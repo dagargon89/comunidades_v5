@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             // Agregar campos faltantes según la estructura de planeacion.sql
+            // Todos los campos son nullable para permitir usuarios básicos
             $table->unsignedBigInteger('point_of_contact_id')->nullable();
             $table->string('phone', 45)->nullable();
             $table->string('org_role', 45)->nullable();
-            $table->unsignedBigInteger('organizations_id');
+            $table->unsignedBigInteger('organizations_id')->nullable();
             $table->string('org_area', 100)->nullable();
 
-            // Agregar clave foránea para organizations_id
-            $table->foreign('organizations_id')->references('id')->on('organizations');
+            // Agregar clave foránea para organizations_id solo si no es null
+            // La clave foránea se manejará a nivel de aplicación
         });
     }
 

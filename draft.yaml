@@ -1,0 +1,173 @@
+models:
+  Axe:
+    name: string:500 nullable
+
+  Program:
+    axes_id: id
+    name: string:500
+    belongsTo: Axe
+
+  ActionLine:
+    name: string:500
+    program_id: id
+    belongsTo: Program
+
+  Organization:
+    name: string:500 nullable
+
+  Component:
+    name: string:45 nullable
+    action_lines_id: id
+    action_lines_program_id: id
+    belongsTo: ActionLine
+
+  Financier:
+    name: string:500 nullable
+
+  Project:
+    name: string:500
+    background: text nullable
+    justification: text nullable
+    general_objective: text nullable
+    financiers_id: id
+    start_date: date nullable
+    end_date: date nullable
+    total_cost: float nullable
+    funded_amount: float nullable
+    cofunding_amount: float nullable
+    monthly_disbursement: float nullable
+    followup_officer: text nullable
+    agreement_file: text nullable
+    project_base_file: text nullable
+    co_financier_id: id nullable
+    created_by: id
+    belongsTo: Financier, User, Financier
+
+  Kpi:
+    name: string:50 nullable
+    description: text nullable
+    initial_value: decimal:10,2 nullable
+    final_value: decimal:10,2 nullable
+    projects_id: id
+    is_percentage: boolean nullable
+    org_area: string:100 nullable
+    belongsTo: Project
+
+  ProgramIndicator:
+    name: string:45 nullable
+    description: text nullable
+    initial_value: decimal:10,2 nullable
+    final_value: decimal:10,2 nullable
+    program_id: id
+    program_axes_id: id
+    belongsTo: Program
+
+  SpecificObjective:
+    description: text nullable
+    projects_id: id
+    belongsTo: Project
+
+  Goal:
+    description: text nullable
+    number: integer nullable
+    components_id: id
+    components_action_lines_id: id
+    components_action_lines_program_id: id
+    organizations_id: id
+    belongsTo: Component, Organization
+
+  Activity:
+    specific_objective_id: id
+    description: text nullable
+    goals_id: id
+    created_by: id
+    belongsTo: SpecificObjective, Goal, User
+
+  Polygon:
+    name: string:100 unique
+    description: text nullable
+
+  Location:
+    name: string:150 unique
+    category: string:50 nullable
+    street: text nullable
+    neighborhood: string:100 nullable
+    ext_number: integer nullable
+    int_number: integer nullable
+    google_place_id: string:500 nullable
+    polygons_id: id
+    created_by: id
+    belongsTo: Polygon, User
+
+  ActivityCalendar:
+    activity_id: id
+    start_date: date nullable
+    end_date: date nullable
+    start_hour: time nullable
+    end_hour: time nullable
+    address_backup: text nullable
+    last_modified: timestamp nullable
+    cancelled: boolean default:false
+    change_reason: text nullable
+    created_by: id
+    asigned_person: id
+    belongsTo: Activity, Location, User
+
+  Beneficiary:
+    last_name: string:100 nullable
+    mother_last_name: string:100 nullable
+    first_names: string:100 nullable
+    birth_year: string:4 nullable
+    gender: enum:M,F,Male,Female nullable
+    phone: string:20 nullable
+    signature: text nullable
+    address_backup: text nullable
+    created_by: id
+    belongsTo: User
+
+  BeneficiaryRegistry:
+    activity_calendar_id: id
+    beneficiaries_id: id
+    data_collectors_id: id
+    created_by: id
+    belongsTo: ActivityCalendar, Beneficiary, User
+
+  PlannedMetric:
+    activity_id: id
+    unit: string:100 nullable
+    year: integer nullable
+    month: integer nullable
+    population_target_value: decimal:10,2 nullable
+    population_real_value: decimal:10,2 default:0.00
+    product_target_value: decimal:10,2 nullable
+    product_real_value: decimal:10,2 nullable
+    activity_progress_log_id: id
+    belongsTo: Activity
+
+  ActivityLog:
+    planned_metrics_id: id
+    created_by: id
+    belongsTo: PlannedMetric, User
+
+  ProjectReport:
+    report_date: date nullable
+    report_file: text nullable
+    projects_id: id
+    created_by: id
+    belongsTo: Project, User
+
+  ProjectDisbursement:
+    projects_id: id
+    amount: float nullable
+    disbursement_date: date nullable
+    created_by: id
+    belongsTo: Project, User
+
+  ActivityFile:
+    month: string:20 nullable
+    type: string:100 nullable
+    file_path: text nullable
+    upload_date: timestamp nullable
+    activity_progress_log_id: id
+    activity_log_id: id
+    belongsTo: ActivityLog

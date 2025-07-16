@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Project extends Model
+{
+    use HasFactory;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name',
+        'background',
+        'justification',
+        'general_objective',
+        'financiers_id',
+        'start_date',
+        'end_date',
+        'total_cost',
+        'funded_amount',
+        'cofunding_amount',
+        'monthly_disbursement',
+        'followup_officer',
+        'agreement_file',
+        'project_base_file',
+        'co_financier_id',
+        'created_by',
+        'belongsTo',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'id' => 'integer',
+            'financiers_id' => 'integer',
+            'start_date' => 'date',
+            'end_date' => 'date',
+            'total_cost' => 'float',
+            'funded_amount' => 'float',
+            'cofunding_amount' => 'float',
+            'monthly_disbursement' => 'float',
+            'co_financier_id' => 'integer',
+            'created_by' => 'integer',
+        ];
+    }
+
+    public function financiers(): BelongsTo
+    {
+        return $this->belongsTo(Financiers::class);
+    }
+
+    public function coFinancier(): BelongsTo
+    {
+        return $this->belongsTo(CoFinancier::class);
+    }
+
+    public function createdBy(): BelongsTo
+    {
+        return $this->belongsTo(CreatedBy::class);
+    }
+}

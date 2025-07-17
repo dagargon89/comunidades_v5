@@ -37,9 +37,6 @@ class ProgramIndicatorResource extends Resource
                 Forms\Components\Select::make('program_axes_id')
                     ->relationship('programAxes', 'name')
                     ->required(),
-                Forms\Components\TextInput::make('belongsTo')
-                    ->required()
-                    ->maxLength(255),
             ]);
     }
 
@@ -61,8 +58,6 @@ class ProgramIndicatorResource extends Resource
                 Tables\Columns\TextColumn::make('programAxes.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('belongsTo')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

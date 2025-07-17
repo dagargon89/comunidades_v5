@@ -22,7 +22,6 @@ class ProgramIndicator extends Model
         'final_value',
         'program_id',
         'program_axes_id',
-        'belongsTo',
     ];
 
     /**

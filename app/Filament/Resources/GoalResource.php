@@ -39,9 +39,6 @@ class GoalResource extends Resource
                 Forms\Components\Select::make('organizations_id')
                     ->relationship('organizations', 'name')
                     ->required(),
-                Forms\Components\TextInput::make('belongsTo')
-                    ->required()
-                    ->maxLength(255),
             ]);
     }
 
@@ -64,8 +61,6 @@ class GoalResource extends Resource
                 Tables\Columns\TextColumn::make('organizations.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('belongsTo')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

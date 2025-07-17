@@ -22,7 +22,6 @@ class Goal extends Model
         'components_action_lines_id',
         'components_action_lines_program_id',
         'organizations_id',
-        'belongsTo',
     ];
 
     /**

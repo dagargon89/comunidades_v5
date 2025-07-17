@@ -19,7 +19,6 @@ class Component extends Model
         'name',
         'action_lines_id',
         'action_lines_program_id',
-        'belongsTo',
     ];
 
     /**

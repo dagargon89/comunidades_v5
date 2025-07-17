@@ -31,9 +31,6 @@ class ComponentResource extends Resource
                 Forms\Components\Select::make('action_lines_program_id')
                     ->relationship('actionLinesProgram', 'name')
                     ->required(),
-                Forms\Components\TextInput::make('belongsTo')
-                    ->required()
-                    ->maxLength(255),
             ]);
     }
 
@@ -49,8 +46,6 @@ class ComponentResource extends Resource
                 Tables\Columns\TextColumn::make('actionLinesProgram.name')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('belongsTo')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

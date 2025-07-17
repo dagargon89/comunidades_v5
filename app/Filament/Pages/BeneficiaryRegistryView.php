@@ -18,6 +18,7 @@ use Filament\Tables\Actions;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\ImageColumn;
+use Illuminate\Support\Facades\Log;
 
 class BeneficiaryRegistryView extends Page implements HasTable
 {
@@ -58,7 +59,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
         $this->resetTable();
     }
 
-    public function updatedActivityCalendarDate($value): void
+    public function updatedActivityCalendarId($value): void
     {
         $this->activity_calendar_id = $value;
         $this->resetTable();
@@ -76,7 +77,10 @@ class BeneficiaryRegistryView extends Page implements HasTable
                         ->searchable()
                         ->required()
                         ->live()
-                        ->default(Activity::query()->min('id')),
+                        ->default(Activity::query()->min('id'))
+                        ->afterStateUpdated(function ($state, $set) {
+                            $set('activity_id', $state);
+                        }),
                     Select::make('activity_calendar_id')
                         ->label('Fecha y hora de la actividad')
                         ->options(function () {
@@ -254,7 +258,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
                 ])
                 ->action(function (array $data) {
                     // Log temporal para depurar
-                    \Log::info('Datos recibidos en acción:', $data);
+                    Log::info('Datos recibidos en acción:', $data);
 
                     // Generar identificador automáticamente
                     $identifier = \App\Models\BeneficiaryRegistry::generarIdentificador(

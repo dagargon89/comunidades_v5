@@ -19,30 +19,87 @@ class ActivityCalendarResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Sección de Calendarización';
+
+    protected static ?string $navigationLabel = 'Calendario de Actividades';
+
+    protected static ?string $modelLabel = 'Calendario de Actividad';
+
+    protected static ?string $pluralModelLabel = 'Calendarios de Actividades';
+
+    protected static ?string $slug = 'calendario-actividades';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('activity_id')
-                    ->relationship('activity', 'description')
-                    ->required(),
-                Forms\Components\DatePicker::make('start_date'),
-                Forms\Components\DatePicker::make('end_date'),
-                Forms\Components\TimePicker::make('start_hour'),
-                Forms\Components\TimePicker::make('end_hour'),
-                Forms\Components\Textarea::make('address_backup')
-                    ->columnSpanFull(),
-                Forms\Components\DateTimePicker::make('last_modified'),
-                Forms\Components\Toggle::make('cancelled')
-                    ->required(),
-                Forms\Components\Textarea::make('change_reason')
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('created_by')
-                    ->options(fn () => \App\Models\User::pluck('name', 'id'))
-                    ->required(),
-                Forms\Components\Select::make('asigned_person')
-                    ->options(fn () => \App\Models\User::pluck('name', 'id'))
-                    ->required(),
+                Forms\Components\Section::make('Información de la Actividad')
+                    ->description('Datos básicos de la actividad programada')
+                    ->icon('heroicon-o-calendar')
+                    ->schema([
+                        Forms\Components\Select::make('activity_id')
+                            ->relationship('activity', 'description')
+                            ->label('Actividad')
+                            ->required()
+                            ->placeholder('Seleccione una actividad'),
+                        Forms\Components\Toggle::make('cancelled')
+                            ->label('Cancelado')
+                            ->required(),
+                        Forms\Components\Textarea::make('change_reason')
+                            ->label('Motivo del cambio')
+                            ->placeholder('Especifique el motivo del cambio o cancelación')
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(2),
+
+                Forms\Components\Section::make('Programación Temporal')
+                    ->description('Fechas y horarios de la actividad')
+                    ->icon('heroicon-o-clock')
+                    ->schema([
+                        Forms\Components\DatePicker::make('start_date')
+                            ->label('Fecha de inicio')
+                            ->placeholder('Seleccione fecha de inicio'),
+                        Forms\Components\DatePicker::make('end_date')
+                            ->label('Fecha de fin')
+                            ->placeholder('Seleccione fecha de fin'),
+                        Forms\Components\TimePicker::make('start_hour')
+                            ->label('Hora de inicio')
+                            ->placeholder('Seleccione hora de inicio'),
+                        Forms\Components\TimePicker::make('end_hour')
+                            ->label('Hora de fin')
+                            ->placeholder('Seleccione hora de fin'),
+                    ])
+                    ->columns(2),
+
+                Forms\Components\Section::make('Información de Ubicación')
+                    ->description('Datos de ubicación y dirección')
+                    ->icon('heroicon-o-map-pin')
+                    ->schema([
+                        Forms\Components\Textarea::make('address_backup')
+                            ->label('Dirección de respaldo')
+                            ->placeholder('Ingrese la dirección completa')
+                            ->columnSpanFull(),
+                    ]),
+
+                Forms\Components\Section::make('Asignación y Control')
+                    ->description('Responsables y seguimiento')
+                    ->icon('heroicon-o-users')
+                    ->schema([
+                        Forms\Components\Select::make('created_by')
+                            ->label('Creado por')
+                            ->options(fn () => \App\Models\User::pluck('name', 'id'))
+                            ->required()
+                            ->placeholder('Seleccione el usuario creador'),
+                        Forms\Components\Select::make('asigned_person')
+                            ->label('Persona asignada')
+                            ->options(fn () => \App\Models\User::pluck('name', 'id'))
+                            ->required()
+                            ->placeholder('Seleccione la persona asignada'),
+                        Forms\Components\DateTimePicker::make('last_modified')
+                            ->label('Última modificación')
+                            ->placeholder('Fecha y hora de última modificación'),
+                    ])
+                    ->columns(2),
             ]);
     }
 

@@ -19,31 +19,81 @@ class LocationResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Sección de Calendarización';
+
+    protected static ?string $navigationLabel = 'Ubicaciones';
+
+    protected static ?string $modelLabel = 'Ubicación';
+
+    protected static ?string $pluralModelLabel = 'Ubicaciones';
+
+    protected static ?string $slug = 'ubicaciones';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(150),
-                Forms\Components\TextInput::make('category')
-                    ->maxLength(50),
-                Forms\Components\Textarea::make('street')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('neighborhood')
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('ext_number')
-                    ->numeric(),
-                Forms\Components\TextInput::make('int_number')
-                    ->numeric(),
-                Forms\Components\TextInput::make('google_place_id')
-                    ->maxLength(500),
-                Forms\Components\Select::make('polygons_id')
-                    ->relationship('polygons', 'name')
-                    ->required(),
-                Forms\Components\TextInput::make('created_by')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Section::make('Información Básica')
+                    ->description('Datos principales de la ubicación')
+                    ->icon('heroicon-o-map-pin')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre de la ubicación')
+                            ->required()
+                            ->maxLength(150)
+                            ->placeholder('Ingrese el nombre de la ubicación'),
+                        Forms\Components\TextInput::make('category')
+                            ->label('Categoría')
+                            ->maxLength(50)
+                            ->placeholder('Ej: Oficina, Taller, Almacén'),
+                        Forms\Components\Select::make('polygons_id')
+                            ->relationship('polygons', 'name')
+                            ->label('Polígono')
+                            ->required()
+                            ->placeholder('Seleccione un polígono'),
+                    ])
+                    ->columns(2),
+
+                Forms\Components\Section::make('Dirección Detallada')
+                    ->description('Información completa de la dirección')
+                    ->icon('heroicon-o-home')
+                    ->schema([
+                        Forms\Components\Textarea::make('street')
+                            ->label('Calle y dirección')
+                            ->placeholder('Ingrese la dirección completa')
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('neighborhood')
+                            ->label('Colonia')
+                            ->maxLength(100)
+                            ->placeholder('Nombre de la colonia'),
+                        Forms\Components\TextInput::make('ext_number')
+                            ->label('Número exterior')
+                            ->numeric()
+                            ->placeholder('Número exterior'),
+                        Forms\Components\TextInput::make('int_number')
+                            ->label('Número interior')
+                            ->numeric()
+                            ->placeholder('Número interior (opcional)'),
+                    ])
+                    ->columns(2),
+
+                Forms\Components\Section::make('Información Adicional')
+                    ->description('Datos complementarios y control')
+                    ->icon('heroicon-o-information-circle')
+                    ->schema([
+                        Forms\Components\TextInput::make('google_place_id')
+                            ->label('ID de Google Places')
+                            ->maxLength(500)
+                            ->placeholder('ID de Google Places (opcional)'),
+                        Forms\Components\Select::make('created_by')
+                            ->label('Usuario creador')
+                            ->options(\App\Models\User::pluck('name', 'id'))
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->placeholder('Seleccione el usuario creador'),
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -52,30 +102,40 @@ class LocationResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Nombre')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('category')
+                    ->label('Categoría')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('neighborhood')
+                    ->label('Colonia')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('ext_number')
+                    ->label('Número exterior')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('int_number')
+                    ->label('Número interior')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('google_place_id')
+                    ->label('ID Google Places')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('polygons.name')
+                    ->label('Polígono')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_by')
+                    ->label('Creado por')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Creado')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Actualizado')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

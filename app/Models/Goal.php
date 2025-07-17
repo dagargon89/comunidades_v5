@@ -43,21 +43,21 @@ class Goal extends Model
 
     public function components(): BelongsTo
     {
-        return $this->belongsTo(Components::class);
+        return $this->belongsTo(Component::class);
     }
 
     public function componentsActionLines(): BelongsTo
     {
-        return $this->belongsTo(ComponentsActionLines::class);
+        return $this->belongsTo(ActionLine::class);
     }
 
     public function componentsActionLinesProgram(): BelongsTo
     {
-        return $this->belongsTo(ComponentsActionLinesProgram::class);
+        return $this->belongsTo(Program::class);
     }
 
     public function organizations(): BelongsTo
     {
-        return $this->belongsTo(Organizations::class);
+        return $this->belongsTo(Organization::class);
     }
 }

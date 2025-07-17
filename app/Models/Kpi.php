@@ -44,6 +44,6 @@ class Kpi extends Model
 
     public function projects(): BelongsTo
     {
-        return $this->belongsTo(Projects::class);
+        return $this->belongsTo(Project::class);
     }
 }

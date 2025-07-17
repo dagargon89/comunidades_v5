@@ -18,7 +18,6 @@ class ActionLine extends Model
     protected $fillable = [
         'name',
         'program_id',
-        'belongsTo',
     ];
 
     /**

@@ -21,6 +21,14 @@ class PolygonResource extends Resource
 
     protected static ?string $navigationGroup = 'Sección Técnica';
 
+    protected static ?string $navigationLabel = 'Polígonos';
+
+    protected static ?string $modelLabel = 'Polígono';
+
+    protected static ?string $pluralModelLabel = 'Polígonos';
+
+    protected static ?string $slug = 'poligonos';
+
     public static function form(Form $form): Form
     {
         return $form

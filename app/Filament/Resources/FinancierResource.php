@@ -21,6 +21,14 @@ class FinancierResource extends Resource
 
     protected static ?string $navigationGroup = 'Sección Técnica';
 
+    protected static ?string $navigationLabel = 'Financiadores';
+
+    protected static ?string $modelLabel = 'Financiador';
+
+    protected static ?string $pluralModelLabel = 'Financiadores';
+
+    protected static ?string $slug = 'financiadores';
+
     public static function form(Form $form): Form
     {
         return $form

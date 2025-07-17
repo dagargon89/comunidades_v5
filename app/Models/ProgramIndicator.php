@@ -48,6 +48,6 @@ class ProgramIndicator extends Model
 
     public function programAxes(): BelongsTo
     {
-        return $this->belongsTo(ProgramAxes::class);
+        return $this->belongsTo(Axe::class);
     }
 }

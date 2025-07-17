@@ -45,11 +45,11 @@ class Activity extends Model
 
     public function goals(): BelongsTo
     {
-        return $this->belongsTo(Goals::class);
+        return $this->belongsTo(Goal::class);
     }
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(CreatedBy::class);
+        return $this->belongsTo(User::class);
     }
 }

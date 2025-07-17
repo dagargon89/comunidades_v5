@@ -21,6 +21,14 @@ class OrganizationResource extends Resource
 
     protected static ?string $navigationGroup = 'Sección Técnica';
 
+    protected static ?string $navigationLabel = 'Organizaciones';
+
+    protected static ?string $modelLabel = 'Organización';
+
+    protected static ?string $pluralModelLabel = 'Organizaciones';
+
+    protected static ?string $slug = 'organizaciones';
+
     public static function form(Form $form): Form
     {
         return $form

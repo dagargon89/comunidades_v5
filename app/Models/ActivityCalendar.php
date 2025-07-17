@@ -56,11 +56,11 @@ class ActivityCalendar extends Model
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(CreatedBy::class);
+        return $this->belongsTo(User::class);
     }
 
     public function asignedPerson(): BelongsTo
     {
-        return $this->belongsTo(AsignedPerson::class);
+        return $this->belongsTo(User::class);
     }
 }

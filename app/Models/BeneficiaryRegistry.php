@@ -46,16 +46,16 @@ class BeneficiaryRegistry extends Model
 
     public function beneficiaries(): BelongsTo
     {
-        return $this->belongsTo(Beneficiaries::class);
+        return $this->belongsTo(Beneficiary::class);
     }
 
     public function dataCollectors(): BelongsTo
     {
-        return $this->belongsTo(DataCollectors::class);
+        return $this->belongsTo(User::class);
     }
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(CreatedBy::class);
+        return $this->belongsTo(User::class);
     }
 }

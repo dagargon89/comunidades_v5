@@ -44,11 +44,11 @@ class Location extends Model
 
     public function polygons(): BelongsTo
     {
-        return $this->belongsTo(Polygons::class);
+        return $this->belongsTo(Polygon::class);
     }
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(CreatedBy::class);
+        return $this->belongsTo(User::class);
     }
 }

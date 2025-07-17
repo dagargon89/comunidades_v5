@@ -37,11 +37,11 @@ class ActivityLog extends Model
 
     public function plannedMetrics(): BelongsTo
     {
-        return $this->belongsTo(PlannedMetrics::class);
+        return $this->belongsTo(PlannedMetric::class);
     }
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(CreatedBy::class);
+        return $this->belongsTo(User::class);
     }
 }

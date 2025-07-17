@@ -53,6 +53,6 @@ class PlannedMetric extends Model
 
     public function activityProgressLog(): BelongsTo
     {
-        return $this->belongsTo(ActivityProgressLog::class);
+        return $this->belongsTo(ActivityLog::class);
     }
 }

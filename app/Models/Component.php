@@ -38,11 +38,11 @@ class Component extends Model
 
     public function actionLines(): BelongsTo
     {
-        return $this->belongsTo(ActionLines::class);
+        return $this->belongsTo(ActionLine::class);
     }
 
     public function actionLinesProgram(): BelongsTo
     {
-        return $this->belongsTo(ActionLinesProgram::class);
+        return $this->belongsTo(Program::class);
     }
 }

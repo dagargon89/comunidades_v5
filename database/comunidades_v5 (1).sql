@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 16, 2025 at 10:32 PM
+-- Generation Time: Jul 17, 2025 at 06:37 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -31,10 +31,19 @@ CREATE TABLE `action_lines` (
   `id` bigint UNSIGNED NOT NULL,
   `name` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
   `program_id` bigint UNSIGNED NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `action_lines`
+--
+
+INSERT INTO `action_lines` (`id`, `name`, `program_id`, `created_at`, `updated_at`) VALUES
+(1, 'Linea de acción 1', 1, '2025-07-17 20:25:24', '2025-07-17 20:25:24'),
+(2, 'Linea de accion 2', 4, '2025-07-17 20:25:35', '2025-07-17 20:25:35'),
+(3, 'Linea de accion 3', 2, '2025-07-17 20:25:45', '2025-07-17 20:25:45'),
+(4, 'Linea de accion 4', 3, '2025-07-17 20:25:58', '2025-07-17 20:25:58');
 
 -- --------------------------------------------------------
 
@@ -44,14 +53,21 @@ CREATE TABLE `action_lines` (
 
 CREATE TABLE `activities` (
   `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `specific_objective_id` bigint UNSIGNED NOT NULL,
   `description` text COLLATE utf8mb4_unicode_ci,
   `goals_id` bigint UNSIGNED NOT NULL,
   `created_by` bigint UNSIGNED NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `activities`
+--
+
+INSERT INTO `activities` (`id`, `name`, `specific_objective_id`, `description`, `goals_id`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 'Actividad 1', 2, 'Actividad 1 Descripcion', 2, 1, '2025-07-17 21:02:27', '2025-07-18 00:00:15');
 
 -- --------------------------------------------------------
 
@@ -72,10 +88,17 @@ CREATE TABLE `activity_calendars` (
   `change_reason` text COLLATE utf8mb4_unicode_ci,
   `created_by` bigint UNSIGNED NOT NULL,
   `asigned_person` bigint UNSIGNED NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `activity_calendars`
+--
+
+INSERT INTO `activity_calendars` (`id`, `activity_id`, `start_date`, `end_date`, `start_hour`, `end_hour`, `address_backup`, `last_modified`, `cancelled`, `change_reason`, `created_by`, `asigned_person`, `created_at`, `updated_at`) VALUES
+(1, 1, '2025-07-18', '2025-07-18', '10:09:54', '11:09:59', NULL, NULL, 0, NULL, 1, 2, '2025-07-17 22:10:14', '2025-07-17 22:10:14'),
+(2, 1, '2025-07-18', '2025-07-19', '10:13:28', '10:13:31', NULL, NULL, 0, NULL, 1, 2, '2025-07-17 22:13:42', '2025-07-17 22:13:42');
 
 -- --------------------------------------------------------
 
@@ -91,7 +114,6 @@ CREATE TABLE `activity_files` (
   `upload_date` timestamp NULL DEFAULT NULL,
   `activity_progress_log_id` bigint UNSIGNED NOT NULL,
   `activity_log_id` bigint UNSIGNED NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -106,7 +128,6 @@ CREATE TABLE `activity_logs` (
   `id` bigint UNSIGNED NOT NULL,
   `planned_metrics_id` bigint UNSIGNED NOT NULL,
   `created_by` bigint UNSIGNED NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -124,6 +145,14 @@ CREATE TABLE `axes` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `axes`
+--
+
+INSERT INTO `axes` (`id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 'Eje 1', '2025-07-17 20:19:27', '2025-07-17 20:19:27'),
+(2, 'Eje 2', '2025-07-17 20:20:00', '2025-07-17 20:20:00');
+
 -- --------------------------------------------------------
 
 --
@@ -138,10 +167,8 @@ CREATE TABLE `beneficiaries` (
   `birth_year` varchar(4) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `gender` enum('M','F','Male','Female') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `phone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `signature` text COLLATE utf8mb4_unicode_ci,
   `address_backup` text COLLATE utf8mb4_unicode_ci,
   `created_by` bigint UNSIGNED NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -157,8 +184,8 @@ CREATE TABLE `beneficiary_registries` (
   `activity_calendar_id` bigint UNSIGNED NOT NULL,
   `beneficiaries_id` bigint UNSIGNED NOT NULL,
   `data_collectors_id` bigint UNSIGNED NOT NULL,
+  `signature` text COLLATE utf8mb4_unicode_ci,
   `created_by` bigint UNSIGNED NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -180,8 +207,8 @@ CREATE TABLE `cache` (
 --
 
 INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('comunidades-v5-cache-livewire-rate-limiter:a17961fa74e9275d529f489537f179c05d50c2f3', 'i:1;', 1752704410),
-('comunidades-v5-cache-livewire-rate-limiter:a17961fa74e9275d529f489537f179c05d50c2f3:timer', 'i:1752704410;', 1752704410);
+('comunidades-v5-cache-livewire-rate-limiter:a17961fa74e9275d529f489537f179c05d50c2f3', 'i:1;', 1752761527),
+('comunidades-v5-cache-livewire-rate-limiter:a17961fa74e9275d529f489537f179c05d50c2f3:timer', 'i:1752761527;', 1752761527);
 
 -- --------------------------------------------------------
 
@@ -206,10 +233,19 @@ CREATE TABLE `components` (
   `name` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `action_lines_id` bigint UNSIGNED NOT NULL,
   `action_lines_program_id` bigint UNSIGNED NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `components`
+--
+
+INSERT INTO `components` (`id`, `name`, `action_lines_id`, `action_lines_program_id`, `created_at`, `updated_at`) VALUES
+(1, 'Componente 1', 1, 1, '2025-07-17 20:28:25', '2025-07-17 20:28:25'),
+(2, 'Componente 2', 2, 4, '2025-07-17 20:28:53', '2025-07-17 20:28:53'),
+(3, 'Componente 3', 3, 2, '2025-07-17 20:29:06', '2025-07-17 20:29:06'),
+(4, 'Componente 4', 4, 3, '2025-07-17 20:29:19', '2025-07-17 20:29:19');
 
 -- --------------------------------------------------------
 
@@ -240,6 +276,14 @@ CREATE TABLE `financiers` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `financiers`
+--
+
+INSERT INTO `financiers` (`id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 'Financiera 1', '2025-07-17 04:41:36', '2025-07-17 04:41:36'),
+(2, 'Financiera 2', '2025-07-17 20:36:40', '2025-07-17 20:36:40');
+
 -- --------------------------------------------------------
 
 --
@@ -254,10 +298,17 @@ CREATE TABLE `goals` (
   `components_action_lines_id` bigint UNSIGNED NOT NULL,
   `components_action_lines_program_id` bigint UNSIGNED NOT NULL,
   `organizations_id` bigint UNSIGNED NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `goals`
+--
+
+INSERT INTO `goals` (`id`, `description`, `number`, `components_id`, `components_action_lines_id`, `components_action_lines_program_id`, `organizations_id`, `created_at`, `updated_at`) VALUES
+(1, 'Meta 1', 1, 1, 1, 1, 1, '2025-07-17 20:34:30', '2025-07-17 20:34:30'),
+(2, 'Meta 2', 2, 2, 2, 2, 2, '2025-07-17 20:34:49', '2025-07-17 20:34:49');
 
 -- --------------------------------------------------------
 
@@ -309,10 +360,17 @@ CREATE TABLE `kpis` (
   `projects_id` bigint UNSIGNED NOT NULL,
   `is_percentage` tinyint(1) DEFAULT NULL,
   `org_area` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `kpis`
+--
+
+INSERT INTO `kpis` (`id`, `name`, `description`, `initial_value`, `final_value`, `projects_id`, `is_percentage`, `org_area`, `created_at`, `updated_at`) VALUES
+(1, 'KPI 1', 'KPI 1', 100.00, 1000.00, 1, 0, 'Mejora Continua', '2025-07-17 20:55:22', '2025-07-17 20:55:22'),
+(2, 'KPI 2', 'KPI 2', 10.00, 100.00, 2, 1, 'Red de Vecinos', '2025-07-17 20:56:54', '2025-07-17 20:56:54');
 
 -- --------------------------------------------------------
 
@@ -331,10 +389,16 @@ CREATE TABLE `locations` (
   `google_place_id` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `polygons_id` bigint UNSIGNED NOT NULL,
   `created_by` bigint UNSIGNED NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `locations`
+--
+
+INSERT INTO `locations` (`id`, `name`, `category`, `street`, `neighborhood`, `ext_number`, `int_number`, `google_place_id`, `polygons_id`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 'Ubicación 1', 'Categoria 1', 'Calle Cebada 7970\nColonia el granjero', 'Colonia 1', 1234, NULL, NULL, 1, 1, '2025-07-17 21:52:03', '2025-07-17 21:58:17');
 
 -- --------------------------------------------------------
 
@@ -378,7 +442,27 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (57, '2025_07_16_215309_create_activity_logs_table', 1),
 (58, '2025_07_16_215310_create_project_reports_table', 1),
 (59, '2025_07_16_215311_create_project_disbursements_table', 1),
-(60, '2025_07_16_215312_create_activity_files_table', 1);
+(60, '2025_07_16_215312_create_activity_files_table', 1),
+(61, '2025_07_17_020936_remove_belongs_to_from_programs_table', 2),
+(62, '2025_07_17_023202_remove_belongs_to_from_action_lines_table', 2),
+(63, '2025_07_17_023755_remove_belongs_to_from_components_table', 2),
+(64, '2025_07_17_024029_remove_belongs_to_from_program_indicators_table', 2),
+(65, '2025_07_17_024446_remove_belongs_to_from_goals_table', 2),
+(66, '2025_07_17_025619_remove_belongs_to_from_projects_table', 2),
+(67, '2025_07_17_031121_remove_belongs_to_from_kpis_table', 2),
+(68, '2025_07_17_032039_remove_belongs_to_from_specific_objectives_table', 2),
+(69, '2025_07_17_032352_remove_belongs_to_from_activities_table', 2),
+(70, '2025_07_17_033218_remove_belongs_to_from_planned_metrics_table', 2),
+(71, '2025_07_17_150803_make_activity_progress_log_id_nullable_in_planned_metrics_table', 3),
+(72, '2025_07_17_153115_remove_belongs_to_from_locations_table', 4),
+(73, '2025_07_17_160512_remove_belongsto_from_activity_calendars_table', 5),
+(74, '2025_07_17_164522_remove_signature_from_beneficiaries_table', 6),
+(75, '2025_07_17_171444_add_signature_to_beneficiaries_table', 7),
+(76, '2025_07_17_172043_remove_belongsto_from_beneficiaries_table', 8),
+(77, '2025_07_17_172120_remove_belongsto_from_beneficiary_registries_table', 8),
+(78, '2025_07_17_173117_remove_belongsto_from_activity_logs_table', 9),
+(79, '2025_07_17_173131_remove_belongsto_from_activity_files_table', 9),
+(80, '2025_07_17_175856_add_name_to_activities_table', 10);
 
 -- --------------------------------------------------------
 
@@ -392,6 +476,14 @@ CREATE TABLE `organizations` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `organizations`
+--
+
+INSERT INTO `organizations` (`id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 'Organización 1', '2025-07-17 04:41:20', '2025-07-17 04:41:20'),
+(2, 'Organización 2', '2025-07-17 20:33:55', '2025-07-17 20:33:55');
 
 -- --------------------------------------------------------
 
@@ -421,11 +513,17 @@ CREATE TABLE `planned_metrics` (
   `population_real_value` decimal(10,2) NOT NULL DEFAULT '0.00',
   `product_target_value` decimal(10,2) DEFAULT NULL,
   `product_real_value` decimal(10,2) DEFAULT NULL,
-  `activity_progress_log_id` bigint UNSIGNED NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `activity_progress_log_id` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `planned_metrics`
+--
+
+INSERT INTO `planned_metrics` (`id`, `activity_id`, `unit`, `year`, `month`, `population_target_value`, `population_real_value`, `product_target_value`, `product_real_value`, `activity_progress_log_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Población', 2015, 12, 100.00, 50.00, NULL, NULL, NULL, '2025-07-17 21:09:09', '2025-07-17 21:09:09');
 
 -- --------------------------------------------------------
 
@@ -441,6 +539,13 @@ CREATE TABLE `polygons` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `polygons`
+--
+
+INSERT INTO `polygons` (`id`, `name`, `description`, `created_at`, `updated_at`) VALUES
+(1, 'Poligono 1', 'Es un Ejemplo', '2025-07-17 04:41:50', '2025-07-17 04:42:22');
+
 -- --------------------------------------------------------
 
 --
@@ -451,10 +556,19 @@ CREATE TABLE `programs` (
   `id` bigint UNSIGNED NOT NULL,
   `axes_id` bigint UNSIGNED NOT NULL,
   `name` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `programs`
+--
+
+INSERT INTO `programs` (`id`, `axes_id`, `name`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Programa 1', '2025-07-17 20:22:05', '2025-07-17 20:22:05'),
+(2, 2, 'Programa 2', '2025-07-17 20:22:21', '2025-07-17 20:22:21'),
+(3, 1, 'Programa 2', '2025-07-17 20:22:45', '2025-07-17 20:22:45'),
+(4, 2, 'Programa 1', '2025-07-17 20:22:57', '2025-07-17 20:22:57');
 
 -- --------------------------------------------------------
 
@@ -470,10 +584,19 @@ CREATE TABLE `program_indicators` (
   `final_value` decimal(10,2) DEFAULT NULL,
   `program_id` bigint UNSIGNED NOT NULL,
   `program_axes_id` bigint UNSIGNED NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `program_indicators`
+--
+
+INSERT INTO `program_indicators` (`id`, `name`, `description`, `initial_value`, `final_value`, `program_id`, `program_axes_id`, `created_at`, `updated_at`) VALUES
+(1, 'Indicador de programa 1', 'Dexcripcion de indicador de programa 1', 10.00, 100.00, 1, 1, '2025-07-17 20:31:38', '2025-07-17 20:31:38'),
+(2, 'Indicador de programa 2', 'Descripción indicador de programa 2', 20.00, 200.00, 4, 1, '2025-07-17 20:32:12', '2025-07-17 20:32:12'),
+(3, 'Indicador de programa 3', 'Indicador de programa 3', 30.00, 300.00, 2, 2, '2025-07-17 20:32:35', '2025-07-17 20:32:35'),
+(4, 'Indicador de programa 4', 'Indicador de programa 4', 40.00, 400.00, 3, 2, '2025-07-17 20:32:55', '2025-07-17 20:32:55');
 
 -- --------------------------------------------------------
 
@@ -499,10 +622,17 @@ CREATE TABLE `projects` (
   `project_base_file` text COLLATE utf8mb4_unicode_ci,
   `co_financier_id` bigint UNSIGNED DEFAULT NULL,
   `created_by` bigint UNSIGNED NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `projects`
+--
+
+INSERT INTO `projects` (`id`, `name`, `background`, `justification`, `general_objective`, `financiers_id`, `start_date`, `end_date`, `total_cost`, `funded_amount`, `cofunding_amount`, `monthly_disbursement`, `followup_officer`, `agreement_file`, `project_base_file`, `co_financier_id`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 'Proyecto 1', NULL, NULL, NULL, 2, '2025-08-01', '2026-08-01', 1000000, 750000, 250000, 50000, NULL, NULL, NULL, 1, 1, '2025-07-17 20:38:21', '2025-07-17 20:38:21'),
+(2, 'Proyecto 2', NULL, NULL, NULL, 1, '2025-07-30', '2025-09-30', 2000000, 2000000, 0, 10000, NULL, NULL, NULL, NULL, 1, '2025-07-17 20:41:21', '2025-07-17 20:41:21');
 
 -- --------------------------------------------------------
 
@@ -558,7 +688,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('JiLSIkAaGQkapOC6MwRpWJZAaH8TyciXpfAAEKSa', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoieXpwV09TVFQ0U2toRDlOYWF6d0pnMnJSSEF0OFlSNXF2bkVGdWFwUSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDA6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi91c2Vycy9jcmVhdGUiO31zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO3M6MTc6InBhc3N3b3JkX2hhc2hfd2ViIjtzOjYwOiIkMnkkMTIkNEYyakVCMVBPSXkzck1rU3IvYWdJZWZPay5DbzVva0huMmhCWEN6eFAvOUFEamF1RXJFSFciO30=', 1752705126);
+('kx4Vzy4x2zs1pYEdbutBfLFrjDw4rX1exkjPdb7K', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiSFJhNkRDWHVHa0Rlc1UxMzJiZjlDTVhxSVU3dWxZcDloczBiSWlRRyI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjM5OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vYWN0aXZpZGFkZXMiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO3M6MTc6InBhc3N3b3JkX2hhc2hfd2ViIjtzOjYwOiIkMnkkMTIkZTFCOEtzcVdsR1c3UHRnYm1ZMWxlZUlYb21Lb3NPU09YY2o1Wk5nL3U1TWxPUjdjd2FvcksiO3M6ODoiZmlsYW1lbnQiO2E6MDp7fX0=', 1752776696);
 
 -- --------------------------------------------------------
 
@@ -570,10 +700,17 @@ CREATE TABLE `specific_objectives` (
   `id` bigint UNSIGNED NOT NULL,
   `description` text COLLATE utf8mb4_unicode_ci,
   `projects_id` bigint UNSIGNED NOT NULL,
-  `belongsTo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `specific_objectives`
+--
+
+INSERT INTO `specific_objectives` (`id`, `description`, `projects_id`, `created_at`, `updated_at`) VALUES
+(1, 'Objetivo Especifico 1', 1, '2025-07-17 21:00:41', '2025-07-17 21:00:41'),
+(2, 'Objetivo Especifico 2', 2, '2025-07-17 21:01:00', '2025-07-17 21:01:00');
 
 -- --------------------------------------------------------
 
@@ -602,7 +739,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `point_of_contact_id`, `phone`, `org_role`, `organizations_id`, `org_area`) VALUES
-(1, 'David García', 'dgarcia@planjuarez.org', NULL, '$2y$12$4F2jEB1POIy3rMkSr/agIefOk.Co5okHn2hBXCzxP/9ADjauErEHW', NULL, '2025-07-17 04:18:47', '2025-07-17 04:18:47', NULL, NULL, NULL, NULL, NULL);
+(1, 'David García', 'dgarcia@planjuarez.org', NULL, '$2y$12$e1B8KsqWlGW7PtgbmY1leeIXomKosOSOXcj5ZNg/u5MlOR7cwaorK', NULL, '2025-07-17 04:18:47', '2025-07-17 04:45:43', NULL, '6562786534', 'Desarrollador', 1, 'Mejora Continua'),
+(2, 'Capturista', 'capturista@test.com', NULL, '$2y$12$M.FASMD4iDiOUawH77oOIOLjm3k6VrfnJG1mQ8662VSJJaY4TWTHm', NULL, '2025-07-17 04:51:11', '2025-07-17 04:51:11', 1, NULL, 'Promotor', 1, 'Red de Vecinos');
 
 --
 -- Indexes for dumped tables
@@ -809,19 +947,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `action_lines`
 --
 ALTER TABLE `action_lines`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `activities`
 --
 ALTER TABLE `activities`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `activity_calendars`
 --
 ALTER TABLE `activity_calendars`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `activity_files`
@@ -839,7 +977,7 @@ ALTER TABLE `activity_logs`
 -- AUTO_INCREMENT for table `axes`
 --
 ALTER TABLE `axes`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `beneficiaries`
@@ -857,7 +995,7 @@ ALTER TABLE `beneficiary_registries`
 -- AUTO_INCREMENT for table `components`
 --
 ALTER TABLE `components`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -869,13 +1007,13 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `financiers`
 --
 ALTER TABLE `financiers`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `goals`
 --
 ALTER TABLE `goals`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -887,55 +1025,55 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `kpis`
 --
 ALTER TABLE `kpis`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `locations`
 --
 ALTER TABLE `locations`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 
 --
 -- AUTO_INCREMENT for table `organizations`
 --
 ALTER TABLE `organizations`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `planned_metrics`
 --
 ALTER TABLE `planned_metrics`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `polygons`
 --
 ALTER TABLE `polygons`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `programs`
 --
 ALTER TABLE `programs`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `program_indicators`
 --
 ALTER TABLE `program_indicators`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `projects`
 --
 ALTER TABLE `projects`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `project_disbursements`
@@ -953,13 +1091,13 @@ ALTER TABLE `project_reports`
 -- AUTO_INCREMENT for table `specific_objectives`
 --
 ALTER TABLE `specific_objectives`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -53,9 +53,9 @@ class ProjectResource extends Resource
                     ->columnSpanFull(),
                 Forms\Components\Select::make('co_financier_id')
                     ->relationship('coFinancier', 'name'),
-                Forms\Components\TextInput::make('created_by')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Select::make('created_by')
+                    ->relationship('createdBy', 'name', fn ($query) => $query->select('id', 'name'))
+                    ->required(),
             ]);
     }
 
@@ -64,40 +64,53 @@ class ProjectResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->label('Nombre del Proyecto')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('financiers.name')
-                    ->numeric()
+                    ->label('Financiador')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
+                    ->label('Fecha de Inicio')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_date')
+                    ->label('Fecha de Fin')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_cost')
-                    ->numeric()
+                    ->label('Costo Total')
+                    ->money('USD')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('funded_amount')
-                    ->numeric()
+                    ->label('Monto Financiado')
+                    ->money('USD')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('cofunding_amount')
-                    ->numeric()
+                    ->label('Monto de Cofinanciación')
+                    ->money('USD')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('monthly_disbursement')
-                    ->numeric()
+                    ->label('Desembolso Mensual')
+                    ->money('USD')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('coFinancier.name')
-                    ->numeric()
+                    ->label('Cofinanciador')
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_by')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('createdBy.name')
+                    ->label('Creado por')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Creado')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label('Actualizado')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

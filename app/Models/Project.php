@@ -57,16 +57,16 @@ class Project extends Model
 
     public function financiers(): BelongsTo
     {
-        return $this->belongsTo(Financier::class);
+        return $this->belongsTo(Financier::class, 'financiers_id');
     }
 
     public function coFinancier(): BelongsTo
     {
-        return $this->belongsTo(Financier::class);
+        return $this->belongsTo(Financier::class, 'co_financier_id');
     }
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

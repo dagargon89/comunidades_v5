@@ -17,26 +17,46 @@ class KpiResource extends Resource
 {
     protected static ?string $model = Kpi::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-chart-bar-square';
+    protected static ?string $navigationGroup = 'Sección de Captura de Proyectos';
+    protected static ?string $navigationLabel = 'KPIs';
+    protected static ?string $modelLabel = 'KPI';
+    protected static ?string $pluralModelLabel = 'KPIs';
+    protected static ?string $slug = 'kpis';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->maxLength(50),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('initial_value')
-                    ->numeric(),
-                Forms\Components\TextInput::make('final_value')
-                    ->numeric(),
-                Forms\Components\Select::make('projects_id')
-                    ->relationship('projects', 'name')
-                    ->required(),
-                Forms\Components\Toggle::make('is_percentage'),
-                Forms\Components\TextInput::make('org_area')
-                    ->maxLength(100),
+                Forms\Components\Section::make('Información del KPI')
+                    ->description('Datos básicos del indicador de rendimiento')
+                    ->icon('heroicon-o-chart-bar-square')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre del KPI')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Textarea::make('description')
+                            ->label('Descripción')
+                            ->maxLength(500),
+                        Forms\Components\TextInput::make('initial_value')
+                            ->label('Valor Inicial')
+                            ->numeric(),
+                        Forms\Components\TextInput::make('final_value')
+                            ->label('Valor Final')
+                            ->numeric(),
+                        Forms\Components\Select::make('projects_id')
+                            ->label('Proyecto')
+                            ->relationship('projects', 'name')
+                            ->required(),
+                        Forms\Components\Toggle::make('is_percentage')
+                            ->label('Es Porcentaje')
+                            ->default(false),
+                        Forms\Components\TextInput::make('org_area')
+                            ->label('Área Organizacional')
+                            ->maxLength(100),
+                    ])
+                    ->columns(2),
             ]);
     }
 

@@ -17,45 +17,54 @@ class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $navigationGroup = 'Sección de Captura de Proyectos';
+    protected static ?string $navigationLabel = 'Proyectos';
+    protected static ?string $modelLabel = 'Proyecto';
+    protected static ?string $pluralModelLabel = 'Proyectos';
+    protected static ?string $slug = 'proyectos';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(500),
-                Forms\Components\Textarea::make('background')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('justification')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('general_objective')
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('financiers_id')
-                    ->relationship('financiers', 'name')
-                    ->required(),
-                Forms\Components\DatePicker::make('start_date'),
-                Forms\Components\DatePicker::make('end_date'),
-                Forms\Components\TextInput::make('total_cost')
-                    ->numeric(),
-                Forms\Components\TextInput::make('funded_amount')
-                    ->numeric(),
-                Forms\Components\TextInput::make('cofunding_amount')
-                    ->numeric(),
-                Forms\Components\TextInput::make('monthly_disbursement')
-                    ->numeric(),
-                Forms\Components\Textarea::make('followup_officer')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('agreement_file')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('project_base_file')
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('co_financier_id')
-                    ->relationship('coFinancier', 'name'),
-                Forms\Components\Select::make('created_by')
-                    ->relationship('createdBy', 'name', fn ($query) => $query->select('id', 'name'))
-                    ->required(),
+                Forms\Components\Section::make('Información del Proyecto')
+                    ->description('Datos básicos del proyecto')
+                    ->icon('heroicon-o-folder')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre del Proyecto')
+                            ->required()
+                            ->maxLength(500),
+                        Forms\Components\Select::make('financiers_id')
+                            ->label('Financiador')
+                            ->relationship('financiers', 'name')
+                            ->required(),
+                        Forms\Components\DatePicker::make('start_date')
+                            ->label('Fecha de Inicio'),
+                        Forms\Components\DatePicker::make('end_date')
+                            ->label('Fecha de Fin'),
+                        Forms\Components\TextInput::make('total_cost')
+                            ->label('Costo Total')
+                            ->numeric(),
+                        Forms\Components\TextInput::make('funded_amount')
+                            ->label('Monto Financiado')
+                            ->numeric(),
+                        Forms\Components\TextInput::make('cofunding_amount')
+                            ->label('Monto de Cofinanciación')
+                            ->numeric(),
+                        Forms\Components\TextInput::make('monthly_disbursement')
+                            ->label('Desembolso Mensual')
+                            ->numeric(),
+                        Forms\Components\Select::make('co_financier_id')
+                            ->label('Cofinanciador')
+                            ->relationship('coFinancier', 'name'),
+                        Forms\Components\Select::make('created_by')
+                            ->label('Creado por')
+                            ->relationship('createdBy', 'name', fn ($query) => $query->select('id', 'name'))
+                            ->required(),
+                    ])
+                    ->columns(2),
             ]);
     }
 

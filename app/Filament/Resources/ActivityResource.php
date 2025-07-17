@@ -17,23 +17,39 @@ class ActivityResource extends Resource
 {
     protected static ?string $model = Activity::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?string $navigationGroup = 'Sección de Captura de Proyectos';
+    protected static ?string $navigationLabel = 'Actividades';
+    protected static ?string $modelLabel = 'Actividad';
+    protected static ?string $pluralModelLabel = 'Actividades';
+    protected static ?string $slug = 'actividades';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('specific_objective_id')
-                    ->relationship('specificObjective', 'description')
-                    ->required(),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('goals_id')
-                    ->relationship('goals', 'description')
-                    ->required(),
-                Forms\Components\Select::make('created_by')
-                    ->relationship('createdBy', 'name')
-                    ->required(),
+                Forms\Components\Section::make('Información de la Actividad')
+                    ->description('Datos básicos de la actividad')
+                    ->icon('heroicon-o-clipboard-document-list')
+                    ->schema([
+                        Forms\Components\Select::make('specific_objective_id')
+                            ->label('Objetivo Específico')
+                            ->relationship('specificObjective', 'description')
+                            ->required(),
+                        Forms\Components\Textarea::make('description')
+                            ->label('Descripción de la Actividad')
+                            ->required()
+                            ->maxLength(500),
+                        Forms\Components\Select::make('goals_id')
+                            ->label('Meta')
+                            ->relationship('goals', 'description')
+                            ->required(),
+                        Forms\Components\Select::make('created_by')
+                            ->label('Creado por')
+                            ->relationship('createdBy', 'name')
+                            ->required(),
+                    ])
+                    ->columns(2),
             ]);
     }
 

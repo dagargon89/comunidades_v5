@@ -17,17 +17,31 @@ class SpecificObjectiveResource extends Resource
 {
     protected static ?string $model = SpecificObjective::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-flag';
+    protected static ?string $navigationGroup = 'Sección de Captura de Proyectos';
+    protected static ?string $navigationLabel = 'Objetivos Específicos';
+    protected static ?string $modelLabel = 'Objetivo Específico';
+    protected static ?string $pluralModelLabel = 'Objetivos Específicos';
+    protected static ?string $slug = 'objetivos-especificos';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('projects_id')
-                    ->relationship('projects', 'name')
-                    ->required(),
+                Forms\Components\Section::make('Información del Objetivo Específico')
+                    ->description('Datos básicos del objetivo específico')
+                    ->icon('heroicon-o-flag')
+                    ->schema([
+                        Forms\Components\Textarea::make('description')
+                            ->label('Descripción del Objetivo')
+                            ->required()
+                            ->maxLength(500),
+                        Forms\Components\Select::make('projects_id')
+                            ->label('Proyecto')
+                            ->relationship('projects', 'name')
+                            ->required(),
+                    ])
+                    ->columns(2),
             ]);
     }
 

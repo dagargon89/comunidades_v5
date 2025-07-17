@@ -45,9 +45,6 @@ class PlannedMetricResource extends Resource
                 Forms\Components\Select::make('activity_progress_log_id')
                     ->relationship('activityProgressLog', 'id')
                     ->required(),
-                Forms\Components\TextInput::make('belongsTo')
-                    ->required()
-                    ->maxLength(255),
             ]);
     }
 
@@ -81,8 +78,6 @@ class PlannedMetricResource extends Resource
                 Tables\Columns\TextColumn::make('activityProgressLog.id')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('belongsTo')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

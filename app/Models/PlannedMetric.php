@@ -25,7 +25,6 @@ class PlannedMetric extends Model
         'product_target_value',
         'product_real_value',
         'activity_progress_log_id',
-        'belongsTo',
     ];
 
     /**

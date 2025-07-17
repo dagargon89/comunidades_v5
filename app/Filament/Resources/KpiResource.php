@@ -37,9 +37,6 @@ class KpiResource extends Resource
                 Forms\Components\Toggle::make('is_percentage'),
                 Forms\Components\TextInput::make('org_area')
                     ->maxLength(100),
-                Forms\Components\TextInput::make('belongsTo')
-                    ->required()
-                    ->maxLength(255),
             ]);
     }
 
@@ -61,8 +58,6 @@ class KpiResource extends Resource
                 Tables\Columns\IconColumn::make('is_percentage')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('org_area')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('belongsTo')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

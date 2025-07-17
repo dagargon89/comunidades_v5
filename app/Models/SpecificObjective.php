@@ -18,7 +18,6 @@ class SpecificObjective extends Model
     protected $fillable = [
         'description',
         'projects_id',
-        'belongsTo',
     ];
 
     /**
@@ -36,6 +35,6 @@ class SpecificObjective extends Model
 
     public function projects(): BelongsTo
     {
-        return $this->belongsTo(Projects::class);
+        return $this->belongsTo(Project::class);
     }
 }

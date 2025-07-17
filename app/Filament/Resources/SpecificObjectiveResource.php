@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ActivityResource\Pages;
-use App\Filament\Resources\ActivityResource\RelationManagers;
-use App\Models\Activity;
+use App\Filament\Resources\SpecificObjectiveResource\Pages;
+use App\Filament\Resources\SpecificObjectiveResource\RelationManagers;
+use App\Models\SpecificObjective;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,9 +13,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ActivityResource extends Resource
+class SpecificObjectiveResource extends Resource
 {
-    protected static ?string $model = Activity::class;
+    protected static ?string $model = SpecificObjective::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -23,16 +23,10 @@ class ActivityResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('specific_objective_id')
-                    ->relationship('specificObjective', 'description')
-                    ->required(),
                 Forms\Components\Textarea::make('description')
                     ->columnSpanFull(),
-                Forms\Components\Select::make('goals_id')
-                    ->relationship('goals', 'description')
-                    ->required(),
-                Forms\Components\Select::make('created_by')
-                    ->relationship('createdBy', 'name')
+                Forms\Components\Select::make('projects_id')
+                    ->relationship('projects', 'name')
                     ->required(),
             ]);
     }
@@ -41,18 +35,8 @@ class ActivityResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('description')
-                    ->label('Actividad')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('specificObjective.description')
+                Tables\Columns\TextColumn::make('projects.name')
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('goals.description')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('createdBy.name')
-                    ->label('Creado por')
-                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -86,9 +70,9 @@ class ActivityResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListActivities::route('/'),
-            'create' => Pages\CreateActivity::route('/create'),
-            'edit' => Pages\EditActivity::route('/{record}/edit'),
+            'index' => Pages\ListSpecificObjectives::route('/'),
+            'create' => Pages\CreateSpecificObjective::route('/create'),
+            'edit' => Pages\EditSpecificObjective::route('/{record}/edit'),
         ];
     }
 }

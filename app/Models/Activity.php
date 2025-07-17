@@ -20,7 +20,6 @@ class Activity extends Model
         'description',
         'goals_id',
         'created_by',
-        'belongsTo',
     ];
 
     /**
@@ -40,16 +39,16 @@ class Activity extends Model
 
     public function specificObjective(): BelongsTo
     {
-        return $this->belongsTo(SpecificObjective::class);
+        return $this->belongsTo(SpecificObjective::class, 'specific_objective_id');
     }
 
     public function goals(): BelongsTo
     {
-        return $this->belongsTo(Goal::class);
+        return $this->belongsTo(Goal::class, 'goals_id');
     }
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

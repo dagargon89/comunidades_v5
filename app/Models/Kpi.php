@@ -23,7 +23,6 @@ class Kpi extends Model
         'projects_id',
         'is_percentage',
         'org_area',
-        'belongsTo',
     ];
 
     /**

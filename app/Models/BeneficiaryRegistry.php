@@ -20,7 +20,6 @@ class BeneficiaryRegistry extends Model
         'beneficiaries_id',
         'data_collectors_id',
         'created_by',
-        'belongsTo',
     ];
 
     /**

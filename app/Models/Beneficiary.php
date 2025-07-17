@@ -25,7 +25,6 @@ class Beneficiary extends Model
         'signature',
         'address_backup',
         'created_by',
-        'belongsTo',
     ];
 
     /**

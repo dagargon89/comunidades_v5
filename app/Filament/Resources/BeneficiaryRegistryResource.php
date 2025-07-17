@@ -19,25 +19,50 @@ class BeneficiaryRegistryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Sección de campo';
+    protected static ?string $navigationLabel = 'Registros de Beneficiarios';
+    protected static ?string $modelLabel = 'Registro de Beneficiario';
+    protected static ?string $pluralModelLabel = 'Registros de Beneficiarios';
+    protected static ?string $slug = 'registros-beneficiarios';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('activity_calendar_id')
-                    ->relationship('activityCalendar', 'id')
-                    ->required(),
-                Forms\Components\Select::make('beneficiaries_id')
-                    ->relationship('beneficiaries', 'id')
-                    ->required(),
-                Forms\Components\Select::make('data_collectors_id')
-                    ->relationship('dataCollectors', 'name')
-                    ->required(),
-                Forms\Components\TextInput::make('created_by')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('belongsTo')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Section::make('Datos de registro')
+                    ->description('Información de registro de beneficiario en actividad')
+                    ->icon('heroicon-o-clipboard-document')
+                    ->schema([
+                        Forms\Components\Select::make('activity_calendar_id')
+                            ->relationship('activityCalendar', 'id')
+                            ->label('Calendario de actividad')
+                            ->required()
+                            ->placeholder('Seleccione el calendario de actividad'),
+                        Forms\Components\Select::make('beneficiaries_id')
+                            ->relationship('beneficiaries', 'id')
+                            ->label('Beneficiario')
+                            ->required()
+                            ->placeholder('Seleccione el beneficiario'),
+                        Forms\Components\Select::make('data_collectors_id')
+                            ->relationship('dataCollectors', 'name')
+                            ->label('Colector de datos')
+                            ->required()
+                            ->placeholder('Seleccione el colector de datos'),
+                    ])
+                    ->columns(2),
+                Forms\Components\Section::make('Control y auditoría')
+                    ->description('Datos de control y usuario creador')
+                    ->icon('heroicon-o-user')
+                    ->schema([
+                        Forms\Components\Select::make('created_by')
+                            ->label('Usuario creador')
+                            ->options(\App\Models\User::pluck('name', 'id'))
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->placeholder('Seleccione el usuario creador'),
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -46,24 +71,28 @@ class BeneficiaryRegistryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('activityCalendar.id')
+                    ->label('Calendario de actividad')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('beneficiaries.id')
+                    ->label('Beneficiario')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('dataCollectors.name')
+                    ->label('Colector de datos')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_by')
+                    ->label('Usuario creador')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('belongsTo')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Creado')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Actualizado')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

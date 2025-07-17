@@ -19,32 +19,67 @@ class BeneficiaryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Sección de campo';
+    protected static ?string $navigationLabel = 'Beneficiarios';
+    protected static ?string $modelLabel = 'Beneficiario';
+    protected static ?string $pluralModelLabel = 'Beneficiarios';
+    protected static ?string $slug = 'beneficiarios';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('last_name')
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('mother_last_name')
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('first_names')
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('birth_year')
-                    ->maxLength(4),
-                Forms\Components\TextInput::make('gender'),
-                Forms\Components\TextInput::make('phone')
-                    ->tel()
-                    ->maxLength(20),
-                Forms\Components\Textarea::make('signature')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('address_backup')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('created_by')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('belongsTo')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Section::make('Datos personales')
+                    ->description('Información básica del beneficiario')
+                    ->icon('heroicon-o-user')
+                    ->schema([
+                        Forms\Components\TextInput::make('last_name')
+                            ->label('Apellido paterno')
+                            ->maxLength(100)
+                            ->placeholder('Ingrese el apellido paterno'),
+                        Forms\Components\TextInput::make('mother_last_name')
+                            ->label('Apellido materno')
+                            ->maxLength(100)
+                            ->placeholder('Ingrese el apellido materno'),
+                        Forms\Components\TextInput::make('first_names')
+                            ->label('Nombres')
+                            ->maxLength(100)
+                            ->placeholder('Ingrese los nombres'),
+                        Forms\Components\TextInput::make('birth_year')
+                            ->label('Año de nacimiento')
+                            ->maxLength(4)
+                            ->placeholder('Ej: 1990'),
+                        Forms\Components\TextInput::make('gender')
+                            ->label('Género')
+                            ->placeholder('Masculino/Femenino'),
+                        Forms\Components\TextInput::make('phone')
+                            ->label('Teléfono')
+                            ->tel()
+                            ->maxLength(20)
+                            ->placeholder('Ingrese el teléfono'),
+                    ])
+                    ->columns(2),
+                Forms\Components\Section::make('Información de registro')
+                    ->description('Datos de registro y control')
+                    ->icon('heroicon-o-clipboard-document')
+                    ->schema([
+                        Forms\Components\Textarea::make('signature')
+                            ->label('Firma')
+                            ->placeholder('Firma digital o imagen')
+                            ->columnSpanFull(),
+                        Forms\Components\Textarea::make('address_backup')
+                            ->label('Dirección de respaldo')
+                            ->placeholder('Dirección completa')
+                            ->columnSpanFull(),
+                        Forms\Components\Select::make('created_by')
+                            ->label('Usuario creador')
+                            ->options(\App\Models\User::pluck('name', 'id'))
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->placeholder('Seleccione el usuario creador'),
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -53,26 +88,33 @@ class BeneficiaryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('last_name')
+                    ->label('Apellido paterno')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('mother_last_name')
+                    ->label('Apellido materno')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('first_names')
+                    ->label('Nombres')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('birth_year')
+                    ->label('Año de nacimiento')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('gender'),
+                Tables\Columns\TextColumn::make('gender')
+                    ->label('Género'),
                 Tables\Columns\TextColumn::make('phone')
+                    ->label('Teléfono')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_by')
+                    ->label('Usuario creador')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('belongsTo')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Creado')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Actualizado')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

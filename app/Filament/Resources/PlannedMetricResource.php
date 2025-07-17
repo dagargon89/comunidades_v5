@@ -34,7 +34,7 @@ class PlannedMetricResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('activity_id')
                             ->label('Actividad')
-                            ->relationship('activity', 'description')
+                            ->relationship('activity', 'name')
                             ->required(),
                         Forms\Components\TextInput::make('unit')
                             ->label('Unidad')
@@ -72,7 +72,7 @@ class PlannedMetricResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('activity_id')->label('Actividad'),
+                Tables\Columns\TextColumn::make('activity.name')->label('Actividad'),
                 Tables\Columns\TextColumn::make('unit')->label('Unidad'),
                 Tables\Columns\TextColumn::make('year')->label('Año'),
                 Tables\Columns\TextColumn::make('month')->label('Mes'),

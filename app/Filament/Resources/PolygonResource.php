@@ -19,6 +19,8 @@ class PolygonResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-map';
 
+    protected static ?string $navigationGroup = 'Sección Técnica';
+
     public static function form(Form $form): Form
     {
         return $form

@@ -30,6 +30,12 @@ class BeneficiaryRegistryView extends Page implements HasTable
 
     protected static string $view = 'filament.pages.beneficiary-registry-view';
 
+    protected static ?string $title = 'Registro de Beneficiarios';
+    protected static ?string $navigationLabel = 'Registro de Beneficiarios';
+    protected static ?string $modelLabel = 'Registro de Beneficiario';
+    protected static ?string $pluralModelLabel = 'Registros de Beneficiarios';
+    protected static ?string $slug = 'registro-beneficiarios';
+
     public ?int $activity_id = null;
     public ?int $activity_calendar_id = null;
 

@@ -20,7 +20,6 @@ class ProjectDisbursement extends Model
         'amount',
         'disbursement_date',
         'created_by',
-        'belongsTo',
     ];
 
     /**
@@ -41,11 +40,11 @@ class ProjectDisbursement extends Model
 
     public function projects(): BelongsTo
     {
-        return $this->belongsTo(Projects::class);
+        return $this->belongsTo(Project::class);
     }
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(CreatedBy::class);
+        return $this->belongsTo(User::class);
     }
 }

@@ -20,7 +20,6 @@ class ProjectReport extends Model
         'report_file',
         'projects_id',
         'created_by',
-        'belongsTo',
     ];
 
     /**
@@ -40,11 +39,11 @@ class ProjectReport extends Model
 
     public function projects(): BelongsTo
     {
-        return $this->belongsTo(Projects::class);
+        return $this->belongsTo(Project::class);
     }
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(CreatedBy::class);
+        return $this->belongsTo(User::class);
     }
 }

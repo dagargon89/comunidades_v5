@@ -18,7 +18,6 @@ class Program extends Model
     protected $fillable = [
         'axes_id',
         'name',
-        'belongsTo',
     ];
 
     /**
@@ -36,6 +35,6 @@ class Program extends Model
 
     public function axes(): BelongsTo
     {
-        return $this->belongsTo(Axes::class);
+        return $this->belongsTo(Axe::class);
     }
 }

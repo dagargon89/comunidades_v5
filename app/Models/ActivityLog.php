@@ -18,7 +18,6 @@ class ActivityLog extends Model
     protected $fillable = [
         'planned_metrics_id',
         'created_by',
-        'belongsTo',
     ];
 
     /**

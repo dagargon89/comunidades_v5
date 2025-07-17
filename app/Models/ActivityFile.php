@@ -22,7 +22,6 @@ class ActivityFile extends Model
         'upload_date',
         'activity_progress_log_id',
         'activity_log_id',
-        'belongsTo',
     ];
 
     /**

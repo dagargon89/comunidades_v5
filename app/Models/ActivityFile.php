@@ -22,6 +22,7 @@ class ActivityFile extends Model
         'upload_date',
         'activity_progress_log_id',
         'activity_log_id',
+        'activity_calendar_id',
     ];
 
     /**
@@ -32,20 +33,31 @@ class ActivityFile extends Model
     protected function casts(): array
     {
         return [
-            'id' => 'integer',
-            'upload_date' => 'timestamp',
-            'activity_progress_log_id' => 'integer',
-            'activity_log_id' => 'integer',
+            'upload_date' => 'datetime',
         ];
     }
 
+    /**
+     * Get the activity progress log that owns the file.
+     */
     public function activityProgressLog(): BelongsTo
     {
-        return $this->belongsTo(ActivityLog::class);
+        return $this->belongsTo(ActivityLog::class, 'activity_progress_log_id');
     }
 
+    /**
+     * Get the activity log that owns the file.
+     */
     public function activityLog(): BelongsTo
     {
-        return $this->belongsTo(ActivityLog::class);
+        return $this->belongsTo(ActivityLog::class, 'activity_log_id');
+    }
+
+    /**
+     * Get the activity calendar that owns the file.
+     */
+    public function activityCalendar(): BelongsTo
+    {
+        return $this->belongsTo(ActivityCalendar::class, 'activity_calendar_id');
     }
 }

@@ -38,5 +38,5 @@
     @endif
 
     {{-- Aquí irá la tabla de registros de beneficiarios (por implementar en el Page) --}}
-    {{-- {{ $this->table }} --}}
+    {{ $this->table }}
 </x-filament-panels::page>

@@ -10,9 +10,14 @@ use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Carbon\Carbon;
+use Filament\Tables;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Concerns\InteractsWithTable;
 
-class BeneficiaryRegistryView extends Page
+class BeneficiaryRegistryView extends Page implements HasTable
 {
+    use InteractsWithTable;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.beneficiary-registry-view';
@@ -108,6 +113,40 @@ class BeneficiaryRegistryView extends Page
             'hora_inicio' => $calendar->start_hour ?? '-',
             'hora_fin' => $calendar->end_hour ?? '-',
             'responsable' => $responsible,
+        ];
+    }
+
+    protected function getTableQuery()
+    {
+        $query = \App\Models\BeneficiaryRegistry::query()
+            ->with(['beneficiaries', 'activityCalendar']);
+        if ($this->activity_calendar_id) {
+            $query->where('activity_calendar_id', $this->activity_calendar_id);
+        }
+        return $query;
+    }
+
+    protected function shouldRenderTable(): bool
+    {
+        return $this->activity_calendar_id && $this->activity_calendar_id > 0;
+    }
+
+    protected function getTableColumns(): array
+    {
+        return [
+            Tables\Columns\TextColumn::make('beneficiaries.last_name')->label('Apellido Paterno'),
+            Tables\Columns\TextColumn::make('beneficiaries.mother_last_name')->label('Apellido Materno'),
+            Tables\Columns\TextColumn::make('beneficiaries.first_names')->label('Nombres'),
+            Tables\Columns\TextColumn::make('beneficiaries.birth_year')->label('Año Nacimiento'),
+            Tables\Columns\TextColumn::make('beneficiaries.gender')->label('Género')
+                ->formatStateUsing(fn ($state) => match ($state) {
+                    'Male' => 'Masculino',
+                    'Female' => 'Femenino',
+                    default => $state,
+                }),
+            Tables\Columns\TextColumn::make('beneficiaries.phone')->label('Teléfono'),
+            Tables\Columns\TextColumn::make('beneficiaries.signature')->label('Firma'),
+            Tables\Columns\TextColumn::make('created_at')->label('Registrado el')->dateTime('d/m/Y H:i'),
         ];
     }
 }

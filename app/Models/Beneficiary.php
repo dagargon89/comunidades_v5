@@ -24,6 +24,7 @@ class Beneficiary extends Model
         'phone',
         'signature',
         'address_backup',
+        'identifier',
         'created_by',
     ];
 

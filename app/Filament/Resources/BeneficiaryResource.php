@@ -57,6 +57,11 @@ class BeneficiaryResource extends Resource
                             ->tel()
                             ->maxLength(20)
                             ->placeholder('Ingrese el teléfono'),
+                        Forms\Components\TextInput::make('identifier')
+                            ->label('Identificador')
+                            ->placeholder('Identificador único generado automáticamente')
+                            ->disabled()
+                            ->dehydrated(false),
                     ])
                     ->columns(2),
                 Forms\Components\Section::make('Información de registro')
@@ -90,6 +95,10 @@ class BeneficiaryResource extends Resource
                 Tables\Columns\TextColumn::make('last_name')
                     ->label('Apellido paterno')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('identifier')
+                    ->label('Identificador')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('mother_last_name')
                     ->label('Apellido materno')
                     ->searchable(),

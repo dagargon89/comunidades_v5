@@ -184,7 +184,16 @@ class BeneficiaryRegistryView extends Page implements HasTable
                     // Log temporal para depurar
                     \Log::info('Datos recibidos en acción:', $data);
 
-                    // Crear beneficiario (sin signature)
+                    // Generar identificador automáticamente
+                    $identifier = \App\Models\BeneficiaryRegistry::generarIdentificador(
+                        $data['first_names'],
+                        $data['last_name'],
+                        $data['mother_last_name'],
+                        $data['birth_year'],
+                        $data['gender']
+                    );
+
+                    // Crear beneficiario (sin signature, pero con identifier)
                     $beneficiary = \App\Models\Beneficiary::create([
                         'last_name' => $data['last_name'],
                         'mother_last_name' => $data['mother_last_name'],
@@ -193,6 +202,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
                         'gender' => $data['gender'],
                         'phone' => $data['phone'] ?? null,
                         'address_backup' => $data['address_backup'] ?? null,
+                        'identifier' => $identifier,
                         'created_by' => auth()->id(),
                     ]);
                     // Registrar en BeneficiaryRegistry (con signature)
@@ -219,6 +229,13 @@ class BeneficiaryRegistryView extends Page implements HasTable
                 ->form([
                     SignaturePad::make('signature')->label('Firma del beneficiario')->required(),
                 ]),
+            Actions\DeleteAction::make()
+                ->label('Eliminar')
+                ->requiresConfirmation()
+                ->modalHeading('¿Eliminar registro?')
+                ->modalDescription('Esta acción eliminará el registro del beneficiario de esta actividad. ¿Estás seguro?')
+                ->modalSubmitActionLabel('Sí, eliminar')
+                ->modalCancelActionLabel('Cancelar'),
         ];
     }
 }

@@ -34,7 +34,7 @@ class PlannedMetricResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('activity_id')
                             ->label('Actividad')
-                            ->relationship('activity', 'id')
+                            ->relationship('activity', 'description')
                             ->required(),
                         Forms\Components\TextInput::make('unit')
                             ->label('Unidad')
@@ -62,8 +62,7 @@ class PlannedMetricResource extends Resource
                             ->numeric(),
                         Forms\Components\Select::make('activity_progress_log_id')
                             ->label('Registro de Progreso')
-                            ->relationship('activityProgressLog', 'id')
-                            ->required(),
+                            ->relationship('activityProgressLog', 'id'),
                     ])
                     ->columns(2),
             ]);

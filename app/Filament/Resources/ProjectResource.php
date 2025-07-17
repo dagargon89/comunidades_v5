@@ -72,56 +72,12 @@ class ProjectResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Nombre del Proyecto')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('financiers.name')
-                    ->label('Financiador')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('start_date')
-                    ->label('Fecha de Inicio')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('end_date')
-                    ->label('Fecha de Fin')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('total_cost')
-                    ->label('Costo Total')
-                    ->money('USD')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('funded_amount')
-                    ->label('Monto Financiado')
-                    ->money('USD')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('cofunding_amount')
-                    ->label('Monto de Cofinanciación')
-                    ->money('USD')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('monthly_disbursement')
-                    ->label('Desembolso Mensual')
-                    ->money('USD')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('coFinancier.name')
-                    ->label('Cofinanciador')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('createdBy.name')
-                    ->label('Creado por')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Creado')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Actualizado')
-                    ->dateTime('d/m/Y H:i')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('name')->label('Nombre del Proyecto'),
+                Tables\Columns\TextColumn::make('financiers_id')->label('Financiador'),
+                Tables\Columns\TextColumn::make('start_date')->label('Fecha de Inicio'),
+                Tables\Columns\TextColumn::make('end_date')->label('Fecha de Fin'),
+                Tables\Columns\TextColumn::make('created_at')->label('Creado'),
+                Tables\Columns\TextColumn::make('updated_at')->label('Actualizado'),
             ])
             ->filters([
                 //

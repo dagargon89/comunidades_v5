@@ -57,27 +57,12 @@ class ActivityResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('description')
-                    ->label('Actividad')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('specificObjective.description')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('goals.description')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('createdBy.name')
-                    ->label('Creado por')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('description')->label('Descripción'),
+                Tables\Columns\TextColumn::make('specific_objective_id')->label('Objetivo Específico'),
+                Tables\Columns\TextColumn::make('goals_id')->label('Meta'),
+                Tables\Columns\TextColumn::make('created_by')->label('Creado por'),
+                Tables\Columns\TextColumn::make('created_at')->label('Creado'),
+                Tables\Columns\TextColumn::make('updated_at')->label('Actualizado'),
             ])
             ->filters([
                 //

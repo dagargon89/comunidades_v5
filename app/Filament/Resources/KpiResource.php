@@ -64,29 +64,15 @@ class KpiResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('initial_value')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('final_value')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('projects.name')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('is_percentage')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('org_area')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('name')->label('Nombre del KPI'),
+                Tables\Columns\TextColumn::make('description')->label('Descripción'),
+                Tables\Columns\TextColumn::make('initial_value')->label('Valor Inicial'),
+                Tables\Columns\TextColumn::make('final_value')->label('Valor Final'),
+                Tables\Columns\TextColumn::make('projects_id')->label('Proyecto'),
+                Tables\Columns\TextColumn::make('is_percentage')->label('¿Es Porcentaje?'),
+                Tables\Columns\TextColumn::make('org_area')->label('Área Organizacional'),
+                Tables\Columns\TextColumn::make('created_at')->label('Creado'),
+                Tables\Columns\TextColumn::make('updated_at')->label('Actualizado'),
             ])
             ->filters([
                 //

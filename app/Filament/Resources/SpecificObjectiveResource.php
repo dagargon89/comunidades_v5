@@ -49,17 +49,10 @@ class SpecificObjectiveResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('projects.name')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('description')->label('Descripción'),
+                Tables\Columns\TextColumn::make('projects_id')->label('Proyecto'),
+                Tables\Columns\TextColumn::make('created_at')->label('Creado'),
+                Tables\Columns\TextColumn::make('updated_at')->label('Actualizado'),
             ])
             ->filters([
                 //

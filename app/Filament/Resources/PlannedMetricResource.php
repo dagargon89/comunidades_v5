@@ -72,40 +72,17 @@ class PlannedMetricResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('activity.id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('unit')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('year')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('month')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('population_target_value')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('population_real_value')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('product_target_value')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('product_real_value')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('activityProgressLog.id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('activity_id')->label('Actividad'),
+                Tables\Columns\TextColumn::make('unit')->label('Unidad'),
+                Tables\Columns\TextColumn::make('year')->label('Año'),
+                Tables\Columns\TextColumn::make('month')->label('Mes'),
+                Tables\Columns\TextColumn::make('population_target_value')->label('Valor Objetivo de Población'),
+                Tables\Columns\TextColumn::make('population_real_value')->label('Valor Real de Población'),
+                Tables\Columns\TextColumn::make('product_target_value')->label('Valor Objetivo de Producto'),
+                Tables\Columns\TextColumn::make('product_real_value')->label('Valor Real de Producto'),
+                Tables\Columns\TextColumn::make('activity_progress_log_id')->label('Registro de Progreso'),
+                Tables\Columns\TextColumn::make('created_at')->label('Creado'),
+                Tables\Columns\TextColumn::make('updated_at')->label('Actualizado'),
             ])
             ->filters([
                 //

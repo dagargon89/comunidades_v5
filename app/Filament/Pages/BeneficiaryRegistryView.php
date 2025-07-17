@@ -19,6 +19,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Support\Facades\Log;
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
 
 class BeneficiaryRegistryView extends Page implements HasTable
 {
@@ -88,18 +90,23 @@ class BeneficiaryRegistryView extends Page implements HasTable
                             if (!$activityId) {
                                 return [];
                             }
-                            return ActivityCalendar::where('activity_id', $activityId)
+                            $calendars = ActivityCalendar::where('activity_id', $activityId)
                                 ->orderBy('start_date')
                                 ->orderBy('start_hour')
-                                ->get()
-                                ->mapWithKeys(function ($calendar) {
-                                    $fecha = \Carbon\Carbon::parse($calendar->start_date)->translatedFormat('d \d\e F \d\e Y');
-                                    $horaInicio = $calendar->start_hour ? substr($calendar->start_hour, 0, 5) : '--:--';
-                                    $horaFin = $calendar->end_hour ? substr($calendar->end_hour, 0, 5) : '--:--';
-                                    $label = "$fecha ($horaInicio - $horaFin)";
-                                    return [$calendar->id => $label];
-                                })
-                                ->toArray();
+                                ->get();
+
+                            if ($calendars->isEmpty()) {
+                                return [];
+                            }
+
+                            return $calendars->mapWithKeys(function ($calendar) {
+                                $fecha = \Carbon\Carbon::parse($calendar->start_date)->translatedFormat('d \d\e F \d\e Y');
+                                $horaInicio = $calendar->start_hour ? substr($calendar->start_hour, 0, 5) : '--:--';
+                                $horaFin = $calendar->end_hour ? substr($calendar->end_hour, 0, 5) : '--:--';
+                                $label = "$fecha ($horaInicio - $horaFin)";
+                                return [$calendar->id => $label];
+                            })
+                            ->toArray();
                         })
                         ->required()
                         ->live()
@@ -119,6 +126,17 @@ class BeneficiaryRegistryView extends Page implements HasTable
                         ->preload()
                         ->afterStateUpdated(function ($state, $set) {
                             $set('activity_calendar_id', $state);
+                        })
+                        ->helperText(function () {
+                            $activityId = $this->activity_id;
+                            if (!$activityId) {
+                                return 'Selecciona una actividad primero';
+                            }
+                            $count = ActivityCalendar::where('activity_id', $activityId)->count();
+                            if ($count === 0) {
+                                return 'Esta actividad no tiene fechas y horarios programados';
+                            }
+                            return "Esta actividad tiene {$count} fecha(s) programada(s)";
                         }),
                 ]),
         ]);
@@ -151,9 +169,12 @@ class BeneficiaryRegistryView extends Page implements HasTable
         $query = \App\Models\BeneficiaryRegistry::query()
             ->with(['beneficiaries', 'activityCalendar']);
 
-        // Filtrar por activity_calendar_id específico
-        if ($this->activity_calendar_id) {
+        // Solo filtrar si hay un activity_calendar_id válido
+        if ($this->activity_calendar_id && $this->activity_calendar_id > 0) {
             $query->where('activity_calendar_id', $this->activity_calendar_id);
+        } else {
+            // Si no hay activity_calendar_id válido, no mostrar ningún registro
+            $query->whereRaw('1 = 0'); // Esto asegura que no se muestren registros
         }
 
         return $query;
@@ -161,7 +182,18 @@ class BeneficiaryRegistryView extends Page implements HasTable
 
     protected function shouldRenderTable(): bool
     {
-        return $this->activity_calendar_id && $this->activity_calendar_id > 0;
+        // Solo mostrar la tabla si hay un activity_calendar_id válido
+        if (!$this->activity_calendar_id || $this->activity_calendar_id <= 0) {
+            return false;
+        }
+
+        // Verificar que el activity_calendar_id existe en la base de datos
+        $calendarExists = ActivityCalendar::where('id', $this->activity_calendar_id)->exists();
+        if (!$calendarExists) {
+            return false;
+        }
+
+        return true;
     }
 
     protected function getTableColumns(): array
@@ -187,9 +219,17 @@ class BeneficiaryRegistryView extends Page implements HasTable
 
     protected function getTableHeaderActions(): array
     {
-        if (!$this->activity_calendar_id) {
+        // Solo mostrar los botones si hay un activity_calendar_id válido
+        if (!$this->activity_calendar_id || $this->activity_calendar_id <= 0) {
             return [];
         }
+
+        // Verificar que el activity_calendar_id existe
+        $calendarExists = ActivityCalendar::where('id', $this->activity_calendar_id)->exists();
+        if (!$calendarExists) {
+            return [];
+        }
+
         return [
             Actions\Action::make('addSingle')
                 ->label('Registrar beneficiario único')
@@ -311,6 +351,125 @@ class BeneficiaryRegistryView extends Page implements HasTable
 
                     \Filament\Notifications\Notification::make()
                         ->title('Beneficiario registrado')
+                        ->success()
+                        ->send();
+                }),
+            Actions\Action::make('addMassive')
+                ->label('Registrar beneficiarios masivos')
+                ->icon('heroicon-o-users')
+                ->modalWidth('7xl')
+                ->form([
+                    TableRepeater::make('beneficiarios')
+                        ->headers([
+                            Header::make('search_identifier')->label('Identificador'),
+                            Header::make('last_name')->label('Apellido Paterno')->markAsRequired(),
+                            Header::make('mother_last_name')->label('Apellido Materno')->markAsRequired(),
+                            Header::make('first_names')->label('Nombres')->markAsRequired(),
+                            Header::make('birth_year')->label('Año Nac.')->markAsRequired(),
+                            Header::make('gender')->label('Género')->markAsRequired(),
+                            Header::make('phone')->label('Teléfono'),
+                            Header::make('signature')->label('Firma')->markAsRequired(),
+                        ])
+                        ->schema([
+                            \Filament\Forms\Components\TextInput::make('search_identifier')
+                                ->label('Identificador')
+                                ->placeholder('Ej: PEREZ2025M')
+                                ->live(onBlur: true)
+                                ->afterStateUpdated(function ($state, $set, $get) {
+                                    if (!empty($state)) {
+                                        $beneficiary = \App\Models\Beneficiary::where('identifier', $state)->first();
+                                        if ($beneficiary) {
+                                            $set('last_name', $beneficiary->last_name);
+                                            $set('mother_last_name', $beneficiary->mother_last_name);
+                                            $set('first_names', $beneficiary->first_names);
+                                            $set('birth_year', $beneficiary->birth_year);
+                                            $set('gender', $beneficiary->gender);
+                                            $set('phone', $beneficiary->phone);
+                                            $set('address_backup', $beneficiary->address_backup);
+                                            \Filament\Notifications\Notification::make()
+                                                ->title('Beneficiario encontrado')
+                                                ->body('Datos prellenados. Solo captura la firma.')
+                                                ->success()
+                                                ->send();
+                                        } else {
+                                            $set('last_name', '');
+                                            $set('mother_last_name', '');
+                                            $set('first_names', '');
+                                            $set('birth_year', '');
+                                            $set('gender', '');
+                                            $set('phone', '');
+                                            $set('address_backup', '');
+                                            \Filament\Notifications\Notification::make()
+                                                ->title('Beneficiario no encontrado')
+                                                ->body('Puedes registrar manualmente.')
+                                                ->warning()
+                                                ->send();
+                                        }
+                                    }
+                                }),
+                            \Filament\Forms\Components\TextInput::make('last_name')->label('Apellido Paterno')->required(),
+                            \Filament\Forms\Components\TextInput::make('mother_last_name')->label('Apellido Materno')->required(),
+                            \Filament\Forms\Components\TextInput::make('first_names')->label('Nombres')->required(),
+                            \Filament\Forms\Components\TextInput::make('birth_year')->label('Año Nacimiento')->required(),
+                            \Filament\Forms\Components\Select::make('gender')->label('Género')->options([
+                                'M' => 'Masculino',
+                                'F' => 'Femenino',
+                            ])->required(),
+                            \Filament\Forms\Components\TextInput::make('phone')->label('Teléfono'),
+                            \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('signature')->label('Firma')->required(),
+                        ])
+                        ->minItems(1)
+                        ->columnSpan('full'),
+                ])
+                ->action(function (array $data) {
+                    $registered = 0;
+                    $skipped = 0;
+                    foreach ($data['beneficiarios'] as $beneficiary) {
+                        $identifier = \App\Models\BeneficiaryRegistry::generarIdentificador(
+                            $beneficiary['first_names'] ?? '',
+                            $beneficiary['last_name'] ?? '',
+                            $beneficiary['mother_last_name'] ?? '',
+                            $beneficiary['birth_year'] ?? '',
+                            $beneficiary['gender'] ?? ''
+                        );
+                        $beneficiaryModel = \App\Models\Beneficiary::firstOrCreate(
+                            ['identifier' => $identifier],
+                            [
+                                'last_name' => $beneficiary['last_name'],
+                                'mother_last_name' => $beneficiary['mother_last_name'],
+                                'first_names' => $beneficiary['first_names'],
+                                'birth_year' => $beneficiary['birth_year'],
+                                'gender' => $beneficiary['gender'],
+                                'phone' => $beneficiary['phone'] ?? null,
+                                'address_backup' => $beneficiary['address_backup'] ?? null,
+                                'identifier' => $identifier,
+                                'created_by' => auth()->id(),
+                            ]
+                        );
+                        $exists = \App\Models\BeneficiaryRegistry::where([
+                            'beneficiaries_id' => $beneficiaryModel->id,
+                            'activity_calendar_id' => $this->activity_calendar_id,
+                        ])->first();
+                        if ($exists) {
+                            $skipped++;
+                            continue;
+                        }
+                        \App\Models\BeneficiaryRegistry::create([
+                            'activity_calendar_id' => $this->activity_calendar_id,
+                            'beneficiaries_id' => $beneficiaryModel->id,
+                            'data_collectors_id' => auth()->id(),
+                            'created_by' => auth()->id(),
+                            'signature' => $beneficiary['signature'] ?? null,
+                        ]);
+                        $registered++;
+                    }
+                    $msg = "Se registraron $registered beneficiarios correctamente.";
+                    if ($skipped > 0) {
+                        $msg .= " Se omitieron $skipped ya existentes.";
+                    }
+                    \Filament\Notifications\Notification::make()
+                        ->title('Registro masivo completado')
+                        ->body($msg)
                         ->success()
                         ->send();
                 }),

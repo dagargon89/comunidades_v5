@@ -32,6 +32,11 @@ class ActivityResource extends Resource
                     ->description('Datos básicos de la actividad')
                     ->icon('heroicon-o-clipboard-document-list')
                     ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre de la Actividad')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('Ingrese el nombre de la actividad'),
                         Forms\Components\Select::make('specific_objective_id')
                             ->label('Objetivo Específico')
                             ->relationship('specificObjective', 'description')
@@ -57,6 +62,10 @@ class ActivityResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nombre')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('description')->label('Descripción'),
                 Tables\Columns\TextColumn::make('specific_objective_id')->label('Objetivo Específico'),
                 Tables\Columns\TextColumn::make('goals_id')->label('Meta'),

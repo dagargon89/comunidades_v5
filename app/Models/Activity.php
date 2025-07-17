@@ -16,6 +16,7 @@ class Activity extends Model
      * @var array
      */
     protected $fillable = [
+        'name',
         'specific_objective_id',
         'description',
         'goals_id',

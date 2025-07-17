@@ -20,6 +20,7 @@ class BeneficiaryRegistry extends Model
         'beneficiaries_id',
         'data_collectors_id',
         'created_by',
+        'signature',
     ];
 
     /**
@@ -35,6 +36,7 @@ class BeneficiaryRegistry extends Model
             'beneficiaries_id' => 'integer',
             'data_collectors_id' => 'integer',
             'created_by' => 'integer',
+            'signature' => 'string',
         ];
     }
 

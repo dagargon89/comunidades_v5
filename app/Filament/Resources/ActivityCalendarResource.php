@@ -24,12 +24,12 @@ class ActivityCalendarResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('activity_id')
-                    ->relationship('activity', 'id')
+                    ->relationship('activity', 'description')
                     ->required(),
                 Forms\Components\DatePicker::make('start_date'),
                 Forms\Components\DatePicker::make('end_date'),
-                Forms\Components\TextInput::make('start_hour'),
-                Forms\Components\TextInput::make('end_hour'),
+                Forms\Components\TimePicker::make('start_hour'),
+                Forms\Components\TimePicker::make('end_hour'),
                 Forms\Components\Textarea::make('address_backup')
                     ->columnSpanFull(),
                 Forms\Components\DateTimePicker::make('last_modified'),
@@ -37,15 +37,12 @@ class ActivityCalendarResource extends Resource
                     ->required(),
                 Forms\Components\Textarea::make('change_reason')
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('created_by')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('asigned_person')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('belongsTo')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Select::make('created_by')
+                    ->options(fn () => \App\Models\User::pluck('name', 'id'))
+                    ->required(),
+                Forms\Components\Select::make('asigned_person')
+                    ->options(fn () => \App\Models\User::pluck('name', 'id'))
+                    ->required(),
             ]);
     }
 
@@ -53,30 +50,37 @@ class ActivityCalendarResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('activity.id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('activity.description')
+                    ->label('Actividad')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
+                    ->label('Fecha inicio')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end_date')
+                    ->label('Fecha fin')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('start_hour'),
-                Tables\Columns\TextColumn::make('end_hour'),
+                Tables\Columns\TextColumn::make('start_hour')
+                    ->label('Hora inicio'),
+                Tables\Columns\TextColumn::make('end_hour')
+                    ->label('Hora fin'),
                 Tables\Columns\TextColumn::make('last_modified')
+                    ->label('Última modificación')
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('cancelled')
+                    ->label('Cancelado')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('created_by')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('createdBy.name')
+                    ->label('Creado por')
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('asigned_person')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('asignedPerson.name')
+                    ->label('Persona asignada')
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('belongsTo')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

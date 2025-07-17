@@ -27,7 +27,6 @@ class ActivityCalendar extends Model
         'change_reason',
         'created_by',
         'asigned_person',
-        'belongsTo',
     ];
 
     /**
@@ -56,11 +55,11 @@ class ActivityCalendar extends Model
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function asignedPerson(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'asigned_person');
     }
 }

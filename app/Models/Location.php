@@ -25,7 +25,6 @@ class Location extends Model
         'google_place_id',
         'polygons_id',
         'created_by',
-        'belongsTo',
     ];
 
     /**

@@ -32,7 +32,6 @@ class Project extends Model
         'project_base_file',
         'co_financier_id',
         'created_by',
-        'belongsTo',
     ];
 
     /**

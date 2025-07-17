@@ -28,22 +28,36 @@ class GoalResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('number')
-                    ->numeric(),
-                Forms\Components\Select::make('components_id')
-                    ->relationship('components', 'name')
-                    ->required(),
-                Forms\Components\Select::make('components_action_lines_id')
-                    ->relationship('componentsActionLines', 'name')
-                    ->required(),
-                Forms\Components\Select::make('components_action_lines_program_id')
-                    ->relationship('componentsActionLinesProgram', 'name')
-                    ->required(),
-                Forms\Components\Select::make('organizations_id')
-                    ->relationship('organizations', 'name')
-                    ->required(),
+                Forms\Components\Section::make('Información de la Meta')
+                    ->description('Datos básicos de la meta')
+                    ->icon('heroicon-o-flag')
+                    ->schema([
+                        Forms\Components\Select::make('components_id')
+                            ->label('Componente')
+                            ->relationship('components', 'name')
+                            ->required(),
+                        Forms\Components\Select::make('components_action_lines_id')
+                            ->label('Línea de Acción')
+                            ->relationship('componentsActionLines', 'name')
+                            ->required(),
+                        Forms\Components\Select::make('components_action_lines_program_id')
+                            ->label('Programa')
+                            ->relationship('componentsActionLinesProgram', 'name')
+                            ->required(),
+                        Forms\Components\Select::make('organizations_id')
+                            ->label('Organización')
+                            ->relationship('organizations', 'name')
+                            ->required(),
+                        Forms\Components\TextInput::make('description')
+                            ->label('Descripción de la Meta')
+                            ->required()
+                            ->maxLength(500),
+                        Forms\Components\TextInput::make('number')
+                            ->label('Número de Meta')
+                            ->numeric()
+                            ->required(),
+                    ])
+                    ->columns(2),
             ]);
     }
 

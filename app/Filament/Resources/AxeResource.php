@@ -28,8 +28,16 @@ class AxeResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->maxLength(500),
+                Forms\Components\Section::make('Información del Eje')
+                    ->description('Datos básicos del eje')
+                    ->icon('heroicon-o-adjustments-horizontal')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre del Eje')
+                            ->required()
+                            ->maxLength(255),
+                    ])
+                    ->columns(2),
             ]);
     }
 

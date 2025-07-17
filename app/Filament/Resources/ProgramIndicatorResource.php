@@ -28,20 +28,33 @@ class ProgramIndicatorResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->maxLength(45),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('initial_value')
-                    ->numeric(),
-                Forms\Components\TextInput::make('final_value')
-                    ->numeric(),
-                Forms\Components\Select::make('program_id')
-                    ->relationship('program', 'name')
-                    ->required(),
-                Forms\Components\Select::make('program_axes_id')
-                    ->relationship('programAxes', 'name')
-                    ->required(),
+                Forms\Components\Section::make('Información del Indicador de Programa')
+                    ->description('Datos básicos del indicador')
+                    ->icon('heroicon-o-chart-bar')
+                    ->schema([
+                        Forms\Components\Select::make('program_id')
+                            ->label('Programa')
+                            ->relationship('program', 'name')
+                            ->required(),
+                        Forms\Components\Select::make('program_axes_id')
+                            ->label('Eje')
+                            ->relationship('programAxes', 'name')
+                            ->required(),
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre del Indicador')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Textarea::make('description')
+                            ->label('Descripción')
+                            ->maxLength(500),
+                        Forms\Components\TextInput::make('initial_value')
+                            ->label('Valor Inicial')
+                            ->numeric(),
+                        Forms\Components\TextInput::make('final_value')
+                            ->label('Valor Final')
+                            ->numeric(),
+                    ])
+                    ->columns(2),
             ]);
     }
 

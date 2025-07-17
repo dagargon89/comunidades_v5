@@ -28,12 +28,20 @@ class ActionLineResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(500),
-                Forms\Components\Select::make('program_id')
-                    ->relationship('program', 'name')
-                    ->required(),
+                Forms\Components\Section::make('Información de la Línea de Acción')
+                    ->description('Datos básicos de la línea de acción')
+                    ->icon('heroicon-o-bars-3-bottom-left')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre de la Línea de Acción')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Select::make('program_id')
+                            ->label('Programa')
+                            ->relationship('program', 'name')
+                            ->required(),
+                    ])
+                    ->columns(2),
             ]);
     }
 

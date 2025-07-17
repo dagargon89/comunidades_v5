@@ -28,14 +28,24 @@ class ComponentResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->maxLength(45),
-                Forms\Components\Select::make('action_lines_id')
-                    ->relationship('actionLines', 'name')
-                    ->required(),
-                Forms\Components\Select::make('action_lines_program_id')
-                    ->relationship('actionLinesProgram', 'name')
-                    ->required(),
+                Forms\Components\Section::make('Información del Componente')
+                    ->description('Datos básicos del componente')
+                    ->icon('heroicon-o-cube')
+                    ->schema([
+                        Forms\Components\Select::make('action_lines_id')
+                            ->label('Línea de Acción')
+                            ->relationship('actionLines', 'name')
+                            ->required(),
+                        Forms\Components\Select::make('action_lines_program_id')
+                            ->label('Programa')
+                            ->relationship('actionLinesProgram', 'name')
+                            ->required(),
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre del Componente')
+                            ->required()
+                            ->maxLength(255),
+                    ])
+                    ->columns(2),
             ]);
     }
 

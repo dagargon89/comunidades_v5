@@ -33,12 +33,20 @@ class ProgramResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('axes_id')
-                    ->relationship('axes', 'name')
-                    ->required(),
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(500),
+                Forms\Components\Section::make('Información del Programa')
+                    ->description('Datos básicos del programa')
+                    ->icon('heroicon-o-rectangle-stack')
+                    ->schema([
+                        Forms\Components\Select::make('axes_id')
+                            ->label('Eje')
+                            ->relationship('axes', 'name')
+                            ->required(),
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre del Programa')
+                            ->required()
+                            ->maxLength(500),
+                    ])
+                    ->columns(2),
             ]);
     }
 

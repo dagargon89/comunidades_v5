@@ -17,7 +17,12 @@ class GoalResource extends Resource
 {
     protected static ?string $model = Goal::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-flag';
+    protected static ?string $navigationGroup = 'Sección de Planeación Estratégica';
+    protected static ?string $navigationLabel = 'Metas';
+    protected static ?string $modelLabel = 'Meta';
+    protected static ?string $pluralModelLabel = 'Metas';
+    protected static ?string $slug = 'metas';
 
     public static function form(Form $form): Form
     {

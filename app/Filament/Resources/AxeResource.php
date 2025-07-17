@@ -17,7 +17,12 @@ class AxeResource extends Resource
 {
     protected static ?string $model = Axe::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
+    protected static ?string $navigationGroup = 'Sección de Planeación Estratégica';
+    protected static ?string $navigationLabel = 'Ejes';
+    protected static ?string $modelLabel = 'Eje';
+    protected static ?string $pluralModelLabel = 'Ejes';
+    protected static ?string $slug = 'ejes';
 
     public static function form(Form $form): Form
     {

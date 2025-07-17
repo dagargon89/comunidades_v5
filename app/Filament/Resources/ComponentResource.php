@@ -17,7 +17,12 @@ class ComponentResource extends Resource
 {
     protected static ?string $model = Component::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-cube';
+    protected static ?string $navigationGroup = 'Sección de Planeación Estratégica';
+    protected static ?string $navigationLabel = 'Componentes';
+    protected static ?string $modelLabel = 'Componente';
+    protected static ?string $pluralModelLabel = 'Componentes';
+    protected static ?string $slug = 'componentes';
 
     public static function form(Form $form): Form
     {

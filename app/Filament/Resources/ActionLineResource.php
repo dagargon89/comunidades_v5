@@ -17,7 +17,12 @@ class ActionLineResource extends Resource
 {
     protected static ?string $model = ActionLine::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-bars-3-bottom-left';
+    protected static ?string $navigationGroup = 'Sección de Planeación Estratégica';
+    protected static ?string $navigationLabel = 'Líneas de Acción';
+    protected static ?string $modelLabel = 'Línea de Acción';
+    protected static ?string $pluralModelLabel = 'Líneas de Acción';
+    protected static ?string $slug = 'lineas-accion';
 
     public static function form(Form $form): Form
     {

@@ -17,7 +17,12 @@ class ProgramIndicatorResource extends Resource
 {
     protected static ?string $model = ProgramIndicator::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
+    protected static ?string $navigationGroup = 'Sección de Planeación Estratégica';
+    protected static ?string $navigationLabel = 'Indicadores de Programa';
+    protected static ?string $modelLabel = 'Indicador de Programa';
+    protected static ?string $pluralModelLabel = 'Indicadores de Programa';
+    protected static ?string $slug = 'indicadores-programa';
 
     public static function form(Form $form): Form
     {

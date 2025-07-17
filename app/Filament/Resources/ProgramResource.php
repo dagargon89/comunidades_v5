@@ -19,6 +19,16 @@ class ProgramResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Sección de Planeación Estratégica';
+
+    protected static ?string $navigationLabel = 'Programas';
+
+    protected static ?string $modelLabel = 'Programa';
+
+    protected static ?string $pluralModelLabel = 'Programas';
+
+    protected static ?string $slug = 'programas';
+
     public static function form(Form $form): Form
     {
         return $form

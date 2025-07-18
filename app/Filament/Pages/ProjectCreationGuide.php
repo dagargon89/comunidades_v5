@@ -8,17 +8,26 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
-use Filament\Actions\Action;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Notifications\Notification;
+use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action as FormAction;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 use App\Models\Financier;
 use App\Models\SpecificObjective;
 use App\Models\Activity;
 use App\Models\Location;
+use App\Models\Project;
+use App\Models\Kpi;
+use App\Models\ActivityCalendar;
+use App\Models\Polygon;
 
 class ProjectCreationGuide extends Page
 {
@@ -36,6 +45,7 @@ class ProjectCreationGuide extends Page
     public $activitiesData = [];
     public $locationsData = [];
     public $scheduledActivitiesData = [];
+    public $showSummaryModal = false;
 
     public function mount()
     {
@@ -84,522 +94,463 @@ class ProjectCreationGuide extends Page
         return 7;
     }
 
-    // Métodos auxiliares para los selectores
-    private function getObjectivesOptions()
+    public function getProgressProperty()
     {
-        $options = [];
-        foreach ($this->objectivesData as $index => $objective) {
-            $options[$index] = $objective['description'] ?? "Objetivo " . ($index + 1);
-        }
-        return $options;
+        $completed = $this->completedSteps;
+        $total = $this->totalSteps;
+        return $total > 0 ? round(($completed / $total) * 100) : 0;
     }
 
-    private function getActivitiesOptions()
+    // Formulario principal
+    public function form(Form $form): Form
     {
-        $options = [];
-        foreach ($this->activitiesData as $index => $activity) {
-            $options[$index] = $activity['name'] ?? "Actividad " . ($index + 1);
-        }
-        return $options;
-    }
+        return $form->schema([
+            Section::make('Progreso de Creación')
+                ->schema([
+                    Placeholder::make('progress')
+                        ->content(fn() => "{$this->progress}% Completado")
+                        ->extraAttributes(['class' => 'text-center text-lg font-semibold']),
+                ])
+                ->collapsible(false),
 
-    private function getLocationsOptions()
-    {
-        $options = [];
-        foreach ($this->locationsData as $index => $location) {
-            $options[$index] = $location['name'] ?? $location['street'] ?? "Ubicación " . ($index + 1);
-        }
-        return $options;
-    }
+            Section::make('1. Información Básica del Proyecto')
+                ->description('Define los datos principales del proyecto')
+                ->schema([
+                    Grid::make(2)
+                        ->schema([
+                            TextInput::make('projectData.name')
+                                ->label('Nombre del Proyecto')
+                                ->required(),
+                            Textarea::make('projectData.description')
+                                ->label('Descripción')
+                                ->rows(3),
+                        ]),
+                    Actions::make([
+                        Action::make('saveProject')
+                            ->label($this->projectData ? 'Actualizar Proyecto' : 'Crear Proyecto')
+                            ->color($this->projectData ? 'warning' : 'primary')
+                            ->action('saveProjectData'),
+                    ])->alignRight(),
+                ])
+                ->collapsible()
+                ->collapsed(false),
 
-    private function getActivityName($activityId)
-    {
-        return $this->activitiesData[$activityId]['name'] ?? "Actividad " . ($activityId + 1);
-    }
+            Section::make('2. Objetivos Específicos')
+                ->description('Define los objetivos específicos del proyecto')
+                ->schema([
+                    Repeater::make('objectivesData')
+                        ->schema([
+                            Textarea::make('description')
+                                ->label('Descripción del Objetivo')
+                                ->required()
+                                ->rows(3),
+                        ])
+                        ->addActionLabel('Agregar Objetivo')
+                        ->reorderable()
+                        ->collapsible()
+                        ->itemLabel(fn(array $state): ?string => $state['description'] ?? null),
+                    Actions::make([
+                        Action::make('saveObjectives')
+                            ->label('Guardar Objetivos')
+                            ->color('primary')
+                            ->action('saveObjectivesData'),
+                    ])->alignRight(),
+                ])
+                ->collapsible()
+                ->collapsed(false),
 
-        // Acciones para abrir modales
-    protected function getHeaderActions(): array
-    {
-        $actions = [
-            Action::make('projectModal')
-                ->label('Crear Proyecto')
-                ->icon('heroicon-o-plus')
-                ->form([
-                    Section::make('Información Básica del Proyecto')
+            Section::make('3. Indicadores de Rendimiento (KPIs)')
+                ->description('Define los indicadores clave del proyecto')
+                ->schema([
+                    Repeater::make('kpisData')
                         ->schema([
                             TextInput::make('name')
-                                ->label('Nombre del Proyecto')
-                                ->required()
-                                ->maxLength(255),
-
-                            Select::make('financiers_id')
-                                ->label('Financiadora')
-                                ->options(Financier::all()->pluck('name', 'id'))
-                                ->required()
-                                ->searchable(),
-
-                            Textarea::make('general_objective')
-                                ->label('Objetivo General')
-                                ->required()
-                                ->rows(4),
-
-                            Textarea::make('background')
-                                ->label('Antecedentes')
-                                ->required()
-                                ->rows(4),
-
-                            Textarea::make('justification')
-                                ->label('Justificación')
-                                ->required()
-                                ->rows(4),
-
-                            Grid::make(2)
-                                ->schema([
-                                    DatePicker::make('start_date')
-                                        ->label('Fecha de Inicio')
-                                        ->required(),
-
-                                    DatePicker::make('end_date')
-                                        ->label('Fecha de Finalización')
-                                        ->required()
-                                        ->after('start_date'),
-                                ]),
-
-                            Grid::make(2)
-                                ->schema([
-                                    TextInput::make('total_cost')
-                                        ->label('Costo Total')
-                                        ->numeric()
-                                        ->required()
-                                        ->prefix('$'),
-
-                                    TextInput::make('funded_amount')
-                                        ->label('Cantidad Financiada')
-                                        ->numeric()
-                                        ->required()
-                                        ->prefix('$'),
-                                ]),
-
-                            Grid::make(2)
-                                ->schema([
-                                    Select::make('cofinancier_id')
-                                        ->label('Cofinanciador')
-                                        ->options(Financier::all()->pluck('name', 'id'))
-                                        ->searchable(),
-
-                                    TextInput::make('cofunding_amount')
-                                        ->label('Cantidad Cofinanciada')
-                                        ->numeric()
-                                        ->prefix('$'),
-                                ]),
-
-                            Grid::make(2)
-                                ->schema([
-                                    TextInput::make('monthly_disbursement')
-                                        ->label('Ministración Mensual')
-                                        ->numeric()
-                                        ->prefix('$'),
-
-                                    TextInput::make('followup_officer')
-                                        ->label('Encargado de Seguimiento')
-                                        ->maxLength(255),
-                                ]),
-
-                            Grid::make(2)
-                                ->schema([
-                                    FileUpload::make('agreement_file')
-                                        ->label('Convenio')
-                                        ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
-                                        ->maxSize(10240),
-
-                                    FileUpload::make('project_base_file')
-                                        ->label('Proyecto Base')
-                                        ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
-                                        ->maxSize(10240),
-                                ]),
+                                ->label('Nombre del KPI')
+                                ->required(),
+                            Textarea::make('description')
+                                ->label('Descripción')
+                                ->rows(2),
+                            TextInput::make('initial_value')
+                                ->label('Valor Inicial')
+                                ->numeric()
+                                ->required(),
+                            TextInput::make('final_value')
+                                ->label('Valor Final')
+                                ->numeric()
+                                ->required(),
+                            Toggle::make('is_percentage')
+                                ->label('¿Es Porcentaje?')
+                                ->default(false),
+                            TextInput::make('org_area')
+                                ->label('Área Organizacional')
+                                ->maxLength(100),
                         ])
+                        ->addActionLabel('Agregar KPI')
+                        ->reorderable()
+                        ->collapsible()
+                        ->itemLabel(fn(array $state): ?string => $state['name'] ?? null),
+                    Actions::make([
+                        Action::make('saveKpis')
+                            ->label('Guardar KPIs')
+                            ->color('primary')
+                            ->action('saveKpisData'),
+                    ])->alignRight(),
                 ])
-                ->action(function (array $data) {
-                    $this->projectData = $data;
-                    $this->saveTemporaryData();
+                ->collapsible()
+                ->collapsed(false),
 
-                    Notification::make()
-                        ->title('Proyecto guardado temporalmente')
-                        ->success()
-                        ->send();
-                })
-                ->modalHeading('Información Básica del Proyecto')
-                ->modalSubmitActionLabel('Guardar Proyecto')
-                ->modalCancelActionLabel('Cancelar'),
-        ];
-
-        // Solo mostrar las siguientes acciones si ya existe un proyecto
-        if ($this->projectData) {
-            $actions[] = Action::make('objectivesModal')
-                ->label('Crear Objetivos')
-                ->icon('heroicon-o-list-bullet')
-                ->form([
-                    Section::make('Objetivos Específicos')
+            Section::make('4. Cofinanciadores')
+                ->description('Agrega los cofinanciadores del proyecto')
+                ->schema([
+                    Repeater::make('cofinanciersData')
                         ->schema([
-                            Repeater::make('objectives')
-                                ->label('Objetivos')
-                                ->schema([
-                                    TextInput::make('description')
-                                        ->label('Descripción del Objetivo')
-                                        ->required()
-                                        ->maxLength(500),
-                                ])
-                                ->addActionLabel('Agregar Objetivo')
-                                ->reorderable()
-                                ->collapsible()
-                                ->itemLabel(fn (array $state): ?string => $state['description'] ?? null),
+                            Select::make('financier_id')
+                                ->label('Cofinanciador')
+                                ->options(Financier::pluck('name', 'id'))
+                                ->searchable()
+                                ->required(),
+                            TextInput::make('amount')
+                                ->label('Monto Cofinanciado')
+                                ->numeric()
+                                ->prefix('$')
+                                ->required(),
                         ])
+                        ->addActionLabel('Agregar Cofinanciador')
+                        ->reorderable()
+                        ->collapsible()
+                        ->itemLabel(
+                            fn(array $state): ?string =>
+                            $state['financier_id'] ? Financier::find($state['financier_id'])?->name : null
+                        ),
+                    Actions::make([
+                        Action::make('saveCofinanciers')
+                            ->label('Guardar Cofinanciadores')
+                            ->color('primary')
+                            ->action('saveCofinanciersData'),
+                    ])->alignRight(),
                 ])
-                ->action(function (array $data) {
-                    $this->objectivesData = $data['objectives'] ?? [];
-                    $this->saveTemporaryData();
+                ->collapsible()
+                ->collapsed(false),
 
-                    Notification::make()
-                        ->title('Objetivos guardados temporalmente')
-                        ->success()
-                        ->send();
-                })
-                ->modalHeading('Objetivos Específicos')
-                ->modalSubmitActionLabel('Guardar Objetivos')
-                ->modalCancelActionLabel('Cancelar');
-
-            $actions[] = Action::make('kpisModal')
-                ->label('Crear KPIs')
-                ->icon('heroicon-o-chart-bar')
-                ->form([
-                    Section::make('Indicadores de Rendimiento (KPIs)')
+            Section::make('5. Ubicaciones')
+                ->description('Define las ubicaciones del proyecto')
+                ->schema([
+                    Repeater::make('locationsData')
                         ->schema([
-                            Repeater::make('kpis')
-                                ->label('KPIs')
-                                ->schema([
-                                    TextInput::make('name')
-                                        ->label('Nombre del KPI')
-                                        ->required()
-                                        ->maxLength(255),
-
-                                    Textarea::make('description')
-                                        ->label('Descripción')
-                                        ->required()
-                                        ->rows(3),
-
-                                    Grid::make(2)
-                                        ->schema([
-                                            TextInput::make('initial_value')
-                                                ->label('Valor Inicial')
-                                                ->numeric()
-                                                ->required(),
-
-                                            TextInput::make('final_value')
-                                                ->label('Valor Meta')
-                                                ->numeric()
-                                                ->required(),
-                                        ]),
-
-                                    \Filament\Forms\Components\Checkbox::make('is_percentage')
-                                        ->label('Es Porcentaje?'),
-                                ])
-                                ->addActionLabel('Agregar KPI')
-                                ->reorderable()
-                                ->collapsible()
-                                ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
+                            TextInput::make('name')
+                                ->label('Nombre de la Ubicación')
+                                ->required(),
+                            TextInput::make('category')
+                                ->label('Categoría')
+                                ->maxLength(50),
+                            Textarea::make('street')
+                                ->label('Dirección')
+                                ->rows(2),
+                            TextInput::make('neighborhood')
+                                ->label('Colonia')
+                                ->maxLength(100),
+                            TextInput::make('ext_number')
+                                ->label('Número Exterior')
+                                ->numeric(),
+                            TextInput::make('int_number')
+                                ->label('Número Interior')
+                                ->numeric(),
+                            Select::make('polygons_id')
+                                ->label('Polígono')
+                                ->options(Polygon::pluck('name', 'id'))
+                                ->searchable()
+                                ->required(),
                         ])
+                        ->addActionLabel('Agregar Ubicación')
+                        ->reorderable()
+                        ->collapsible()
+                        ->itemLabel(fn(array $state): ?string => $state['name'] ?? null),
+                    Actions::make([
+                        Action::make('saveLocations')
+                            ->label('Guardar Ubicaciones')
+                            ->color('primary')
+                            ->action('saveLocationsData'),
+                    ])->alignRight(),
                 ])
-                ->action(function (array $data) {
-                    $this->kpisData = $data['kpis'] ?? [];
-                    $this->saveTemporaryData();
+                ->collapsible()
+                ->collapsed(false),
 
-                    Notification::make()
-                        ->title('KPIs guardados temporalmente')
-                        ->success()
-                        ->send();
-                })
-                ->modalHeading('Indicadores de Rendimiento (KPIs)')
-                ->modalSubmitActionLabel('Guardar KPIs')
-                ->modalCancelActionLabel('Cancelar');
-
-            $actions[] = Action::make('cofinanciersModal')
-                ->label('Agregar Cofinanciadores')
-                ->icon('heroicon-o-currency-dollar')
-                ->form([
-                    Section::make('Cofinanciadores')
+            Section::make('6. Actividades')
+                ->description('Define las actividades del proyecto')
+                ->schema([
+                    Repeater::make('activitiesData')
                         ->schema([
-                            Repeater::make('cofinanciers')
-                                ->label('Cofinanciadores')
-                                ->schema([
-                                    Select::make('financier_id')
-                                        ->label('Cofinanciador')
-                                        ->options(Financier::all()->pluck('name', 'id'))
-                                        ->required()
-                                        ->searchable(),
-
-                                    TextInput::make('amount')
-                                        ->label('Cantidad Cofinanciada')
-                                        ->numeric()
-                                        ->required()
-                                        ->prefix('$'),
-                                ])
-                                ->addActionLabel('Agregar Cofinanciador')
-                                ->reorderable()
-                                ->collapsible()
-                                ->itemLabel(fn (array $state): ?string =>
-                                    $state['financier_id'] ? Financier::find($state['financier_id'])?->name : null
-                                ),
+                            TextInput::make('name')
+                                ->label('Nombre de la Actividad')
+                                ->required(),
+                            Select::make('specific_objective_id')
+                                ->label('Objetivo Específico')
+                                ->options(SpecificObjective::pluck('description', 'id'))
+                                ->searchable()
+                                ->required(),
+                            Textarea::make('description')
+                                ->label('Descripción')
+                                ->rows(3),
+                            Select::make('goals_id')
+                                ->label('Meta')
+                                ->options(function () {
+                                    // Aquí necesitarías obtener las metas disponibles
+                                    return [];
+                                })
+                                ->searchable()
+                                ->required(),
                         ])
+                        ->addActionLabel('Agregar Actividad')
+                        ->reorderable()
+                        ->collapsible()
+                        ->itemLabel(fn(array $state): ?string => $state['name'] ?? null),
+                    Actions::make([
+                        Action::make('saveActivities')
+                            ->label('Guardar Actividades')
+                            ->color('primary')
+                            ->action('saveActivitiesData'),
+                    ])->alignRight(),
                 ])
-                ->action(function (array $data) {
-                    $this->cofinanciersData = $data['cofinanciers'] ?? [];
-                    $this->saveTemporaryData();
+                ->collapsible()
+                ->collapsed(false),
 
-                    Notification::make()
-                        ->title('Cofinanciadores guardados temporalmente')
-                        ->success()
-                        ->send();
-                })
-                ->modalHeading('Cofinanciadores')
-                ->modalSubmitActionLabel('Guardar Cofinanciadores')
-                ->modalCancelActionLabel('Cancelar');
-
-            // Solo mostrar actividades si hay objetivos específicos
-            if ($this->objectivesData && count($this->objectivesData) > 0) {
-                $actions[] = Action::make('activitiesModal')
-                    ->label('Crear Actividades')
-                    ->icon('heroicon-o-calendar')
-                    ->form([
-                        Section::make('Actividades del Proyecto')
-                            ->schema([
-                                Repeater::make('activities')
-                                    ->label('Actividades')
-                                    ->schema([
-                                        TextInput::make('name')
-                                            ->label('Nombre de la Actividad')
-                                            ->required()
-                                            ->maxLength(255),
-
-                                        Textarea::make('description')
-                                            ->label('Descripción')
-                                            ->required()
-                                            ->rows(3),
-
-                                        Select::make('specific_objective_id')
-                                            ->label('Objetivo Específico')
-                                            ->options($this->getObjectivesOptions())
-                                            ->required()
-                                            ->searchable(),
-
-                                        Grid::make(2)
-                                            ->schema([
-                                                TextInput::make('population_target_value')
-                                                    ->label('Población Meta')
-                                                    ->numeric()
-                                                    ->required(),
-
-                                                TextInput::make('product_target_value')
-                                                    ->label('Productos Meta')
-                                                    ->numeric()
-                                                    ->required(),
-                                            ]),
-                                    ])
-                                    ->addActionLabel('Agregar Actividad')
-                                    ->reorderable()
-                                    ->collapsible()
-                                    ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
-                            ])
-                    ])
-                    ->action(function (array $data) {
-                        $this->activitiesData = $data['activities'] ?? [];
-                        $this->saveTemporaryData();
-
-                        Notification::make()
-                            ->title('Actividades guardadas temporalmente')
-                            ->success()
-                            ->send();
-                    })
-                    ->modalHeading('Actividades del Proyecto')
-                    ->modalSubmitActionLabel('Guardar Actividades')
-                    ->modalCancelActionLabel('Cancelar');
-            }
-
-            // Ubicaciones (independiente)
-            $actions[] = Action::make('locationsModal')
-                ->label('Crear Ubicaciones')
-                ->icon('heroicon-o-map-pin')
-                ->form([
-                    Section::make('Ubicaciones del Proyecto')
+            Section::make('7. Programación de Actividades')
+                ->description('Define el calendario de actividades')
+                ->schema([
+                    Repeater::make('scheduledActivitiesData')
                         ->schema([
-                            Repeater::make('locations')
-                                ->label('Ubicaciones')
-                                ->schema([
-                                    TextInput::make('street')
-                                        ->label('Calle')
-                                        ->required()
-                                        ->maxLength(255),
-
-                                    Grid::make(2)
-                                        ->schema([
-                                            TextInput::make('ext_number')
-                                                ->label('Número Exterior')
-                                                ->maxLength(50),
-
-                                            TextInput::make('int_number')
-                                                ->label('Número Interior')
-                                                ->maxLength(50),
-                                        ]),
-
-                                    TextInput::make('neighborhood')
-                                        ->label('Colonia')
-                                        ->required()
-                                        ->maxLength(255),
-
-                                    Select::make('polygons_id')
-                                        ->label('Polígono')
-                                        ->options(\App\Models\Polygon::all()->pluck('name', 'id'))
-                                        ->required()
-                                        ->searchable(),
-
-                                    Select::make('category')
-                                        ->label('Categoría')
-                                        ->options([
-                                            'Centro comunitario' => 'Centro comunitario',
-                                            'Escuela' => 'Escuela',
-                                            'Hospital' => 'Hospital',
-                                            'Parque' => 'Parque',
-                                            'Oficina gubernamental' => 'Oficina gubernamental',
-                                            'Otro' => 'Otro',
-                                        ])
-                                        ->required(),
-
-                                    TextInput::make('google_place_id')
-                                        ->label('Google Place ID')
-                                        ->maxLength(255),
-
-                                    TextInput::make('name')
-                                        ->label('Apodo (opcional)')
-                                        ->maxLength(255),
-                                ])
-                                ->addActionLabel('Agregar Ubicación')
-                                ->reorderable()
-                                ->collapsible()
-                                ->itemLabel(fn (array $state): ?string => $state['name'] ?? $state['street'] ?? null),
+                            Select::make('activity_id')
+                                ->label('Actividad')
+                                ->options(Activity::pluck('name', 'id'))
+                                ->searchable()
+                                ->required(),
+                            DatePicker::make('start_date')
+                                ->label('Fecha de Inicio')
+                                ->required(),
+                            DatePicker::make('end_date')
+                                ->label('Fecha de Fin')
+                                ->required(),
                         ])
+                        ->addActionLabel('Agregar Programación')
+                        ->reorderable()
+                        ->collapsible()
+                        ->itemLabel(
+                            fn(array $state): ?string =>
+                            $state['activity_id'] ? Activity::find($state['activity_id'])?->name : null
+                        ),
+                    Actions::make([
+                        Action::make('saveScheduledActivities')
+                            ->label('Guardar Programación')
+                            ->color('primary')
+                            ->action('saveScheduledActivitiesData'),
+                    ])->alignRight(),
                 ])
-                ->action(function (array $data) {
-                    $this->locationsData = $data['locations'] ?? [];
-                    $this->saveTemporaryData();
-
-                    Notification::make()
-                        ->title('Ubicaciones guardadas temporalmente')
-                        ->success()
-                        ->send();
-                })
-                ->modalHeading('Ubicaciones del Proyecto')
-                ->modalSubmitActionLabel('Guardar Ubicaciones')
-                ->modalCancelActionLabel('Cancelar');
-
-            // Programación de actividades (depende de actividades y ubicaciones)
-            if (($this->activitiesData && count($this->activitiesData) > 0) &&
-                ($this->locationsData && count($this->locationsData) > 0)) {
-                $actions[] = Action::make('schedulingModal')
-                    ->label('Programar Actividades')
-                    ->icon('heroicon-o-clock')
-                    ->form([
-                        Section::make('Programación de Actividades')
-                            ->schema([
-                                Repeater::make('scheduled_activities')
-                                    ->label('Actividades Programadas')
-                                    ->schema([
-                                        Select::make('activity_id')
-                                            ->label('Actividad')
-                                            ->options($this->getActivitiesOptions())
-                                            ->required()
-                                            ->searchable(),
-
-                                        Grid::make(2)
-                                            ->schema([
-                                                DatePicker::make('start_date')
-                                                    ->label('Fecha de Inicio')
-                                                    ->required(),
-
-                                                DatePicker::make('end_date')
-                                                    ->label('Fecha de Finalización')
-                                                    ->required()
-                                                    ->after('start_date'),
-                                            ]),
-
-                                        Grid::make(2)
-                                            ->schema([
-                                                \Filament\Forms\Components\TimePicker::make('start_hour')
-                                                    ->label('Hora de Inicio')
-                                                    ->required(),
-
-                                                \Filament\Forms\Components\TimePicker::make('end_hour')
-                                                    ->label('Hora de Finalización')
-                                                    ->required(),
-                                            ]),
-
-                                        Select::make('location_id')
-                                            ->label('Ubicación')
-                                            ->options($this->getLocationsOptions())
-                                            ->required()
-                                            ->searchable(),
-
-                                        TextInput::make('assigned_person')
-                                            ->label('Responsable')
-                                            ->required()
-                                            ->maxLength(255),
-                                    ])
-                                    ->addActionLabel('Agregar Programación')
-                                    ->reorderable()
-                                    ->collapsible()
-                                    ->itemLabel(fn (array $state): ?string =>
-                                        $state['activity_id'] ? $this->getActivityName($state['activity_id']) : null
-                                    ),
-                            ])
-                    ])
-                    ->action(function (array $data) {
-                        $this->scheduledActivitiesData = $data['scheduled_activities'] ?? [];
-                        $this->saveTemporaryData();
-
-                        Notification::make()
-                            ->title('Programación guardada temporalmente')
-                            ->success()
-                            ->send();
-                    })
-                    ->modalHeading('Programación de Actividades')
-                    ->modalSubmitActionLabel('Guardar Programación')
-                    ->modalCancelActionLabel('Cancelar');
-            }
-        }
-
-        return $actions;
+                ->collapsible()
+                ->collapsed(false),
+        ]);
     }
 
-    // Método para guardar todo finalmente
-    public function saveAllData()
+    // Métodos para manejar datos del proyecto
+    public function saveProjectData($data)
+    {
+        $this->projectData = $data;
+        $this->saveTemporaryData();
+
+        Notification::make()
+            ->title('Proyecto guardado')
+            ->success()
+            ->send();
+    }
+
+    public function saveObjectivesData($data)
+    {
+        $this->objectivesData = $data['objectivesData'] ?? [];
+        $this->saveTemporaryData();
+
+        Notification::make()
+            ->title('Objetivos guardados')
+            ->success()
+            ->send();
+    }
+
+    public function saveKpisData($data)
+    {
+        $this->kpisData = $data['kpisData'] ?? [];
+        $this->saveTemporaryData();
+
+        Notification::make()
+            ->title('KPIs guardados')
+            ->success()
+            ->send();
+    }
+
+    public function saveCofinanciersData($data)
+    {
+        $this->cofinanciersData = $data['cofinanciersData'] ?? [];
+        $this->saveTemporaryData();
+
+        Notification::make()
+            ->title('Cofinanciadores guardados')
+            ->success()
+            ->send();
+    }
+
+    public function saveLocationsData($data)
+    {
+        $this->locationsData = $data['locationsData'] ?? [];
+        $this->saveTemporaryData();
+
+        Notification::make()
+            ->title('Ubicaciones guardadas')
+            ->success()
+            ->send();
+    }
+
+    public function saveActivitiesData($data)
+    {
+        $this->activitiesData = $data['activitiesData'] ?? [];
+        $this->saveTemporaryData();
+
+        Notification::make()
+            ->title('Actividades guardadas')
+            ->success()
+            ->send();
+    }
+
+    public function saveScheduledActivitiesData($data)
+    {
+        $this->scheduledActivitiesData = $data['scheduledActivitiesData'] ?? [];
+        $this->saveTemporaryData();
+
+        Notification::make()
+            ->title('Programación guardada')
+            ->success()
+            ->send();
+    }
+
+    // Métodos para el modal de resumen
+    public function showSummary()
+    {
+        $this->showSummaryModal = true;
+    }
+
+    public function closeSummary()
+    {
+        $this->showSummaryModal = false;
+    }
+
+    public function saveProject()
     {
         try {
-            // Aquí implementaremos la lógica para guardar todo en las tablas
-            // Por ahora solo limpiaremos los datos temporales
+            DB::beginTransaction();
 
-            Session::forget('project_creation_guide');
+            // Crear proyecto
+            $project = Project::create([
+                'name' => $this->projectData['name'],
+                'description' => $this->projectData['description'],
+                'financiers_id' => $this->projectData['financiers_id'] ?? 1,
+                'general_objective' => $this->projectData['general_objective'] ?? '',
+                'background' => $this->projectData['background'] ?? '',
+                'justification' => $this->projectData['justification'] ?? '',
+                'start_date' => $this->projectData['start_date'] ?? now(),
+                'end_date' => $this->projectData['end_date'] ?? now(),
+                'total_cost' => $this->projectData['total_cost'] ?? 0,
+                'funded_amount' => $this->projectData['funded_amount'] ?? 0,
+                'monthly_disbursement' => $this->projectData['monthly_disbursement'] ?? 0,
+                'followup_officer' => $this->projectData['followup_officer'] ?? '',
+                'created_by' => auth()->id(),
+            ]);
+
+            // Crear objetivos específicos
+            foreach ($this->objectivesData as $objective) {
+                SpecificObjective::create([
+                    'name' => $objective['name'],
+                    'description' => $objective['description'],
+                    'project_id' => $project->id,
+                    'created_by' => auth()->id(),
+                ]);
+            }
+
+            // Crear KPIs
+            foreach ($this->kpisData as $kpi) {
+                Kpi::create([
+                    'name' => $kpi['name'],
+                    'description' => $kpi['description'],
+                    'target' => $kpi['target'],
+                    'project_id' => $project->id,
+                    'created_by' => auth()->id(),
+                ]);
+            }
+
+            // Crear ubicaciones
+            foreach ($this->locationsData as $location) {
+                Location::create([
+                    'name' => $location['name'],
+                    'description' => $location['description'],
+                    'project_id' => $project->id,
+                    'created_by' => auth()->id(),
+                ]);
+            }
+
+            // Crear actividades
+            $activityIds = [];
+            foreach ($this->activitiesData as $activity) {
+                $newActivity = Activity::create([
+                    'name' => $activity['name'],
+                    'description' => $activity['description'],
+                    'specific_objective_id' => $activity['specific_objective_id'],
+                    'goals_id' => 1, // Valor por defecto
+                    'created_by' => auth()->id(),
+                ]);
+                $activityIds[] = $newActivity->id;
+            }
+
+            // Crear programación de actividades
+            foreach ($this->scheduledActivitiesData as $scheduled) {
+                ActivityCalendar::create([
+                    'activity_id' => $activityIds[$scheduled['activity_id']] ?? 1,
+                    'start_date' => $scheduled['start_date'],
+                    'end_date' => $scheduled['end_date'],
+                    'created_by' => auth()->id(),
+                ]);
+            }
+
+            DB::commit();
+
+            // Limpiar datos temporales
+            Session::forget([
+                'project_creation_guide.project',
+                'project_creation_guide.objectives',
+                'project_creation_guide.kpis',
+                'project_creation_guide.cofinanciers',
+                'project_creation_guide.activities',
+                'project_creation_guide.locations',
+                'project_creation_guide.scheduled_activities',
+            ]);
+
+            $this->showSummaryModal = false;
 
             Notification::make()
-                ->title('Proyecto creado exitosamente')
+                ->title('Proyecto guardado exitosamente')
                 ->success()
                 ->send();
 
-            $this->redirect('/admin/projects');
-
+            // Redirigir a la lista de proyectos
+            return redirect()->route('filament.admin.resources.projects.index');
         } catch (\Exception $e) {
+            DB::rollBack();
+
             Notification::make()
-                ->title('Error al crear el proyecto')
+                ->title('Error al guardar el proyecto')
                 ->body($e->getMessage())
                 ->danger()
                 ->send();
         }
+    }
+
+    public function editProject()
+    {
+        $this->showSummaryModal = false;
+        // Lógica para editar el proyecto
     }
 }

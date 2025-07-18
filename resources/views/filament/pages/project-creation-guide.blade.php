@@ -46,12 +46,13 @@
                 <p class="text-gray-600 dark:text-gray-400 mb-4">
                     Define los datos principales del proyecto
                 </p>
-                <button
-                    wire:click="openProjectModal"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-                >
-                    {{ $projectData ? 'Editar Proyecto' : 'Crear Proyecto' }}
-                </button>
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                    @if($projectData)
+                        <strong>Proyecto:</strong> {{ $projectData['name'] ?? 'Sin nombre' }}
+                    @else
+                        No se ha creado ningún proyecto aún
+                    @endif
+                </div>
             </div>
 
             <!-- 2. Objetivos Específicos -->
@@ -72,13 +73,13 @@
                 <p class="text-gray-600 dark:text-gray-400 mb-4">
                     Define los objetivos específicos del proyecto
                 </p>
-                <button
-                    wire:click="openObjectivesModal"
-                    class="w-full {{ $projectData ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed' }} text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-                    {{ !$projectData ? 'disabled' : '' }}
-                >
-                    {{ $objectivesData && count($objectivesData) > 0 ? 'Editar Objetivos' : 'Crear Objetivos' }}
-                </button>
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                    @if($objectivesData && count($objectivesData) > 0)
+                        {{ count($objectivesData) }} objetivo(s) creado(s)
+                    @else
+                        No se han creado objetivos aún
+                    @endif
+                </div>
             </div>
 
             <!-- 3. KPIs -->
@@ -99,13 +100,13 @@
                 <p class="text-gray-600 dark:text-gray-400 mb-4">
                     Define los indicadores clave del proyecto
                 </p>
-                <button
-                    wire:click="openKpisModal"
-                    class="w-full {{ $projectData ? 'bg-purple-600 hover:bg-purple-700' : 'bg-gray-400 cursor-not-allowed' }} text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-                    {{ !$projectData ? 'disabled' : '' }}
-                >
-                    {{ $kpisData && count($kpisData) > 0 ? 'Editar KPIs' : 'Crear KPIs' }}
-                </button>
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                    @if($kpisData && count($kpisData) > 0)
+                        {{ count($kpisData) }} KPI(s) creado(s)
+                    @else
+                        No se han creado KPIs aún
+                    @endif
+                </div>
             </div>
 
             <!-- 4. Cofinanciadores -->
@@ -126,13 +127,13 @@
                 <p class="text-gray-600 dark:text-gray-400 mb-4">
                     Agrega cofinanciadores del proyecto
                 </p>
-                <button
-                    wire:click="openCofinanciersModal"
-                    class="w-full {{ $projectData ? 'bg-orange-600 hover:bg-orange-700' : 'bg-gray-400 cursor-not-allowed' }} text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-                    {{ !$projectData ? 'disabled' : '' }}
-                >
-                    {{ $cofinanciersData && count($cofinanciersData) > 0 ? 'Editar Cofinanciadores' : 'Agregar Cofinanciadores' }}
-                </button>
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                    @if($cofinanciersData && count($cofinanciersData) > 0)
+                        {{ count($cofinanciersData) }} cofinanciador(es) agregado(s)
+                    @else
+                        No se han agregado cofinanciadores aún
+                    @endif
+                </div>
             </div>
 
             <!-- 5. Actividades -->
@@ -153,13 +154,13 @@
                 <p class="text-gray-600 dark:text-gray-400 mb-4">
                     Define las actividades del proyecto
                 </p>
-                <button
-                    wire:click="openActivitiesModal"
-                    class="w-full {{ ($objectivesData && count($objectivesData) > 0) ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-400 cursor-not-allowed' }} text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-                    {{ !($objectivesData && count($objectivesData) > 0) ? 'disabled' : '' }}
-                >
-                    {{ $activitiesData && count($activitiesData) > 0 ? 'Editar Actividades' : 'Crear Actividades' }}
-                </button>
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                    @if($activitiesData && count($activitiesData) > 0)
+                        {{ count($activitiesData) }} actividad(es) creada(s)
+                    @else
+                        No se han creado actividades aún
+                    @endif
+                </div>
             </div>
 
             <!-- 6. Ubicaciones -->
@@ -180,12 +181,13 @@
                 <p class="text-gray-600 dark:text-gray-400 mb-4">
                     Registra las ubicaciones del proyecto
                 </p>
-                <button
-                    wire:click="openLocationsModal"
-                    class="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-                >
-                    {{ $locationsData && count($locationsData) > 0 ? 'Editar Ubicaciones' : 'Crear Ubicaciones' }}
-                </button>
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                    @if($locationsData && count($locationsData) > 0)
+                        {{ count($locationsData) }} ubicación(es) registrada(s)
+                    @else
+                        No se han registrado ubicaciones aún
+                    @endif
+                </div>
             </div>
 
             <!-- 7. Programación de Actividades -->
@@ -206,13 +208,13 @@
                 <p class="text-gray-600 dark:text-gray-400 mb-4">
                     Programa las actividades en el calendario
                 </p>
-                <button
-                    wire:click="openSchedulingModal"
-                    class="w-full {{ ($activitiesData && count($activitiesData) > 0 && $locationsData && count($locationsData) > 0) ? 'bg-pink-600 hover:bg-pink-700' : 'bg-gray-400 cursor-not-allowed' }} text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-                    {{ !($activitiesData && count($activitiesData) > 0 && $locationsData && count($locationsData) > 0) ? 'disabled' : '' }}
-                >
-                    {{ $scheduledActivitiesData && count($scheduledActivitiesData) > 0 ? 'Editar Programación' : 'Programar Actividades' }}
-                </button>
+                <div class="text-sm text-gray-500 dark:text-gray-400">
+                    @if($scheduledActivitiesData && count($scheduledActivitiesData) > 0)
+                        {{ count($scheduledActivitiesData) }} actividad(es) programada(s)
+                    @else
+                        No se han programado actividades aún
+                    @endif
+                </div>
             </div>
 
         </div>
@@ -229,7 +231,7 @@
                     </p>
                 </div>
                 <button
-                    wire:click="openSummaryModal"
+                    wire:click="saveAllData"
                     class="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition duration-200"
                 >
                     Ver Resumen y Guardar
@@ -237,6 +239,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Modales se incluirán aquí -->
 </x-filament-panels::page>

@@ -35,10 +35,16 @@ class ProgramIndicatorResource extends Resource
                         Forms\Components\Select::make('program_id')
                             ->label('Programa')
                             ->relationship('program', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->required(),
                         Forms\Components\Select::make('program_axes_id')
                             ->label('Eje')
                             ->relationship('programAxes', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->required(),
                         Forms\Components\TextInput::make('name')
                             ->label('Nombre del Indicador')

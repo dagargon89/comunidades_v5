@@ -50,6 +50,9 @@ class LocationResource extends Resource
                             ->relationship('polygons', 'name')
                             ->label('Polígono')
                             ->required()
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->placeholder('Seleccione un polígono'),
                     ])
                     ->columns(2),

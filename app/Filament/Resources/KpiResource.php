@@ -48,6 +48,9 @@ class KpiResource extends Resource
                         Forms\Components\Select::make('projects_id')
                             ->label('Proyecto')
                             ->relationship('projects', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->required(),
                         Forms\Components\Toggle::make('is_percentage')
                             ->label('Es Porcentaje')

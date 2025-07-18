@@ -52,7 +52,7 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('password')
                             ->label('Contraseña')
                             ->password()
-                            ->required(fn (string $context): bool => $context === 'create')
+                            ->required(fn(string $context): bool => $context === 'create')
                             ->minLength(8)
                             ->maxLength(255)
                             ->placeholder('Mínimo 8 caracteres'),
@@ -88,9 +88,10 @@ class UserResource extends Resource
                         Forms\Components\Select::make('organizations_id')
                             ->label('Organización')
                             ->relationship('organization', 'name')
+                            ->required()
                             ->searchable()
                             ->preload()
-                            ->required()
+                            ->native(false)
                             ->placeholder('Seleccione una organización'),
                         Forms\Components\TextInput::make('org_role')
                             ->label('Rol en la Organización')
@@ -136,7 +137,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('system_role')
                     ->label('Rol Sistema')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'admin' => 'danger',
                         'manager' => 'warning',
                         'user' => 'success',

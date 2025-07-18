@@ -41,6 +41,9 @@ class ActivityCalendarResource extends Resource
                             ->relationship('activity', 'description')
                             ->label('Actividad')
                             ->required()
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->placeholder('Seleccione una actividad'),
                         Forms\Components\Toggle::make('cancelled')
                             ->label('Cancelado')
@@ -87,12 +90,12 @@ class ActivityCalendarResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('created_by')
                             ->label('Creado por')
-                            ->options(fn () => \App\Models\User::pluck('name', 'id'))
+                            ->options(fn() => \App\Models\User::pluck('name', 'id'))
                             ->required()
                             ->placeholder('Seleccione el usuario creador'),
                         Forms\Components\Select::make('asigned_person')
                             ->label('Persona asignada')
-                            ->options(fn () => \App\Models\User::pluck('name', 'id'))
+                            ->options(fn() => \App\Models\User::pluck('name', 'id'))
                             ->required()
                             ->placeholder('Seleccione la persona asignada'),
                         Forms\Components\DateTimePicker::make('last_modified')

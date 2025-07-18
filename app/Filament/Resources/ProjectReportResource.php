@@ -36,6 +36,9 @@ class ProjectReportResource extends Resource
                             ->relationship('projects', 'name')
                             ->label('Proyecto')
                             ->required()
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->placeholder('Seleccione el proyecto'),
                         Forms\Components\DatePicker::make('report_date')
                             ->label('Fecha del reporte')

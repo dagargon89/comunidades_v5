@@ -39,6 +39,9 @@ class SpecificObjectiveResource extends Resource
                         Forms\Components\Select::make('projects_id')
                             ->label('Proyecto')
                             ->relationship('projects', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->required(),
                     ])
                     ->columns(2),

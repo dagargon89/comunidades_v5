@@ -35,10 +35,16 @@ class ComponentResource extends Resource
                         Forms\Components\Select::make('action_lines_id')
                             ->label('Línea de Acción')
                             ->relationship('actionLines', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->required(),
                         Forms\Components\Select::make('action_lines_program_id')
                             ->label('Programa')
                             ->relationship('actionLinesProgram', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->required(),
                         Forms\Components\TextInput::make('name')
                             ->label('Nombre del Componente')

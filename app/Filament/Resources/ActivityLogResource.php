@@ -36,11 +36,15 @@ class ActivityLogResource extends Resource
                             ->relationship('plannedMetrics', 'id')
                             ->label('Métrica planificada')
                             ->required()
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->placeholder('Seleccione la métrica planificada'),
                         Forms\Components\Select::make('created_by')
                             ->label('Usuario creador')
                             ->options(\App\Models\User::pluck('name', 'id'))
                             ->searchable()
+                            ->native(false)
                             ->preload()
                             ->required()
                             ->placeholder('Seleccione el usuario creador'),

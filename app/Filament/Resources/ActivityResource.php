@@ -40,6 +40,9 @@ class ActivityResource extends Resource
                         Forms\Components\Select::make('specific_objective_id')
                             ->label('Objetivo Específico')
                             ->relationship('specificObjective', 'description')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->required(),
                         Forms\Components\Textarea::make('description')
                             ->label('Descripción de la Actividad')
@@ -48,10 +51,16 @@ class ActivityResource extends Resource
                         Forms\Components\Select::make('goals_id')
                             ->label('Meta')
                             ->relationship('goals', 'description')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->required(),
                         Forms\Components\Select::make('created_by')
                             ->label('Creado por')
                             ->relationship('createdBy', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->required(),
                     ])
                     ->columns(2),

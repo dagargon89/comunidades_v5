@@ -40,6 +40,9 @@ class ProgramResource extends Resource
                         Forms\Components\Select::make('axes_id')
                             ->label('Eje')
                             ->relationship('axes', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->required(),
                         Forms\Components\TextInput::make('name')
                             ->label('Nombre del Programa')

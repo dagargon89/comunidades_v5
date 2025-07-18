@@ -35,6 +35,9 @@ class ProjectDisbursementResource extends Resource
                         Forms\Components\Select::make('projects_id')
                             ->relationship('projects', 'name')
                             ->label('Proyecto')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->required()
                             ->placeholder('Seleccione el proyecto'),
                         Forms\Components\TextInput::make('amount')

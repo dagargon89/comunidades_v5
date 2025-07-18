@@ -78,9 +78,10 @@ class BeneficiaryResource extends Resource
                             ->columnSpanFull(),
                         Forms\Components\Select::make('created_by')
                             ->label('Usuario creador')
-                            ->options(\App\Models\User::pluck('name', 'id'))
+                            ->options(fn() => \App\Models\User::pluck('name', 'id'))
                             ->searchable()
                             ->preload()
+                            ->native(false)
                             ->required()
                             ->placeholder('Seleccione el usuario creador'),
                     ])

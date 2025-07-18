@@ -62,7 +62,10 @@ class PlannedMetricResource extends Resource
                             ->numeric(),
                         Forms\Components\Select::make('activity_progress_log_id')
                             ->label('Registro de Progreso')
-                            ->relationship('activityProgressLog', 'id'),
+                            ->relationship('activityProgressLog', 'id')
+                            ->searchable()
+                            ->preload()
+                            ->native(false),
                     ])
                     ->columns(2),
             ]);

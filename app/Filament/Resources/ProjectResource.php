@@ -39,6 +39,9 @@ class ProjectResource extends Resource
                         Forms\Components\Select::make('financiers_id')
                             ->label('Financiador')
                             ->relationship('financiers', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->required(),
                         Forms\Components\DatePicker::make('start_date')
                             ->label('Fecha de Inicio'),
@@ -58,10 +61,16 @@ class ProjectResource extends Resource
                             ->numeric(),
                         Forms\Components\Select::make('co_financier_id')
                             ->label('Cofinanciador')
-                            ->relationship('coFinancier', 'name'),
+                            ->relationship('coFinancier', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false),
                         Forms\Components\Select::make('created_by')
                             ->label('Creado por')
-                            ->relationship('createdBy', 'name', fn ($query) => $query->select('id', 'name'))
+                            ->relationship('createdBy', 'name', fn($query) => $query->select('id', 'name'))
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
                             ->required(),
                     ])
                     ->columns(2),

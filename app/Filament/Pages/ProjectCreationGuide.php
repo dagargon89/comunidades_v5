@@ -131,9 +131,6 @@ class ProjectCreationGuide extends Page
                                         ->options(\App\Models\Financier::pluck('name', 'id'))
                                         ->searchable()
                                         ->required(),
-                                    TextInput::make('projectData.monthly_disbursement')
-                                        ->label('Ministración Mensual')
-                                        ->numeric(),
                                 ]),
                         ]),
                     Section::make('Responsable y Archivos')
@@ -181,15 +178,39 @@ class ProjectCreationGuide extends Page
                                         ->label('Costo total')
                                         ->numeric(),
                                 ]),
-                            Grid::make(3)
+                            Grid::make(2)
                                 ->schema([
                                     TextInput::make('projectData.funded_amount')
                                         ->label('Cantidad financiada')
                                         ->numeric(),
-                                    TextInput::make('projectData.cofunding_amount')
-                                        ->label('Cantidad cofinanciada')
-                                        ->numeric(),
+                                    Placeholder::make('cofinanciador_placeholder')
+                                        ->content('')
+                                        ->extraAttributes(['class' => 'hidden']),
                                 ]),
+                            Actions::make([
+                                Action::make('addCofinancier')
+                                    ->label('Agregar Cofinanciador')
+                                    ->color('primary')
+                                    ->form([
+                                        Select::make('financier_id')
+                                            ->label('Cofinanciador')
+                                            ->options(\App\Models\Financier::pluck('name', 'id'))
+                                            ->searchable()
+                                            ->required(),
+                                        TextInput::make('amount')
+                                            ->label('Monto cofinanciado')
+                                            ->numeric()
+                                            ->required(),
+                                    ])
+                                    ->action(function (array $data) {
+                                        $this->cofinanciersData[] = [
+                                            'financier_id' => $data['financier_id'],
+                                            'amount' => $data['amount'],
+                                        ];
+                                        $this->saveTemporaryData();
+                                        Notification::make()->title('Cofinanciador agregado')->success()->send();
+                                    }),
+                            ])->alignRight(),
                         ]),
                     Actions::make([
                         Action::make('saveProject')

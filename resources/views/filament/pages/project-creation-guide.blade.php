@@ -6,6 +6,26 @@
     {{-- Formulario principal --}}
     {{ $this->form }}
 
+    {{-- Lista de cofinanciadores agregados --}}
+    @if($cofinanciersData && count($cofinanciersData) > 0)
+        <x-filament::section>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Cofinanciadores agregados</h3>
+            <div class="space-y-3">
+                @foreach($cofinanciersData as $cofinancier)
+                    <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                        <span class="text-gray-900 dark:text-white">
+                            {{ \App\Models\Financier::find($cofinancier['financier_id'])->name ?? 'N/A' }}
+                        </span>
+                        <span class="text-green-600 font-medium">${{ number_format($cofinancier['amount'], 2) }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </x-filament::section>
+    @endif
+
+    {{-- Modal para agregar cofinanciador --}}
+    {{-- Eliminado: ahora se usa Action de Filament --}}
+
                     {{-- Botón para ver resumen cuando esté completo --}}
                 @if($this->progress == 100)
         <x-filament::section>

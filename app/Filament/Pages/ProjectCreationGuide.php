@@ -285,82 +285,6 @@ class ProjectCreationGuide extends Page
                 ->collapsible()
                 ->collapsed(false),
 
-            Section::make('4. Cofinanciadores')
-                ->description('Agrega los cofinanciadores del proyecto')
-                ->schema([
-                    Repeater::make('cofinanciersData')
-                        ->schema([
-                            Select::make('financier_id')
-                                ->label('Cofinanciador')
-                                ->options(Financier::pluck('name', 'id'))
-                                ->searchable()
-                                ->required(),
-                            TextInput::make('amount')
-                                ->label('Monto Cofinanciado')
-                                ->numeric()
-                                ->prefix('$')
-                                ->required(),
-                        ])
-                        ->addActionLabel('Agregar Cofinanciador')
-                        ->reorderable()
-                        ->collapsible()
-                        ->itemLabel(
-                            fn(array $state): ?string =>
-                            $state['financier_id'] ? Financier::find($state['financier_id'])?->name : null
-                        ),
-                    Actions::make([
-                        Action::make('saveCofinanciers')
-                            ->label('Guardar Cofinanciadores')
-                            ->color('primary')
-                            ->action('saveCofinanciersData'),
-                    ])->alignRight(),
-                ])
-                ->collapsible()
-                ->collapsed(false),
-
-            Section::make('5. Ubicaciones')
-                ->description('Define las ubicaciones del proyecto')
-                ->schema([
-                    Repeater::make('locationsData')
-                        ->schema([
-                            TextInput::make('name')
-                                ->label('Nombre de la Ubicación')
-                                ->required(),
-                            TextInput::make('category')
-                                ->label('Categoría')
-                                ->maxLength(50),
-                            Textarea::make('street')
-                                ->label('Dirección')
-                                ->rows(2),
-                            TextInput::make('neighborhood')
-                                ->label('Colonia')
-                                ->maxLength(100),
-                            TextInput::make('ext_number')
-                                ->label('Número Exterior')
-                                ->numeric(),
-                            TextInput::make('int_number')
-                                ->label('Número Interior')
-                                ->numeric(),
-                            Select::make('polygons_id')
-                                ->label('Polígono')
-                                ->options(Polygon::pluck('name', 'id'))
-                                ->searchable()
-                                ->required(),
-                        ])
-                        ->addActionLabel('Agregar Ubicación')
-                        ->reorderable()
-                        ->collapsible()
-                        ->itemLabel(fn(array $state): ?string => $state['name'] ?? null),
-                    Actions::make([
-                        Action::make('saveLocations')
-                            ->label('Guardar Ubicaciones')
-                            ->color('primary')
-                            ->action('saveLocationsData'),
-                    ])->alignRight(),
-                ])
-                ->collapsible()
-                ->collapsed(false),
-
             Section::make('6. Actividades')
                 ->description('Define las actividades del proyecto')
                 ->schema([
@@ -385,6 +309,33 @@ class ProjectCreationGuide extends Page
                                 })
                                 ->searchable()
                                 ->required(),
+                            Actions::make([
+                                Action::make('addPlannedMetric')
+                                    ->label('Agregar Métricas Planeadas')
+                                    ->color('primary')
+                                    ->form([
+                                        TextInput::make('population_target_value')
+                                            ->label('Meta de Población')
+                                            ->numeric()
+                                            ->required(),
+                                        TextInput::make('product_target_value')
+                                            ->label('Meta de Producto')
+                                            ->numeric()
+                                            ->required(),
+                                    ])
+                                    ->action(function (array $data, $get, $set, $state, $livewire) {
+                                        // Guardar las métricas planeadas en un array temporal dentro de la actividad
+                                        $metrics = $get('planned_metrics') ?? [];
+                                        $metrics[] = [
+                                            'population_target_value' => $data['population_target_value'],
+                                            'product_target_value' => $data['product_target_value'],
+                                        ];
+                                        $set('planned_metrics', $metrics);
+                                        \Filament\Notifications\Notification::make()->title('Métrica planeada agregada')->success()->send();
+                                    }),
+                            ])->alignRight(),
+                            // Campo oculto para almacenar las métricas planeadas
+                            \Filament\Forms\Components\Hidden::make('planned_metrics'),
                         ])
                         ->addActionLabel('Agregar Actividad')
                         ->reorderable()
@@ -395,40 +346,6 @@ class ProjectCreationGuide extends Page
                             ->label('Guardar Actividades')
                             ->color('primary')
                             ->action('saveActivitiesData'),
-                    ])->alignRight(),
-                ])
-                ->collapsible()
-                ->collapsed(false),
-
-            Section::make('7. Programación de Actividades')
-                ->description('Define el calendario de actividades')
-                ->schema([
-                    Repeater::make('scheduledActivitiesData')
-                        ->schema([
-                            Select::make('activity_id')
-                                ->label('Actividad')
-                                ->options(Activity::pluck('name', 'id'))
-                                ->searchable()
-                                ->required(),
-                            DatePicker::make('start_date')
-                                ->label('Fecha de Inicio')
-                                ->required(),
-                            DatePicker::make('end_date')
-                                ->label('Fecha de Fin')
-                                ->required(),
-                        ])
-                        ->addActionLabel('Agregar Programación')
-                        ->reorderable()
-                        ->collapsible()
-                        ->itemLabel(
-                            fn(array $state): ?string =>
-                            $state['activity_id'] ? Activity::find($state['activity_id'])?->name : null
-                        ),
-                    Actions::make([
-                        Action::make('saveScheduledActivities')
-                            ->label('Guardar Programación')
-                            ->color('primary')
-                            ->action('saveScheduledActivitiesData'),
                     ])->alignRight(),
                 ])
                 ->collapsible()

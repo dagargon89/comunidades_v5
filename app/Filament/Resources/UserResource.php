@@ -85,6 +85,9 @@ class UserResource extends Resource
                     ->description('Datos relacionados con la organización')
                     ->icon('heroicon-o-building-office')
                     ->schema([
+                        Forms\Components\Toggle::make('can_publish_data')
+                            ->label('Puede publicar datos')
+                            ->default(false),
                         Forms\Components\Select::make('roles')
                             ->relationship('roles', 'name')
                             ->multiple()
@@ -131,7 +134,11 @@ class UserResource extends Resource
                     ->label('Supervisor')
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('roles')
+                Tables\Columns\ToggleColumn::make('can_publish_data')
+                    ->label('Puede publicar datos')
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('roles.name')
                     ->label('Roles')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {

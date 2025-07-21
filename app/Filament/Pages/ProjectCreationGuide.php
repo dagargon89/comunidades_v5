@@ -41,17 +41,35 @@ class ProjectCreationGuide extends Page
     protected static string $view = 'filament.pages.project-creation-guide';
 
     // Propiedades para almacenar datos temporales
-    public $projectData = null;
+    public $projectData = [];
     public $objectivesData = [];
     public $kpisData = [];
     public $cofinanciersData = [];
     public $activitiesData = [];
     public $locationsData = [];
     public $scheduledActivitiesData = [];
-    public $showSummaryModal = false;
 
     public function mount()
     {
+        // Limpiar datos temporales si la petición no es un submit Livewire
+        if (!request()->has('_livewire')) {
+            Session::forget([
+                'project_creation_guide.project',
+                'project_creation_guide.objectives',
+                'project_creation_guide.kpis',
+                'project_creation_guide.cofinanciers',
+                'project_creation_guide.activities',
+                'project_creation_guide.locations',
+                'project_creation_guide.scheduled_activities',
+            ]);
+            $this->projectData = [];
+            $this->objectivesData = [];
+            $this->kpisData = [];
+            $this->cofinanciersData = [];
+            $this->activitiesData = [];
+            $this->locationsData = [];
+            $this->scheduledActivitiesData = [];
+        }
         $this->loadTemporaryData();
     }
 
@@ -143,12 +161,12 @@ class ProjectCreationGuide extends Page
                                         ->searchable()
                                         ->required()
                                         ->placeholder('Seleccione un usuario'),
-                                    FileUpload::make('projectData.agreement_file')
-                                        ->label('Convenio')
-                                        ->directory('project_agreements'),
-                                    FileUpload::make('projectData.project_base_file')
-                                        ->label('Proyecto Base')
-                                        ->directory('project_bases'),
+                                    // FileUpload::make('projectData.agreement_file')
+                                    //     ->label('Convenio')
+                                    //     ->directory('project_agreements'),
+                                    // FileUpload::make('projectData.project_base_file')
+                                    //     ->label('Proyecto Base')
+                                    //     ->directory('project_bases'),
                                 ]),
                         ]),
                     Section::make('Descripción y Objetivos')
@@ -295,7 +313,16 @@ class ProjectCreationGuide extends Page
                                 ->required(),
                             Select::make('specific_objective_id')
                                 ->label('Objetivo Específico')
-                                ->options(SpecificObjective::pluck('description', 'id'))
+                                ->options(function () {
+                                    // Usar los objetivos temporales y evitar labels null
+                                    return collect($this->objectivesData)
+                                        ->mapWithKeys(fn($obj, $idx) => [
+                                            $idx => isset($obj['description']) && $obj['description'] !== null
+                                                ? (string) $obj['description']
+                                                : 'Sin descripción'
+                                        ])
+                                        ->toArray();
+                                })
                                 ->searchable()
                                 ->required(),
                             Textarea::make('description')
@@ -303,10 +330,7 @@ class ProjectCreationGuide extends Page
                                 ->rows(3),
                             Select::make('goals_id')
                                 ->label('Meta')
-                                ->options(function () {
-                                    // Aquí necesitarías obtener las metas disponibles
-                                    return [];
-                                })
+                                ->options(\App\Models\Goal::pluck('description', 'id'))
                                 ->searchable()
                                 ->required(),
                             Actions::make([
@@ -350,6 +374,25 @@ class ProjectCreationGuide extends Page
                 ])
                 ->collapsible()
                 ->collapsed(false),
+            Actions::make([
+                Action::make('showSummary')
+                    ->label('Mostrar Resumen y Guardar Proyecto')
+                    ->color('success')
+                    ->modalHeading('Resumen del Proyecto')
+                    ->modalSubmitActionLabel('Confirmar y Guardar')
+                    ->modalCancelActionLabel('Cancelar')
+                    ->form([
+                        Placeholder::make('resumen')
+                            ->content(fn() => view('filament.pages.partials.project-summary', [
+                                'projectData' => $this->projectData,
+                                'objectivesData' => $this->objectivesData,
+                                'kpisData' => $this->kpisData,
+                                'cofinanciersData' => $this->cofinanciersData,
+                                'activitiesData' => $this->activitiesData,
+                            ])->render()),
+                    ])
+                    ->action('saveProject'),
+            ])->alignRight(),
         ]);
     }
 
@@ -432,64 +475,61 @@ class ProjectCreationGuide extends Page
     }
 
     // Métodos para el modal de resumen
-    public function showSummary()
-    {
-        $this->showSummaryModal = true;
-    }
-
-    public function closeSummary()
-    {
-        $this->showSummaryModal = false;
-    }
-
     public function saveProject()
     {
         try {
             DB::beginTransaction();
 
+            $projectData = $this->projectData ?? [];
+            $objectivesData = $this->objectivesData ?? [];
+            $kpisData = $this->kpisData ?? [];
+            $locationsData = $this->locationsData ?? [];
+            $activitiesData = $this->activitiesData ?? [];
+            $scheduledActivitiesData = $this->scheduledActivitiesData ?? [];
+
             // Crear proyecto
             $project = Project::create([
-                'name' => $this->projectData['name'],
-                'description' => $this->projectData['description'],
-                'financiers_id' => $this->projectData['financiers_id'] ?? 1,
-                'general_objective' => $this->projectData['general_objective'] ?? '',
-                'background' => $this->projectData['background'] ?? '',
-                'justification' => $this->projectData['justification'] ?? '',
-                'start_date' => $this->projectData['start_date'] ?? now(),
-                'end_date' => $this->projectData['end_date'] ?? now(),
-                'total_cost' => $this->projectData['total_cost'] ?? 0,
-                'funded_amount' => $this->projectData['funded_amount'] ?? 0,
-                'monthly_disbursement' => $this->projectData['monthly_disbursement'] ?? 0,
-                'followup_officer' => $this->projectData['followup_officer'] ?? '',
+                'name' => $projectData['name'] ?? '',
+                'description' => $projectData['description'] ?? '',
+                'financiers_id' => $projectData['financiers_id'] ?? 1,
+                'general_objective' => $projectData['general_objective'] ?? '',
+                'background' => $projectData['background'] ?? '',
+                'justification' => $projectData['justification'] ?? '',
+                'start_date' => $projectData['start_date'] ?? now(),
+                'end_date' => $projectData['end_date'] ?? now(),
+                'total_cost' => $projectData['total_cost'] ?? 0,
+                'funded_amount' => $projectData['funded_amount'] ?? 0,
+                'monthly_disbursement' => $projectData['monthly_disbursement'] ?? 0,
+                'followup_officer' => $projectData['followup_officer'] ?? '',
                 'created_by' => auth()->id(),
             ]);
 
             // Crear objetivos específicos
-            foreach ($this->objectivesData as $objective) {
+            foreach ($objectivesData as $objective) {
                 SpecificObjective::create([
-                    'name' => $objective['name'],
-                    'description' => $objective['description'],
+                    'name' => $objective['name'] ?? '',
+                    'description' => $objective['description'] ?? '',
                     'project_id' => $project->id,
                     'created_by' => auth()->id(),
                 ]);
             }
 
             // Crear KPIs
-            foreach ($this->kpisData as $kpi) {
+            foreach ($kpisData as $kpi) {
                 Kpi::create([
-                    'name' => $kpi['name'],
-                    'description' => $kpi['description'],
-                    'target' => $kpi['target'],
+                    'name' => $kpi['name'] ?? '',
+                    'description' => $kpi['description'] ?? '',
+                    'target' => $kpi['target'] ?? 0,
                     'project_id' => $project->id,
                     'created_by' => auth()->id(),
                 ]);
             }
 
             // Crear ubicaciones
-            foreach ($this->locationsData as $location) {
+            foreach ($locationsData as $location) {
                 Location::create([
-                    'name' => $location['name'],
-                    'description' => $location['description'],
+                    'name' => $location['name'] ?? '',
+                    'description' => $location['description'] ?? '',
                     'project_id' => $project->id,
                     'created_by' => auth()->id(),
                 ]);
@@ -497,23 +537,23 @@ class ProjectCreationGuide extends Page
 
             // Crear actividades
             $activityIds = [];
-            foreach ($this->activitiesData as $activity) {
+            foreach ($activitiesData as $activity) {
                 $newActivity = Activity::create([
-                    'name' => $activity['name'],
-                    'description' => $activity['description'],
-                    'specific_objective_id' => $activity['specific_objective_id'],
-                    'goals_id' => 1, // Valor por defecto
+                    'name' => $activity['name'] ?? '',
+                    'description' => $activity['description'] ?? '',
+                    'specific_objective_id' => $activity['specific_objective_id'] ?? null,
+                    'goals_id' => $activity['goals_id'] ?? 1,
                     'created_by' => auth()->id(),
                 ]);
                 $activityIds[] = $newActivity->id;
             }
 
             // Crear programación de actividades
-            foreach ($this->scheduledActivitiesData as $scheduled) {
+            foreach ($scheduledActivitiesData as $scheduled) {
                 ActivityCalendar::create([
-                    'activity_id' => $activityIds[$scheduled['activity_id']] ?? 1,
-                    'start_date' => $scheduled['start_date'],
-                    'end_date' => $scheduled['end_date'],
+                    'activity_id' => isset($scheduled['activity_id']) && isset($activityIds[$scheduled['activity_id']]) ? $activityIds[$scheduled['activity_id']] : 1,
+                    'start_date' => $scheduled['start_date'] ?? now(),
+                    'end_date' => $scheduled['end_date'] ?? now(),
                     'created_by' => auth()->id(),
                 ]);
             }
@@ -530,8 +570,6 @@ class ProjectCreationGuide extends Page
                 'project_creation_guide.locations',
                 'project_creation_guide.scheduled_activities',
             ]);
-
-            $this->showSummaryModal = false;
 
             Notification::make()
                 ->title('Proyecto guardado exitosamente')
@@ -553,7 +591,6 @@ class ProjectCreationGuide extends Page
 
     public function editProject()
     {
-        $this->showSummaryModal = false;
         // Lógica para editar el proyecto
     }
 }

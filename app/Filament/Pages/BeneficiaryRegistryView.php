@@ -21,10 +21,11 @@ use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Support\Facades\Log;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class BeneficiaryRegistryView extends Page implements HasTable
 {
-    use InteractsWithTable;
+    use InteractsWithTable, HasPageShield;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 

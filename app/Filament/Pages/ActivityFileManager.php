@@ -8,6 +8,7 @@ use App\Models\ActivityCalendar;
 use App\Models\ActivityLog;
 use App\Models\PlannedMetric;
 use App\Models\User;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
@@ -26,7 +27,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ActivityFileManager extends Page implements Tables\Contracts\HasTable
 {
-    use Tables\Concerns\InteractsWithTable;
+    use Tables\Concerns\InteractsWithTable, HasPageShield;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $navigationLabel = 'Gestión de Archivos';

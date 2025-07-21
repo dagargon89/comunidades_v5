@@ -85,6 +85,11 @@ class UserResource extends Resource
                     ->description('Datos relacionados con la organización')
                     ->icon('heroicon-o-building-office')
                     ->schema([
+                        Forms\Components\Select::make('roles')
+                            ->relationship('roles', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable(),
                         Forms\Components\Select::make('organizations_id')
                             ->label('Organización')
                             ->relationship('organization', 'name')
@@ -125,6 +130,17 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('pointOfContact.name')
                     ->label('Supervisor')
                     ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('roles')
+                    ->label('Roles')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'admin' => 'danger',
+                        'manager' => 'warning',
+                        'user' => 'success',
+                        'viewer' => 'info',
+                        default => 'gray',
+                    })
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('organization.name')
                     ->label('Organización')

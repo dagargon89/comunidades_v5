@@ -28,9 +28,11 @@ use App\Models\Project;
 use App\Models\Kpi;
 use App\Models\ActivityCalendar;
 use App\Models\Polygon;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class ProjectCreationGuide extends Page
 {
+    use HasPageShield;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $navigationLabel = 'Guía de Creación de Proyectos';
     protected static ?string $title = 'Guía de Creación de Proyectos';

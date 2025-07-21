@@ -54,4 +54,9 @@ class PlannedMetric extends Model
     {
         return $this->belongsTo(ActivityLog::class);
     }
+
+    public function publishedMetrics()
+    {
+        return $this->hasMany(\App\Models\PublishedMetric::class, 'original_metric_id');
+    }
 }

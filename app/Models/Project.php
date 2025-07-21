@@ -69,4 +69,9 @@ class Project extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function publishedProjects()
+    {
+        return $this->hasMany(\App\Models\PublishedProject::class, 'original_project_id');
+    }
 }

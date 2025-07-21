@@ -52,4 +52,9 @@ class Activity extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function publishedActivities()
+    {
+        return $this->hasMany(\App\Models\PublishedActivity::class, 'original_activity_id');
+    }
 }

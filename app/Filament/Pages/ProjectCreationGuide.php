@@ -29,6 +29,7 @@ use App\Models\Kpi;
 use App\Models\ActivityCalendar;
 use App\Models\Polygon;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Forms\Components\FileUpload;
 
 class ProjectCreationGuide extends Page
 {
@@ -118,24 +119,86 @@ class ProjectCreationGuide extends Page
             Section::make('1. Información Básica del Proyecto')
                 ->description('Define los datos principales del proyecto')
                 ->schema([
-                    Grid::make(2)
+                    Section::make('Datos Generales')
                         ->schema([
-                            TextInput::make('projectData.name')
-                                ->label('Nombre del Proyecto')
-                                ->required(),
-                            Textarea::make('projectData.description')
-                                ->label('Descripción')
-                                ->rows(3),
+                            Grid::make(3)
+                                ->schema([
+                                    TextInput::make('projectData.name')
+                                        ->label('Nombre del Proyecto')
+                                        ->required(),
+                                    Select::make('projectData.financiers_id')
+                                        ->label('Financiadora')
+                                        ->options(\App\Models\Financier::pluck('name', 'id'))
+                                        ->searchable()
+                                        ->required(),
+                                    TextInput::make('projectData.monthly_disbursement')
+                                        ->label('Ministración Mensual')
+                                        ->numeric(),
+                                ]),
+                        ]),
+                    Section::make('Responsable y Archivos')
+                        ->schema([
+                            Grid::make(3)
+                                ->schema([
+                                    Select::make('projectData.followup_officer')
+                                        ->label('Encargado de seguimiento')
+                                        ->options(\App\Models\User::pluck('name', 'id'))
+                                        ->searchable()
+                                        ->required()
+                                        ->placeholder('Seleccione un usuario'),
+                                    FileUpload::make('projectData.agreement_file')
+                                        ->label('Convenio')
+                                        ->directory('project_agreements'),
+                                    FileUpload::make('projectData.project_base_file')
+                                        ->label('Proyecto Base')
+                                        ->directory('project_bases'),
+                                ]),
+                        ]),
+                    Section::make('Descripción y Objetivos')
+                        ->schema([
+                            Grid::make(3)
+                                ->schema([
+                                    Textarea::make('projectData.general_objective')
+                                        ->label('Objetivo General')
+                                        ->rows(2),
+                                    Textarea::make('projectData.background')
+                                        ->label('Antecedentes')
+                                        ->rows(2),
+                                    Textarea::make('projectData.justification')
+                                        ->label('Justificación')
+                                        ->rows(2),
+                                ]),
+                        ]),
+                    Section::make('Fechas y Montos')
+                        ->schema([
+                            Grid::make(3)
+                                ->schema([
+                                    DatePicker::make('projectData.start_date')
+                                        ->label('Fecha de inicio'),
+                                    DatePicker::make('projectData.end_date')
+                                        ->label('Fecha de finalización'),
+                                    TextInput::make('projectData.total_cost')
+                                        ->label('Costo total')
+                                        ->numeric(),
+                                ]),
+                            Grid::make(3)
+                                ->schema([
+                                    TextInput::make('projectData.funded_amount')
+                                        ->label('Cantidad financiada')
+                                        ->numeric(),
+                                    TextInput::make('projectData.cofunding_amount')
+                                        ->label('Cantidad cofinanciada')
+                                        ->numeric(),
+                                ]),
                         ]),
                     Actions::make([
                         Action::make('saveProject')
-                            ->label($this->projectData ? 'Actualizar Proyecto' : 'Crear Proyecto')
+                            ->label($this->projectData ? 'Actualizar Proyecto' : 'Guardar Proyecto')
                             ->color($this->projectData ? 'warning' : 'primary')
                             ->action('saveProjectData'),
                     ])->alignRight(),
                 ])
-                ->collapsible()
-                ->collapsed(false),
+                ->collapsible(false),
 
             Section::make('2. Objetivos Específicos')
                 ->description('Define los objetivos específicos del proyecto')

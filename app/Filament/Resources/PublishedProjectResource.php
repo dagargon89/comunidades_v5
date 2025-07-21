@@ -16,99 +16,45 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class PublishedProjectResource extends Resource
 {
     protected static ?string $model = PublishedProject::class;
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
+    protected static ?string $navigationGroup = 'Datos publicados';
+    protected static ?string $navigationLabel = 'Proyectos publicados';
+    protected static ?string $modelLabel = 'Proyecto publicado';
+    protected static ?string $pluralModelLabel = 'Proyectos publicados';
+    protected static ?string $slug = 'proyectos-publicados';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    public static function form(Form $form): Form
+    public static function form(Forms\Form $form): Forms\Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('publication_id')
-                    ->relationship('publication', 'id')
-                    ->required(),
-                Forms\Components\Select::make('original_project_id')
-                    ->relationship('originalProject', 'name')
-                    ->required(),
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(500),
-                Forms\Components\Textarea::make('background')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('justification')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('general_objective')
-                    ->columnSpanFull(),
-                Forms\Components\DatePicker::make('start_date'),
-                Forms\Components\DatePicker::make('end_date'),
-                Forms\Components\TextInput::make('total_cost')
-                    ->numeric(),
-                Forms\Components\TextInput::make('funded_amount')
-                    ->numeric(),
-                Forms\Components\TextInput::make('cofunding_amount')
-                    ->numeric(),
-                Forms\Components\TextInput::make('financiers_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\Select::make('co_financier_id')
-                    ->relationship('coFinancier', 'name'),
-                Forms\Components\TextInput::make('created_by')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\DateTimePicker::make('snapshot_date')
-                    ->required(),
+                Forms\Components\Section::make('Información del proyecto publicado')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')->label('Nombre')->maxLength(500),
+                        Forms\Components\TextInput::make('background')->label('Antecedentes'),
+                        Forms\Components\TextInput::make('justification')->label('Justificación'),
+                        Forms\Components\TextInput::make('general_objective')->label('Objetivo general'),
+                        Forms\Components\DatePicker::make('start_date')->label('Fecha inicio'),
+                        Forms\Components\DatePicker::make('end_date')->label('Fecha fin'),
+                        Forms\Components\TextInput::make('total_cost')->label('Costo total')->numeric(),
+                        Forms\Components\TextInput::make('funded_amount')->label('Monto financiado')->numeric(),
+                        Forms\Components\TextInput::make('cofunding_amount')->label('Monto cofinanciado')->numeric(),
+                    ])
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('publication.id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('originalProject.name')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('start_date')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('end_date')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('total_cost')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('funded_amount')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('cofunding_amount')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('financiers_id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('coFinancier.name')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_by')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('snapshot_date')
-                    ->dateTime()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
+                Tables\Columns\TextColumn::make('name')->label('Nombre'),
+                Tables\Columns\TextColumn::make('start_date')->label('Fecha inicio')->date(),
+                Tables\Columns\TextColumn::make('end_date')->label('Fecha fin')->date(),
+                Tables\Columns\TextColumn::make('financier.name')->label('Financiador'),
+                Tables\Columns\TextColumn::make('total_cost')->label('Costo total'),
             ])
             ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Puedes agregar filtros aquí
             ]);
     }
 

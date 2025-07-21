@@ -16,65 +16,41 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class DataPublicationResource extends Resource
 {
     protected static ?string $model = DataPublication::class;
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
+    protected static ?string $navigationGroup = 'Datos publicados';
+    protected static ?string $navigationLabel = 'Publicaciones de datos';
+    protected static ?string $modelLabel = 'Publicación de datos';
+    protected static ?string $pluralModelLabel = 'Publicaciones de datos';
+    protected static ?string $slug = 'publicaciones-datos';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    public static function form(Form $form): Form
+    public static function form(Forms\Form $form): Forms\Form
     {
         return $form
             ->schema([
-                Forms\Components\DateTimePicker::make('publication_date')
-                    ->required(),
-                Forms\Components\TextInput::make('published_by')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\Textarea::make('publication_notes')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('metrics_count')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\TextInput::make('projects_count')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\TextInput::make('activities_count')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
-                Forms\Components\DatePicker::make('period_from'),
-                Forms\Components\DatePicker::make('period_to'),
+                Forms\Components\Section::make('Información de la publicación')
+                    ->schema([
+                        Forms\Components\TextInput::make('publication_notes')->label('Notas')->maxLength(255),
+                        Forms\Components\DatePicker::make('publication_date')->label('Fecha de publicación'),
+                        Forms\Components\TextInput::make('metrics_count')->label('Métricas')->numeric(),
+                        Forms\Components\TextInput::make('projects_count')->label('Proyectos')->numeric(),
+                        Forms\Components\TextInput::make('activities_count')->label('Actividades')->numeric(),
+                    ])
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('publication_date')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('published_by')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('metrics_count')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('projects_count')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('activities_count')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('period_from')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('period_to')
-                    ->date()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
+                Tables\Columns\TextColumn::make('publication_date')->label('Fecha de publicación')->dateTime(),
+                Tables\Columns\TextColumn::make('publisher.name')->label('Publicado por'),
+                Tables\Columns\TextColumn::make('metrics_count')->label('Métricas'),
+                Tables\Columns\TextColumn::make('projects_count')->label('Proyectos'),
+                Tables\Columns\TextColumn::make('activities_count')->label('Actividades'),
             ])
             ->filters([
-                //
+                // Puedes agregar filtros aquí
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

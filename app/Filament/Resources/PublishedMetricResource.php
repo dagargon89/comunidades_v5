@@ -16,88 +16,45 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class PublishedMetricResource extends Resource
 {
     protected static ?string $model = PublishedMetric::class;
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
+    protected static ?string $navigationGroup = 'Datos publicados';
+    protected static ?string $navigationLabel = 'Métricas publicadas';
+    protected static ?string $modelLabel = 'Métrica publicada';
+    protected static ?string $pluralModelLabel = 'Métricas publicadas';
+    protected static ?string $slug = 'metricas-publicadas';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    public static function form(Form $form): Form
+    public static function form(Forms\Form $form): Forms\Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('publication_id')
-                    ->relationship('publication', 'id')
-                    ->required(),
-                Forms\Components\Select::make('original_metric_id')
-                    ->relationship('originalMetric', 'id')
-                    ->required(),
-                Forms\Components\Select::make('activity_id')
-                    ->relationship('activity', 'name')
-                    ->required(),
-                Forms\Components\TextInput::make('unit')
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('year')
-                    ->numeric(),
-                Forms\Components\TextInput::make('month')
-                    ->numeric(),
-                Forms\Components\TextInput::make('population_target_value')
-                    ->numeric(),
-                Forms\Components\TextInput::make('population_real_value')
-                    ->numeric(),
-                Forms\Components\TextInput::make('product_target_value')
-                    ->numeric(),
-                Forms\Components\TextInput::make('product_real_value')
-                    ->numeric(),
-                Forms\Components\DateTimePicker::make('snapshot_date')
-                    ->required(),
+                Forms\Components\Section::make('Información de la métrica publicada')
+                    ->schema([
+                        Forms\Components\TextInput::make('unit')->label('Unidad'),
+                        Forms\Components\TextInput::make('year')->label('Año')->numeric(),
+                        Forms\Components\TextInput::make('month')->label('Mes')->numeric(),
+                        Forms\Components\TextInput::make('population_target_value')->label('Meta población')->numeric(),
+                        Forms\Components\TextInput::make('population_real_value')->label('Valor real población')->numeric(),
+                        Forms\Components\TextInput::make('product_target_value')->label('Meta producto')->numeric(),
+                        Forms\Components\TextInput::make('product_real_value')->label('Valor real producto')->numeric(),
+                    ])
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('publication.id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('originalMetric.id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('activity.name')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('unit')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('year')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('month')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('population_target_value')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('population_real_value')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('product_target_value')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('product_real_value')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('snapshot_date')
-                    ->dateTime()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
+                Tables\Columns\TextColumn::make('unit')->label('Unidad'),
+                Tables\Columns\TextColumn::make('year')->label('Año'),
+                Tables\Columns\TextColumn::make('month')->label('Mes'),
+                Tables\Columns\TextColumn::make('population_target_value')->label('Meta población'),
+                Tables\Columns\TextColumn::make('population_real_value')->label('Valor real población'),
+                Tables\Columns\TextColumn::make('product_target_value')->label('Meta producto'),
+                Tables\Columns\TextColumn::make('product_real_value')->label('Valor real producto'),
             ])
             ->filters([
-                //
-            ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Puedes agregar filtros aquí
             ]);
     }
 

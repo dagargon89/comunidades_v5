@@ -474,20 +474,11 @@ class ProjectCreationGuide extends Page
             ->send();
     }
 
-    // Métodos para el modal de resumen
-    public function saveProject()
+    // Fase 1: Guardar solo el proyecto y retornar el ID
+    public function saveProjectOnly()
     {
         try {
-            DB::beginTransaction();
-
             $projectData = $this->projectData ?? [];
-            $objectivesData = $this->objectivesData ?? [];
-            $kpisData = $this->kpisData ?? [];
-            $locationsData = $this->locationsData ?? [];
-            $activitiesData = $this->activitiesData ?? [];
-            $scheduledActivitiesData = $this->scheduledActivitiesData ?? [];
-
-            // Crear proyecto
             $project = Project::create([
                 'name' => $projectData['name'] ?? '',
                 'description' => $projectData['description'] ?? '',
@@ -503,52 +494,82 @@ class ProjectCreationGuide extends Page
                 'followup_officer' => $projectData['followup_officer'] ?? '',
                 'created_by' => auth()->id(),
             ]);
+            $this->project_id = $project->id;
+            Notification::make()->title('Proyecto guardado exitosamente')->success()->send();
+            return $project->id;
+        } catch (\Exception $e) {
+            Notification::make()->title('Error al guardar el proyecto')->body($e->getMessage())->danger()->send();
+            return null;
+        }
+    }
 
-            // Crear objetivos específicos
-            foreach ($objectivesData as $objective) {
-                SpecificObjective::create([
+    // Fase 2: Guardar los datos relacionados usando el ID del proyecto
+    public function saveProjectRelations($projectId)
+    {
+        try {
+            $objectivesData = $this->objectivesData ?? [];
+            $kpisData = $this->kpisData ?? [];
+            $locationsData = $this->locationsData ?? [];
+            $activitiesData = $this->activitiesData ?? [];
+            $scheduledActivitiesData = $this->scheduledActivitiesData ?? [];
+
+            // Guardar objetivos específicos y mapear sus IDs
+            $objectiveIdMap = [];
+            foreach ($objectivesData as $idx => $objective) {
+                $obj = SpecificObjective::create([
                     'name' => $objective['name'] ?? '',
                     'description' => $objective['description'] ?? '',
-                    'project_id' => $project->id,
+                    'projects_id' => $projectId,
                     'created_by' => auth()->id(),
                 ]);
+                $objectiveIdMap[$idx] = $obj->id;
             }
+            Notification::make()->title('Objetivos guardados')->success()->send();
 
-            // Crear KPIs
+            // Guardar KPIs
             foreach ($kpisData as $kpi) {
                 Kpi::create([
                     'name' => $kpi['name'] ?? '',
                     'description' => $kpi['description'] ?? '',
-                    'target' => $kpi['target'] ?? 0,
-                    'project_id' => $project->id,
-                    'created_by' => auth()->id(),
+                    'initial_value' => $kpi['initial_value'] ?? 0,
+                    'final_value' => $kpi['final_value'] ?? 0,
+                    'projects_id' => $projectId,
+                    'is_percentage' => $kpi['is_percentage'] ?? 0,
+                    'org_area' => $kpi['org_area'] ?? null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             }
+            Notification::make()->title('KPIs guardados')->success()->send();
 
-            // Crear ubicaciones
+            // Guardar ubicaciones
             foreach ($locationsData as $location) {
                 Location::create([
                     'name' => $location['name'] ?? '',
                     'description' => $location['description'] ?? '',
-                    'project_id' => $project->id,
+                    'project_id' => $projectId,
                     'created_by' => auth()->id(),
                 ]);
             }
+            Notification::make()->title('Ubicaciones guardadas')->success()->send();
 
-            // Crear actividades
+            // Guardar actividades usando el ID real del objetivo específico
             $activityIds = [];
             foreach ($activitiesData as $activity) {
+                // El campo specific_objective_id debe ser el índice del objetivo en el array original
+                $realObjectiveId = isset($objectiveIdMap[$activity['specific_objective_id']]) ? $objectiveIdMap[$activity['specific_objective_id']] : null;
                 $newActivity = Activity::create([
                     'name' => $activity['name'] ?? '',
                     'description' => $activity['description'] ?? '',
-                    'specific_objective_id' => $activity['specific_objective_id'] ?? null,
+                    'specific_objective_id' => $realObjectiveId,
                     'goals_id' => $activity['goals_id'] ?? 1,
                     'created_by' => auth()->id(),
                 ]);
                 $activityIds[] = $newActivity->id;
             }
+            Notification::make()->title('Actividades guardadas')->success()->send();
 
-            // Crear programación de actividades
+            // Guardar programación de actividades
             foreach ($scheduledActivitiesData as $scheduled) {
                 ActivityCalendar::create([
                     'activity_id' => isset($scheduled['activity_id']) && isset($activityIds[$scheduled['activity_id']]) ? $activityIds[$scheduled['activity_id']] : 1,
@@ -557,8 +578,7 @@ class ProjectCreationGuide extends Page
                     'created_by' => auth()->id(),
                 ]);
             }
-
-            DB::commit();
+            Notification::make()->title('Programación guardada')->success()->send();
 
             // Limpiar datos temporales
             Session::forget([
@@ -571,16 +591,26 @@ class ProjectCreationGuide extends Page
                 'project_creation_guide.scheduled_activities',
             ]);
 
-            Notification::make()
-                ->title('Proyecto guardado exitosamente')
-                ->success()
-                ->send();
-
-            // Redirigir a la lista de proyectos
-            return redirect()->route('filament.admin.resources.projects.index');
+            Notification::make()->title('¡Proyecto completo!')->success()->send();
+            return true;
         } catch (\Exception $e) {
-            DB::rollBack();
+            Notification::make()->title('Error al guardar relaciones')->body($e->getMessage())->danger()->send();
+            return false;
+        }
+    }
 
+    // Métodos para el modal de resumen
+    public function saveProject()
+    {
+        try {
+            // Fase 1: Guardar solo el proyecto y obtener el ID
+            $projectId = $this->saveProjectOnly();
+            if (!$projectId) {
+                return;
+            }
+            // Fase 2: Guardar los datos relacionados usando el ID
+            $this->saveProjectRelations($projectId);
+        } catch (\Exception $e) {
             Notification::make()
                 ->title('Error al guardar el proyecto')
                 ->body($e->getMessage())

@@ -171,19 +171,21 @@ class ProjectWizard extends Page
                     ]),
                 Step::make('Actividades')
                     ->schema([
+                        // Mostrar mensaje si no hay objetivos
+                        Placeholder::make('no_objectives')
+                            ->content('Debes agregar al menos un objetivo específico antes de agregar actividades.')
+                            ->visible(fn() => empty($this->formData['objectives'])),
                         Repeater::make('activities')
                             ->schema([
                                 TextInput::make('name')
                                     ->label('Nombre de la Actividad'),
                                 Select::make('specific_objective_id')
                                     ->label('Objetivo Específico')
-                                    ->options(fn($get) => collect($this->formData['objectives'] ?? [])
-                                        ->mapWithKeys(fn($obj, $idx) => [
-                                            $idx => isset($obj['description']) && $obj['description'] !== null
-                                                ? (string) $obj['description']
-                                                : 'Sin descripción'
-                                        ])->toArray())
-                                    ->searchable(),
+                                    ->options(fn() => collect($this->formData['objectives'] ?? [])
+                                        ->mapWithKeys(fn($obj, $idx) => [$idx => $obj['description'] ?? 'Sin descripción'])
+                                        ->toArray())
+                                    ->searchable()
+                                    ->required(),
                                 Textarea::make('description')
                                     ->label('Descripción')
                                     ->rows(3),
@@ -198,7 +200,8 @@ class ProjectWizard extends Page
                             ->addActionLabel('Agregar Actividad')
                             ->reorderable()
                             ->collapsible()
-                            ->itemLabel(fn(array $state): ?string => $state['name'] ?? null),
+                            ->itemLabel(fn(array $state): ?string => $state['name'] ?? null)
+                            ->disabled(fn() => empty($this->formData['objectives'])),
                     ]),
                 Step::make('Resumen')
                     ->schema([
@@ -226,13 +229,10 @@ class ProjectWizard extends Page
     {
         try {
             $data = $this->form->getState()['formData'];
-            // Depuración: loguea los datos antes de guardar
             Log::info('Datos recibidos en ProjectWizard:', $data);
-            // Validación personalizada si es necesario
-            // Puedes agregar reglas aquí si lo requieres
-            // DB::beginTransaction();
             DB::beginTransaction();
-            // Guardar proyecto principal y relaciones
+
+            // 1. Guardar proyecto principal
             $project = \App\Models\Project::create([
                 'name' => $data['project']['name'] ?? '',
                 'financiers_id' => $data['project']['financiers_id'] ?? null,
@@ -249,7 +249,7 @@ class ProjectWizard extends Page
                 'created_by' => Auth::id(),
             ]);
 
-            // Guardar objetivos específicos
+            // 2. Guardar objetivos específicos y mapear índices temporales a IDs reales
             $objectiveIdMap = [];
             if (!empty($data['objectives'])) {
                 foreach ($data['objectives'] as $idx => $objective) {
@@ -262,7 +262,32 @@ class ProjectWizard extends Page
                 }
             }
 
-            // Guardar KPIs
+            // 3. Guardar actividades usando los IDs reales de los objetivos
+            if (!empty($data['activities'])) {
+                foreach ($data['activities'] as $activity) {
+                    // Validar que el objetivo específico exista
+                    if (!isset($activity['specific_objective_id']) || !array_key_exists($activity['specific_objective_id'], $objectiveIdMap)) {
+                        Notification::make()
+                            ->title('Error de validación')
+                            ->body('Cada actividad debe estar asociada a un objetivo específico válido.')
+                            ->danger()
+                            ->send();
+                        DB::rollBack();
+                        return;
+                    }
+                    \App\Models\Activity::create([
+                        'name' => $activity['name'] ?? '',
+                        'description' => $activity['description'] ?? '',
+                        'specific_objective_id' => $objectiveIdMap[$activity['specific_objective_id']],
+                        'projects_id' => $project->id,
+                        'population_target_value' => $activity['population_target_value'] ?? 0,
+                        'product_target_value' => $activity['product_target_value'] ?? 0,
+                        'created_by' => Auth::id(),
+                    ]);
+                }
+            }
+
+            // 4. Guardar KPIs usando el ID del proyecto
             if (!empty($data['kpis'])) {
                 foreach ($data['kpis'] as $kpi) {
                     \App\Models\Kpi::create([
@@ -278,26 +303,10 @@ class ProjectWizard extends Page
                 }
             }
 
-            // Guardar actividades
-            if (!empty($data['activities'])) {
-                foreach ($data['activities'] as $activity) {
-                    \App\Models\Activity::create([
-                        'name' => $activity['name'] ?? '',
-                        'description' => $activity['description'] ?? '',
-                        'specific_objective_id' => isset($objectiveIdMap[$activity['specific_objective_id']]) ? $objectiveIdMap[$activity['specific_objective_id']] : null,
-                        'projects_id' => $project->id,
-                        'population_target_value' => $activity['population_target_value'] ?? 0,
-                        'product_target_value' => $activity['product_target_value'] ?? 0,
-                        'created_by' => Auth::id(),
-                    ]);
-                }
-            }
-
             DB::commit();
             $this->form->fill(['formData' => []]);
             Notification::make()->title('Proyecto guardado exitosamente')->success()->send();
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Muestra errores de validación
             Notification::make()->title('Error de validación')->body(implode("\n", $e->validator->errors()->all()))->danger()->send();
             throw $e;
         } catch (\Exception $e) {

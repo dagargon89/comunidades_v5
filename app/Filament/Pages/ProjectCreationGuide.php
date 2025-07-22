@@ -474,6 +474,28 @@ class ProjectCreationGuide extends Page
             ->send();
     }
 
+    // Eliminar cofinanciador
+    public function removeCofinancier($idx)
+    {
+        if (isset($this->cofinanciersData[$idx])) {
+            unset($this->cofinanciersData[$idx]);
+            $this->cofinanciersData = array_values($this->cofinanciersData); // Reindexar
+            $this->saveTemporaryData();
+            \Filament\Notifications\Notification::make()->title('Cofinanciador eliminado')->success()->send();
+        }
+    }
+
+    // Eliminar planned metric de una actividad
+    public function removePlannedMetric($activityIdx, $metricIdx)
+    {
+        if (isset($this->activitiesData[$activityIdx]['planned_metrics'][$metricIdx])) {
+            unset($this->activitiesData[$activityIdx]['planned_metrics'][$metricIdx]);
+            $this->activitiesData[$activityIdx]['planned_metrics'] = array_values($this->activitiesData[$activityIdx]['planned_metrics']);
+            $this->saveTemporaryData();
+            \Filament\Notifications\Notification::make()->title('Métrica planeada eliminada')->success()->send();
+        }
+    }
+
     // Fase 1: Guardar solo el proyecto y retornar el ID
     public function saveProjectOnly()
     {
@@ -481,17 +503,18 @@ class ProjectCreationGuide extends Page
             $projectData = $this->projectData ?? [];
             $project = Project::create([
                 'name' => $projectData['name'] ?? '',
-                'description' => $projectData['description'] ?? '',
-                'financiers_id' => $projectData['financiers_id'] ?? 1,
-                'general_objective' => $projectData['general_objective'] ?? '',
                 'background' => $projectData['background'] ?? '',
                 'justification' => $projectData['justification'] ?? '',
-                'start_date' => $projectData['start_date'] ?? now(),
-                'end_date' => $projectData['end_date'] ?? now(),
+                'general_objective' => $projectData['general_objective'] ?? '',
+                'financiers_id' => $projectData['financiers_id'] ?? 1,
+                'start_date' => !empty($projectData['start_date']) ? $projectData['start_date'] : null,
+                'end_date' => !empty($projectData['end_date']) ? $projectData['end_date'] : null,
                 'total_cost' => $projectData['total_cost'] ?? 0,
                 'funded_amount' => $projectData['funded_amount'] ?? 0,
+                'cofunding_amount' => $projectData['cofunding_amount'] ?? 0,
                 'monthly_disbursement' => $projectData['monthly_disbursement'] ?? 0,
                 'followup_officer' => $projectData['followup_officer'] ?? '',
+                'co_financier_id' => $projectData['co_financier_id'] ?? null,
                 'created_by' => auth()->id(),
             ]);
             $this->project_id = $project->id;
@@ -553,10 +576,10 @@ class ProjectCreationGuide extends Page
             }
             Notification::make()->title('Ubicaciones guardadas')->success()->send();
 
-            // Guardar actividades usando el ID real del objetivo específico
+            // Guardar actividades y planned metrics
             $activityIds = [];
-            foreach ($activitiesData as $activity) {
-                // El campo specific_objective_id debe ser el índice del objetivo en el array original
+            $plannedMetricsData = [];
+            foreach ($activitiesData as $idx => $activity) {
                 $realObjectiveId = isset($objectiveIdMap[$activity['specific_objective_id']]) ? $objectiveIdMap[$activity['specific_objective_id']] : null;
                 $newActivity = Activity::create([
                     'name' => $activity['name'] ?? '',
@@ -565,9 +588,20 @@ class ProjectCreationGuide extends Page
                     'goals_id' => $activity['goals_id'] ?? 1,
                     'created_by' => auth()->id(),
                 ]);
-                $activityIds[] = $newActivity->id;
+                $activityIds[$idx] = $newActivity->id;
+                // Guardar planned metrics asociadas a la actividad
+                if (!empty($activity['planned_metrics']) && is_array($activity['planned_metrics'])) {
+                    foreach ($activity['planned_metrics'] as $metric) {
+                        $plannedMetric = \App\Models\PlannedMetric::create([
+                            'activity_id' => $newActivity->id,
+                            'population_target_value' => $metric['population_target_value'] ?? 0,
+                            'product_target_value' => $metric['product_target_value'] ?? 0,
+                        ]);
+                        $plannedMetricsData[] = $plannedMetric;
+                    }
+                }
             }
-            Notification::make()->title('Actividades guardadas')->success()->send();
+            Notification::make()->title('Actividades y métricas planeadas guardadas')->success()->send();
 
             // Guardar programación de actividades
             foreach ($scheduledActivitiesData as $scheduled) {

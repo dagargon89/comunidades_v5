@@ -11,12 +11,13 @@
         <x-filament::section>
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Cofinanciadores agregados</h3>
             <div class="space-y-3">
-                @foreach($cofinanciersData as $cofinancier)
+                @foreach($cofinanciersData as $idx => $cofinancier)
                     <div class="flex justify-between items-center border-b border-gray-200 pb-2">
                         <span class="text-gray-900 dark:text-white">
                             {{ \App\Models\Financier::find($cofinancier['financier_id'])->name ?? 'N/A' }}
                         </span>
                         <span class="text-green-600 font-medium">${{ number_format($cofinancier['amount'], 2) }}</span>
+                        <x-filament::button color="danger" size="sm" wire:click="removeCofinancier({{ $idx }})">Eliminar</x-filament::button>
                     </div>
                 @endforeach
             </div>
@@ -147,13 +148,29 @@
                 <x-filament::card>
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Actividades</h3>
                     <div class="space-y-3">
-                        @foreach($activitiesData as $activity)
-                            <div class="border-l-4 border-purple-500 pl-4">
+                        @foreach($activitiesData as $aIdx => $activity)
+                            <div class="border-l-4 border-purple-500 pl-4 mb-2">
                                 <h4 class="font-medium text-gray-900 dark:text-white">{{ $activity['name'] }}</h4>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm">{{ $activity['description'] }}</p>
                                 <p class="text-purple-600 text-sm">
                                     Objetivo: {{ \App\Models\SpecificObjective::find($activity['specific_objective_id'])->description ?? 'N/A' }}
                                 </p>
+                                {{-- Mostrar planned metrics asociadas --}}
+                                @if(isset($activity['planned_metrics']) && is_array($activity['planned_metrics']) && count($activity['planned_metrics']) > 0)
+                                    <div class="mt-2 ml-2">
+                                        <h5 class="font-semibold text-sm text-gray-700 dark:text-gray-200 mb-1">Métricas planeadas:</h5>
+                                        <ul class="list-disc ml-4">
+                                            @foreach($activity['planned_metrics'] as $mIdx => $metric)
+                                                <li class="flex items-center justify-between">
+                                                    <span>
+                                                        Población: {{ $metric['population_target_value'] ?? '-' }}, Producto: {{ $metric['product_target_value'] ?? '-' }}
+                                                    </span>
+                                                    <x-filament::button color="danger" size="xs" wire:click="removePlannedMetric({{ $aIdx }}, {{ $mIdx }})">Eliminar</x-filament::button>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
                             </div>
                         @endforeach
                     </div>

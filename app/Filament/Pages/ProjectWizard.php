@@ -23,6 +23,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Filament\Forms\Components\Hidden;
 
 class ProjectWizard extends Page
 {
@@ -133,8 +135,11 @@ class ProjectWizard extends Page
                     ->schema([
                         Repeater::make('objectives')
                             ->schema([
+                                Hidden::make('uuid')
+                                    ->default(fn () => (string) Str::uuid()),
                                 Textarea::make('description')
                                     ->label('Descripción del Objetivo')
+                                    ->required()
                                     ->rows(3),
                             ])
                             ->addActionLabel('Agregar Objetivo')
@@ -181,8 +186,8 @@ class ProjectWizard extends Page
                                     ->label('Nombre de la Actividad'),
                                 Select::make('specific_objective_id')
                                     ->label('Objetivo Específico')
-                                    ->options(fn() => collect($this->formData['objectives'] ?? [])
-                                        ->mapWithKeys(fn($obj, $idx) => [$idx => $obj['description'] ?? 'Sin descripción'])
+                                    ->options(fn () => collect($this->formData['objectives'] ?? [])
+                                        ->mapWithKeys(fn($obj) => [$obj['uuid'] => $obj['description'] ?? 'Sin descripción'])
                                         ->toArray())
                                     ->searchable()
                                     ->required(),
@@ -254,36 +259,33 @@ class ProjectWizard extends Page
                 'created_by' => Auth::id(),
             ]);
 
-            // 2. Guardar objetivos específicos y mapear índices temporales a IDs reales
-            $objectiveIdMap = [];
+            // 2. Guardar objetivos y mapear UUID a ID real
+            $objectiveUuidMap = [];
             if (!empty($data['objectives'])) {
-                foreach ($data['objectives'] as $idx => $objective) {
+                foreach ($data['objectives'] as $objective) {
                     $obj = \App\Models\SpecificObjective::create([
                         'description' => $objective['description'] ?? '',
                         'projects_id' => $project->id,
                         'created_by' => Auth::id(),
                     ]);
-                    $objectiveIdMap[$idx] = $obj->id;
+                    $objectiveUuidMap[$objective['uuid']] = $obj->id;
                 }
             }
 
             // ACTUALIZAR LAS ACTIVIDADES CON EL ID REAL DEL OBJETIVO
             if (!empty($data['activities'])) {
                 foreach ($data['activities'] as &$activity) {
-                    $idx = $activity['specific_objective_id'];
-                    // Si el valor no es numérico, intenta buscar el índice correspondiente
-                    if (!is_numeric($idx)) {
-                        // Buscar el índice por descripción (fallback)
-                        foreach ($data['objectives'] as $i => $obj) {
-                            if ((isset($obj['description']) && isset($activity['specific_objective_id']) && $obj['description'] === $activity['specific_objective_id']) || (isset($obj['uuid']) && $obj['uuid'] === $activity['specific_objective_id'])) {
-                                $idx = $i;
-                                break;
-                            }
-                        }
-                    }
-                    $idx = (int) $idx;
-                    if (isset($objectiveIdMap[$idx])) {
-                        $activity['specific_objective_id'] = $objectiveIdMap[$idx];
+                    $uuid = $activity['specific_objective_id'];
+                    if (isset($objectiveUuidMap[$uuid])) {
+                        $activity['specific_objective_id'] = $objectiveUuidMap[$uuid];
+                    } else {
+                        Notification::make()
+                            ->title('Error de validación')
+                            ->body('No se pudo asociar la actividad a un objetivo específico válido. Por favor, revisa que cada actividad tenga un objetivo seleccionado.')
+                            ->danger()
+                            ->send();
+                        DB::rollBack();
+                        return;
                     }
                 }
                 unset($activity); // Rompe la referencia

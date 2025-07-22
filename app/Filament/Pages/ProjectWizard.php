@@ -90,10 +90,8 @@ class ProjectWizard extends Page
                                 ->searchable(),
                         ]),
                         Grid::make(3)->schema([
-                            Select::make('project.followup_officer')
-                                ->label('Encargado de seguimiento')
-                                ->options(User::pluck('name', 'id'))
-                                ->searchable(),
+                            TextInput::make('project.followup_officer')
+                                ->label('Encargado de seguimiento'),
                         ]),
                         Grid::make(3)->schema([
                             Textarea::make('project.general_objective')

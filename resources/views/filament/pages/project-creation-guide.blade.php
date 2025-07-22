@@ -39,22 +39,17 @@
                 </p>
                 <x-filament::button
                     wire:click="showSummary"
-                    color="success"
+                    color="primary"
                     size="lg">
-                    Ver Resumen y Guardar
+                    Mostrar resumen
                 </x-filament::button>
             </div>
         </x-filament::section>
     @endif
 
-    {{-- Modal de Resumen --}}
-    <x-filament::modal wire:model="showSummaryModal">
-        <x-slot name="header">
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                Resumen del Proyecto
-            </h2>
-        </x-slot>
-
+    {{-- Tabla/resumen fijo en la parte inferior de la página --}}
+    <div class="mt-10">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Resumen del Proyecto</h2>
         <div class="space-y-6">
             {{-- Información del Proyecto --}}
             @if($projectData)
@@ -203,25 +198,5 @@
                 </x-filament::card>
             @endif
         </div>
-
-        <x-slot name="footer">
-            <div class="flex justify-end space-x-4">
-                <x-filament::button
-                    wire:click="closeSummary"
-                    color="gray">
-                    Cancelar
-                </x-filament::button>
-                <x-filament::button
-                    wire:click="editProject"
-                    color="warning">
-                    Editar
-                </x-filament::button>
-                <x-filament::button
-                    wire:click="saveProject"
-                    color="success">
-                    Confirmar y Guardar
-                </x-filament::button>
-            </div>
-        </x-slot>
-    </x-filament::modal>
+    </div>
 </x-filament-panels::page>

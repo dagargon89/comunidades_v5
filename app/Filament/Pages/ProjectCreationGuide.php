@@ -48,6 +48,7 @@ class ProjectCreationGuide extends Page
     public $activitiesData = [];
     public $locationsData = [];
     public $scheduledActivitiesData = [];
+    public $showSummaryModal = false;
 
     public function mount()
     {
@@ -230,12 +231,6 @@ class ProjectCreationGuide extends Page
                                     }),
                             ])->alignRight(),
                         ]),
-                    Actions::make([
-                        Action::make('saveProject')
-                            ->label($this->projectData ? 'Actualizar Proyecto' : 'Guardar Proyecto')
-                            ->color($this->projectData ? 'warning' : 'primary')
-                            ->action('saveProjectData'),
-                    ])->alignRight(),
                 ])
                 ->collapsible(false),
 
@@ -253,12 +248,6 @@ class ProjectCreationGuide extends Page
                         ->reorderable()
                         ->collapsible()
                         ->itemLabel(fn(array $state): ?string => $state['description'] ?? null),
-                    Actions::make([
-                        Action::make('saveObjectives')
-                            ->label('Guardar Objetivos')
-                            ->color('primary')
-                            ->action('saveObjectivesData'),
-                    ])->alignRight(),
                 ])
                 ->collapsible()
                 ->collapsed(false),
@@ -293,12 +282,6 @@ class ProjectCreationGuide extends Page
                         ->reorderable()
                         ->collapsible()
                         ->itemLabel(fn(array $state): ?string => $state['name'] ?? null),
-                    Actions::make([
-                        Action::make('saveKpis')
-                            ->label('Guardar KPIs')
-                            ->color('primary')
-                            ->action('saveKpisData'),
-                    ])->alignRight(),
                 ])
                 ->collapsible()
                 ->collapsed(false),
@@ -365,12 +348,6 @@ class ProjectCreationGuide extends Page
                         ->reorderable()
                         ->collapsible()
                         ->itemLabel(fn(array $state): ?string => $state['name'] ?? null),
-                    Actions::make([
-                        Action::make('saveActivities')
-                            ->label('Guardar Actividades')
-                            ->color('primary')
-                            ->action('saveActivitiesData'),
-                    ])->alignRight(),
                 ])
                 ->collapsible()
                 ->collapsed(false),
@@ -634,6 +611,17 @@ class ProjectCreationGuide extends Page
     }
 
     // Métodos para el modal de resumen
+    public function showSummary()
+    {
+        $this->loadTemporaryData(); // Refresca los datos antes de mostrar
+        $this->showSummaryModal = true;
+    }
+
+    public function closeSummary()
+    {
+        $this->showSummaryModal = false;
+    }
+
     public function saveProject()
     {
         try {

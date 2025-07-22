@@ -25,9 +25,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\Hidden;
-use App\Models\Component;
-use App\Models\ActionLine;
-use App\Models\Program;
 
 class ProjectWizard extends Page
 {
@@ -187,64 +184,44 @@ class ProjectWizard extends Page
                             ->collapsible()
                             ->itemLabel(fn(array $state): ?string => $state['name'] ?? null),
                     ]),
-                Step::make('Metas y Actividades')
+                Step::make('Actividades')
                     ->schema([
-                        Repeater::make('goals')
-                            ->label('Metas del Proyecto')
+                        // Mostrar mensaje si no hay objetivos
+                        Placeholder::make('no_objectives')
+                            ->content('Debes agregar al menos un objetivo específico antes de agregar actividades.')
+                            ->visible(fn() => empty($this->formData['objectives'])),
+                        Repeater::make('activities')
                             ->schema([
-                                Grid::make(3)->schema([
-                                    Select::make('components_id')
-                                        ->label('Componente')
-                                        ->options(Component::pluck('name', 'id'))
-                                        ->reactive(),
-                                    Select::make('action_lines_id')
-                                        ->label('Línea de Acción')
-                                        ->options(function (callable $get) {
-                                            $componentId = $get('components_id');
-                                            if (!$componentId) return [];
-                                            return ActionLine::where('id', Component::find($componentId)?->action_lines_id)
-                                                ->pluck('name', 'id');
-                                        })
-                                        ->reactive(),
-                                    Select::make('program_id')
-                                        ->label('Programa')
-                                        ->options(function (callable $get) {
-                                            $actionLineId = $get('action_lines_id');
-                                            if (!$actionLineId) return [];
-                                            $actionLine = ActionLine::find($actionLineId);
-                                            if (!$actionLine) return [];
-                                            return Program::where('id', $actionLine->program_id)
-                                                ->pluck('name', 'id');
-                                        }),
-                                ]),
+                                TextInput::make('name')
+                                    ->label('Nombre de la Actividad'),
+                                Select::make('specific_objective_id')
+                                    ->label('Objetivo Específico')
+                                    ->options(fn () => collect($this->formData['objectives'] ?? [])
+                                        ->mapWithKeys(fn($obj) => [$obj['uuid'] => $obj['description'] ?? 'Sin descripción'])
+                                        ->toArray())
+                                    ->searchable()
+                                    ->required(),
+                                Select::make('goals_id')
+                                    ->label('Meta')
+                                    ->options(\App\Models\Goal::pluck('description', 'id'))
+                                    ->searchable()
+                                    ->required(),
                                 Textarea::make('description')
-                                    ->label('Descripción de la Meta')
-                                    ->required()
-                                    ->rows(2),
-                                Repeater::make('activities')
-                                    ->label('Actividades para esta meta')
-                                    ->schema([
-                                        TextInput::make('name')->label('Nombre de la Actividad')->required(),
-                                        Select::make('specific_objective_id')
-                                            ->label('Objetivo Específico')
-                                            ->options(fn () => collect($this->formData['objectives'] ?? [])
-                                                ->mapWithKeys(fn($obj) => [$obj['uuid'] => $obj['description'] ?? 'Sin descripción'])
-                                                ->toArray())
-                                            ->searchable()
-                                            ->required(),
-                                        Textarea::make('description')->label('Descripción')->rows(2),
-                                        TextInput::make('population_target_value')->label('Meta de Población')->numeric(),
-                                        TextInput::make('product_target_value')->label('Meta de Producto')->numeric(),
-                                    ])
-                                    ->addActionLabel('Agregar Actividad')
-                                    ->reorderable()
-                                    ->collapsible()
-                                    ->itemLabel(fn(array $state): ?string => $state['name'] ?? null),
+                                    ->label('Descripción')
+                                    ->rows(3),
+                                // Planned metrics como campos simples
+                                TextInput::make('population_target_value')
+                                    ->label('Meta de Población')
+                                    ->numeric(),
+                                TextInput::make('product_target_value')
+                                    ->label('Meta de Producto')
+                                    ->numeric(),
                             ])
-                            ->addActionLabel('Agregar Meta')
+                            ->addActionLabel('Agregar Actividad')
                             ->reorderable()
                             ->collapsible()
-                            ->itemLabel(fn(array $state): ?string => $state['description'] ?? null),
+                            ->itemLabel(fn(array $state): ?string => $state['name'] ?? null)
+                            ->disabled(fn() => empty($this->formData['objectives'])),
                     ]),
                 Step::make('Resumen')
                     ->schema([

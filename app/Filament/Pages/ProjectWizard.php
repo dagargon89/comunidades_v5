@@ -297,7 +297,7 @@ class ProjectWizard extends Page
                 'created_by' => Auth::id(),
             ]);
 
-            // 2. Guardar objetivos y mapear UUID a ID real
+            // 2. Guardar objetivos específicos y mapear UUID a ID real
             $objectiveUuidMap = [];
             if (!empty($data['objectives'])) {
                 foreach ($data['objectives'] as $objective) {
@@ -310,48 +310,33 @@ class ProjectWizard extends Page
                 }
             }
 
-            // ACTUALIZAR LAS ACTIVIDADES CON EL ID REAL DEL OBJETIVO
-            if (!empty($data['activities'])) {
-                foreach ($data['activities'] as &$activity) {
-                    $uuid = $activity['specific_objective_id'];
-                    if (isset($objectiveUuidMap[$uuid])) {
-                        $activity['specific_objective_id'] = $objectiveUuidMap[$uuid];
-                    } else {
-                        Notification::make()
-                            ->title('Error de validación')
-                            ->body('No se pudo asociar la actividad a un objetivo específico válido. Por favor, revisa que cada actividad tenga un objetivo seleccionado.')
-                            ->danger()
-                            ->send();
-                        DB::rollBack();
-                        return;
-                    }
-                }
-                unset($activity); // Rompe la referencia
-            }
-
-            // 3. Guardar actividades usando los IDs reales de los objetivos
-            if (!empty($data['activities'])) {
-                foreach ($data['activities'] as $activity) {
-                    // Validar que el objetivo específico exista
-                    if (!isset($activity['specific_objective_id']) || empty($activity['specific_objective_id'])) {
-                        Notification::make()
-                            ->title('Error de validación')
-                            ->body('Cada actividad debe estar asociada a un objetivo específico válido.')
-                            ->danger()
-                            ->send();
-                        DB::rollBack();
-                        return;
-                    }
-                    \App\Models\Activity::create([
-                        'name' => $activity['name'] ?? '',
-                        'description' => $activity['description'] ?? '',
-                        'specific_objective_id' => $activity['specific_objective_id'],
-                        'goals_id' => $activity['goals_id'] ?? null,
-                        'projects_id' => $project->id,
-                        'population_target_value' => $activity['population_target_value'] ?? 0,
-                        'product_target_value' => $activity['product_target_value'] ?? 0,
-                        'created_by' => Auth::id(),
+            // 3. Guardar metas (goals) y actividades anidadas
+            if (!empty($data['goals'])) {
+                foreach ($data['goals'] as $goal) {
+                    $goalModel = \App\Models\Goal::create([
+                        'description' => $goal['description'] ?? '',
+                        'number' => $goal['number'] ?? null,
+                        'components_id' => $goal['components_id'] ?? null,
+                        'components_action_lines_id' => $goal['action_lines_id'] ?? null,
+                        'components_action_lines_program_id' => $goal['program_id'] ?? null,
+                        'organizations_id' => $goal['organizations_id'] ?? 1, // Ajusta si tienes organizaciones
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ]);
+                    // Guardar actividades asociadas a la meta
+                    if (!empty($goal['activities'])) {
+                        foreach ($goal['activities'] as $activity) {
+                            $uuid = $activity['specific_objective_id'] ?? null;
+                            $specificObjectiveId = $uuid && isset($objectiveUuidMap[$uuid]) ? $objectiveUuidMap[$uuid] : null;
+                            \App\Models\Activity::create([
+                                'name' => $activity['name'] ?? '',
+                                'description' => $activity['description'] ?? '',
+                                'specific_objective_id' => $specificObjectiveId,
+                                'goals_id' => $goalModel->id,
+                                'created_by' => Auth::id(),
+                            ]);
+                        }
+                    }
                 }
             }
 

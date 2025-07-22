@@ -265,8 +265,20 @@ class ProjectWizard extends Page
             // ACTUALIZAR LAS ACTIVIDADES CON EL ID REAL DEL OBJETIVO
             if (!empty($data['activities'])) {
                 foreach ($data['activities'] as &$activity) {
-                    if (isset($activity['specific_objective_id']) && isset($objectiveIdMap[$activity['specific_objective_id']])) {
-                        $activity['specific_objective_id'] = $objectiveIdMap[$activity['specific_objective_id']];
+                    $idx = $activity['specific_objective_id'];
+                    // Si el valor no es numérico, intenta buscar el índice correspondiente
+                    if (!is_numeric($idx)) {
+                        // Buscar el índice por descripción (fallback)
+                        foreach ($data['objectives'] as $i => $obj) {
+                            if ((isset($obj['description']) && isset($activity['specific_objective_id']) && $obj['description'] === $activity['specific_objective_id']) || (isset($obj['uuid']) && $obj['uuid'] === $activity['specific_objective_id'])) {
+                                $idx = $i;
+                                break;
+                            }
+                        }
+                    }
+                    $idx = (int) $idx;
+                    if (isset($objectiveIdMap[$idx])) {
+                        $activity['specific_objective_id'] = $objectiveIdMap[$idx];
                     }
                 }
                 unset($activity); // Rompe la referencia

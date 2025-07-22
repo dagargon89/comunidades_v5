@@ -262,11 +262,21 @@ class ProjectWizard extends Page
                 }
             }
 
+            // ACTUALIZAR LAS ACTIVIDADES CON EL ID REAL DEL OBJETIVO
+            if (!empty($data['activities'])) {
+                foreach ($data['activities'] as &$activity) {
+                    if (isset($activity['specific_objective_id']) && isset($objectiveIdMap[$activity['specific_objective_id']])) {
+                        $activity['specific_objective_id'] = $objectiveIdMap[$activity['specific_objective_id']];
+                    }
+                }
+                unset($activity); // Rompe la referencia
+            }
+
             // 3. Guardar actividades usando los IDs reales de los objetivos
             if (!empty($data['activities'])) {
                 foreach ($data['activities'] as $activity) {
                     // Validar que el objetivo específico exista
-                    if (!isset($activity['specific_objective_id']) || !array_key_exists($activity['specific_objective_id'], $objectiveIdMap)) {
+                    if (!isset($activity['specific_objective_id']) || empty($activity['specific_objective_id'])) {
                         Notification::make()
                             ->title('Error de validación')
                             ->body('Cada actividad debe estar asociada a un objetivo específico válido.')
@@ -278,7 +288,7 @@ class ProjectWizard extends Page
                     \App\Models\Activity::create([
                         'name' => $activity['name'] ?? '',
                         'description' => $activity['description'] ?? '',
-                        'specific_objective_id' => $objectiveIdMap[$activity['specific_objective_id']],
+                        'specific_objective_id' => $activity['specific_objective_id'],
                         'projects_id' => $project->id,
                         'population_target_value' => $activity['population_target_value'] ?? 0,
                         'product_target_value' => $activity['product_target_value'] ?? 0,

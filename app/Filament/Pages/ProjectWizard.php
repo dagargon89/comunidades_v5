@@ -186,6 +186,11 @@ class ProjectWizard extends Page
                                         ->toArray())
                                     ->searchable()
                                     ->required(),
+                                Select::make('goals_id')
+                                    ->label('Meta')
+                                    ->options(\App\Models\Goal::pluck('description', 'id'))
+                                    ->searchable()
+                                    ->required(),
                                 Textarea::make('description')
                                     ->label('Descripción')
                                     ->rows(3),
@@ -301,6 +306,7 @@ class ProjectWizard extends Page
                         'name' => $activity['name'] ?? '',
                         'description' => $activity['description'] ?? '',
                         'specific_objective_id' => $activity['specific_objective_id'],
+                        'goals_id' => $activity['goals_id'] ?? null,
                         'projects_id' => $project->id,
                         'population_target_value' => $activity['population_target_value'] ?? 0,
                         'product_target_value' => $activity['product_target_value'] ?? 0,

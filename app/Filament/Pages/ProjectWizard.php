@@ -328,13 +328,15 @@ class ProjectWizard extends Page
                         foreach ($goal['activities'] as $activity) {
                             $uuid = $activity['specific_objective_id'] ?? null;
                             $specificObjectiveId = $uuid && isset($objectiveUuidMap[$uuid]) ? $objectiveUuidMap[$uuid] : null;
-                            \App\Models\Activity::create([
-                                'name' => $activity['name'] ?? '',
-                                'description' => $activity['description'] ?? '',
-                                'specific_objective_id' => $specificObjectiveId,
-                                'goals_id' => $goalModel->id,
-                                'created_by' => Auth::id(),
-                            ]);
+                                                    \App\Models\Activity::create([
+                            'name' => $activity['name'] ?? '',
+                            'description' => $activity['description'] ?? '',
+                            'specific_objective_id' => $specificObjectiveId,
+                            'goals_id' => $goalModel->id,
+                            'population_target_value' => $activity['population_target_value'] ?? 0,
+                            'product_target_value' => $activity['product_target_value'] ?? 0,
+                            'created_by' => Auth::id(),
+                        ]);
                         }
                     }
                 }

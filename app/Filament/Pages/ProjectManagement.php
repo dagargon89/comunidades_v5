@@ -25,6 +25,12 @@ class ProjectManagement extends Page implements Tables\Contracts\HasTable
     public function table(Table $table): Table
     {
         return $table
+            ->headerActions([
+                Tables\Actions\Action::make('create')
+                    ->label('Crear proyecto')
+                    ->icon('heroicon-o-plus')
+                    ->url(fn() => route('filament.admin.pages.asistente-proyectos')),
+            ])
             ->query(Project::query())
             ->columns([
                 Tables\Columns\TextColumn::make('name')->label('Nombre')->searchable(),
@@ -34,18 +40,10 @@ class ProjectManagement extends Page implements Tables\Contracts\HasTable
                 Tables\Columns\TextColumn::make('created_at')->label('Creado')->dateTime('d/m/Y H:i'),
             ])
             ->actions([
-                EditAction::make()
+                Tables\Actions\Action::make('edit')
                     ->label('Editar')
-                    ->form([
-                        TextInput::make('name')->label('Nombre')->required(),
-                        Select::make('financiers_id')
-                            ->label('Financiadora')
-                            ->options(\App\Models\Financier::pluck('name', 'id'))
-                            ->searchable()
-                            ->required(),
-                        DatePicker::make('start_date')->label('Inicio')->required(),
-                        DatePicker::make('end_date')->label('Fin')->required(),
-                    ]),
+                    ->icon('heroicon-o-pencil-square')
+                    ->url(fn(Project $record) => url('/admin/asistente-proyectos?edit=' . $record->id)),
                 DeleteAction::make()
                     ->label('Eliminar')
                     ->requiresConfirmation()
@@ -54,7 +52,6 @@ class ProjectManagement extends Page implements Tables\Contracts\HasTable
                     ->modalSubmitActionLabel('Sí, eliminar')
                     ->modalCancelActionLabel('Cancelar')
                     ->action(function (Project $record) {
-                        // Eliminar en cascada la información relacionada
                         $record->specificObjectives()->delete();
                         $record->kpis()->delete();
                         $record->goals()->each(function($goal) {

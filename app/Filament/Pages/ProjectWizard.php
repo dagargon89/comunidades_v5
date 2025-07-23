@@ -38,6 +38,7 @@ class ProjectWizard extends Page
     protected static ?string $title = 'Asistente de Proyectos';
     protected static ?string $slug = 'asistente-proyectos';
     protected static string $view = 'filament.pages.project-wizard';
+    public static function shouldRegisterNavigation(): bool { return false; }
 
     public $formData = [
         'project' => [
@@ -62,6 +63,73 @@ class ProjectWizard extends Page
 
     public function mount()
     {
+        $editId = request()->query('edit');
+        if ($editId) {
+            $project = \App\Models\Project::find($editId);
+            if ($project) {
+                // 1. Objetivos y KPIs
+                $objectives = \App\Models\SpecificObjective::where('projects_id', $project->id)->get();
+                $kpis = \App\Models\Kpi::where('projects_id', $project->id)->get();
+
+                // 2. Componentes del proyecto (ajusta la lógica según tu caso real)
+                $componentIds = \App\Models\Component::where('financiers_id', $project->financiers_id)->pluck('id');
+
+                // 3. Metas (goals) de esos componentes
+                $goals = \App\Models\Goal::whereIn('components_id', $componentIds)->get();
+
+                // 4. Para cada meta, cargar actividades
+                $goalsData = $goals->map(function($goal) {
+                    $activities = \App\Models\Activity::where('goals_id', $goal->id)->get();
+                    return [
+                        'description' => $goal->description,
+                        'number' => $goal->number,
+                        'components_id' => $goal->components_id,
+                        'action_lines_id' => $goal->components_action_lines_id,
+                        'program_id' => $goal->components_action_lines_program_id,
+                        'activities' => $activities->map(function($a) {
+                            return [
+                                'name' => $a->name,
+                                'specific_objective_id' => $a->specific_objective_id,
+                                'description' => $a->description,
+                                'population_target_value' => $a->population_target_value,
+                                'product_target_value' => $a->product_target_value,
+                            ];
+                        })->toArray(),
+                    ];
+                })->toArray();
+
+                $this->formData = [
+                    'project' => [
+                        'name' => $project->name,
+                        'financiers_id' => $project->financiers_id,
+                        'followup_officer' => $project->followup_officer,
+                        'general_objective' => $project->general_objective,
+                        'background' => $project->background,
+                        'justification' => $project->justification,
+                        'start_date' => $project->start_date,
+                        'end_date' => $project->end_date,
+                        'total_cost' => $project->total_cost,
+                        'funded_amount' => $project->funded_amount,
+                        'cofinancier_id' => $project->co_financier_id,
+                        'cofinancier_amount' => $project->cofunding_amount,
+                    ],
+                    'objectives' => $objectives->map(fn($o) => [
+                        'uuid' => (string) \Str::uuid(),
+                        'description' => $o->description,
+                    ])->toArray(),
+                    'kpis' => $kpis->map(fn($k) => [
+                        'name' => $k->name,
+                        'description' => $k->description,
+                        'initial_value' => $k->initial_value,
+                        'final_value' => $k->final_value,
+                        'is_percentage' => $k->is_percentage,
+                        'org_area' => $k->org_area,
+                    ])->toArray(),
+                    'goals' => $goalsData,
+                ];
+                return;
+            }
+        }
         $this->formData = session('project_wizard.formData', [
             'project' => [
                 'name' => '',
@@ -79,6 +147,7 @@ class ProjectWizard extends Page
             ],
             'objectives' => [],
             'kpis' => [],
+            'goals' => [],
             'activities' => [],
         ]);
     }

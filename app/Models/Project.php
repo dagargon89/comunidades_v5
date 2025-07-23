@@ -74,4 +74,19 @@ class Project extends Model
     {
         return $this->hasMany(\App\Models\PublishedProject::class, 'original_project_id');
     }
+
+    public function specificObjectives()
+    {
+        return $this->hasMany(\App\Models\SpecificObjective::class, 'projects_id');
+    }
+
+    public function kpis()
+    {
+        return $this->hasMany(\App\Models\Kpi::class, 'projects_id');
+    }
+
+    public function goals()
+    {
+        return $this->hasMany(\App\Models\Goal::class, 'projects_id');
+    }
 }

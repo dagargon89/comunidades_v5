@@ -43,6 +43,16 @@ class ProjectResource extends Resource
                             ->preload()
                             ->native(false)
                             ->required(),
+                        Forms\Components\Textarea::make('general_objective')
+                            ->label('Objetivo General')
+                            ->required()
+                            ->rows(3),
+                        Forms\Components\Textarea::make('background')
+                            ->label('Antecedentes')
+                            ->rows(3),
+                        Forms\Components\Textarea::make('justification')
+                            ->label('Justificación')
+                            ->rows(3),
                         Forms\Components\DatePicker::make('start_date')
                             ->label('Fecha de Inicio'),
                         Forms\Components\DatePicker::make('end_date')
@@ -65,6 +75,9 @@ class ProjectResource extends Resource
                             ->searchable()
                             ->preload()
                             ->native(false),
+                        Forms\Components\TextInput::make('followup_officer')
+                            ->label('Encargado de Seguimiento')
+                            ->maxLength(255),
                         Forms\Components\Select::make('created_by')
                             ->label('Creado por')
                             ->relationship('createdBy', 'name', fn($query) => $query->select('id', 'name'))
@@ -81,18 +94,48 @@ class ProjectResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('Nombre del Proyecto'),
-                Tables\Columns\TextColumn::make('financiers_id')->label('Financiador'),
-                Tables\Columns\TextColumn::make('start_date')->label('Fecha de Inicio'),
-                Tables\Columns\TextColumn::make('end_date')->label('Fecha de Fin'),
-                Tables\Columns\TextColumn::make('created_at')->label('Creado'),
-                Tables\Columns\TextColumn::make('updated_at')->label('Actualizado'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nombre del Proyecto')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('financiers.name')
+                    ->label('Financiador')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('start_date')
+                    ->label('Fecha de Inicio')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('end_date')
+                    ->label('Fecha de Fin')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('total_cost')
+                    ->label('Costo Total')
+                    ->money('MXN')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('funded_amount')
+                    ->label('Monto Financiado')
+                    ->money('MXN')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('followup_officer')
+                    ->label('Encargado de Seguimiento')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Creado')
+                    ->dateTime()
+                    ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('edit_in_wizard')
+                    ->label('Editar en Asistente')
+                    ->icon('heroicon-o-clipboard-document-list')
+                    ->color('warning')
+                    ->url(fn ($record) => route('filament.admin.pages.asistente-proyectos', ['edit' => $record->id]))
+                    ->openUrlInNewTab(false),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

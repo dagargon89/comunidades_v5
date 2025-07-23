@@ -87,6 +87,6 @@ class Project extends Model
 
     public function goals()
     {
-        return $this->hasMany(\App\Models\Goal::class, 'projects_id');
+        return $this->hasMany(\App\Models\Goal::class, 'project_id');
     }
 }

@@ -42,6 +42,14 @@ class ProjectWizard extends Page
     protected static string $view = 'filament.pages.project-wizard';
     public static function shouldRegisterNavigation(): bool { return false; }
 
+    public $isEditing = false;
+    public $editProjectId = null;
+
+    public function getTitle(): string
+    {
+        return $this->isEditing ? 'Editar Proyecto' : 'Crear Nuevo Proyecto';
+    }
+
     public $formData = [
         'project' => [
             'name' => '',
@@ -69,17 +77,17 @@ class ProjectWizard extends Page
         if ($editId) {
             $project = \App\Models\Project::find($editId);
             if ($project) {
+                $this->isEditing = true;
+                $this->editProjectId = $project->id;
+
                 // 1. Objetivos y KPIs
                 $objectives = \App\Models\SpecificObjective::where('projects_id', $project->id)->get();
                 $kpis = \App\Models\Kpi::where('projects_id', $project->id)->get();
 
-                // 2. Componentes del proyecto (ajusta la lógica según tu caso real)
-                $componentIds = \App\Models\Component::where('financiers_id', $project->financiers_id)->pluck('id');
+                // 2. Metas (goals) del proyecto - ahora usando project_id
+                $goals = \App\Models\Goal::where('project_id', $project->id)->get();
 
-                // 3. Metas (goals) de esos componentes
-                $goals = \App\Models\Goal::whereIn('components_id', $componentIds)->get();
-
-                // 4. Para cada meta, cargar actividades
+                // 3. Para cada meta, cargar actividades
                 $goalsData = $goals->map(function($goal) {
                     $activities = \App\Models\Activity::where('goals_id', $goal->id)->get();
                     return [
@@ -116,7 +124,7 @@ class ProjectWizard extends Page
                         'cofinancier_amount' => $project->cofunding_amount,
                     ],
                     'objectives' => $objectives->map(fn($o) => [
-                        'uuid' => (string) \Str::uuid(),
+                        'uuid' => (string) Str::uuid(),
                         'description' => $o->description,
                     ])->toArray(),
                     'kpis' => $kpis->map(fn($k) => [
@@ -167,6 +175,8 @@ class ProjectWizard extends Page
     public function clearFormData()
     {
         session()->forget('project_wizard.formData');
+        $this->isEditing = false;
+        $this->editProjectId = null;
         $this->mount(); // Reinicia los datos
         Notification::make()->title('Campos limpiados')->success()->send();
     }
@@ -447,18 +457,29 @@ class ProjectWizard extends Page
 
     public function getActions(): array
     {
-        return [
-            Action::make('guardar')
-                ->label('Guardar Proyecto')
-                ->color('success')
-                ->action('saveProject')
-                ->visible(true),
+        $actions = [
             Action::make('limpiar')
                 ->label('Limpiar campos de proyecto')
                 ->color('danger')
                 ->action('clearFormData')
                 ->requiresConfirmation(),
         ];
+
+        if ($this->isEditing) {
+            $actions[] = Action::make('actualizar')
+                ->label('Actualizar Proyecto')
+                ->color('success')
+                ->action('updateProject')
+                ->visible(true);
+        } else {
+            $actions[] = Action::make('guardar')
+                ->label('Guardar Proyecto')
+                ->color('success')
+                ->action('saveProject')
+                ->visible(true);
+        }
+
+        return $actions;
     }
 
     public function saveProject()
@@ -502,6 +523,7 @@ class ProjectWizard extends Page
             if (!empty($data['goals'])) {
                 foreach ($data['goals'] as $goal) {
                     $goalModel = \App\Models\Goal::create([
+                        'project_id' => $project->id, // Agregar project_id
                         'description' => $goal['description'] ?? '',
                         'number' => $goal['number'] ?? null,
                         'components_id' => $goal['components_id'] ?? null,
@@ -556,6 +578,119 @@ class ProjectWizard extends Page
         } catch (\Exception $e) {
             DB::rollBack();
             Notification::make()->title('Error al guardar el proyecto')->body($e->getMessage())->danger()->send();
+        }
+    }
+
+    public function updateProject()
+    {
+        try {
+            $data = $this->form->getState()['formData'];
+            Log::info('Datos recibidos en ProjectWizard (actualización):', $data);
+            DB::beginTransaction();
+
+            // 1. Actualizar proyecto principal
+            $project = \App\Models\Project::find($this->editProjectId);
+            if (!$project) {
+                throw new \Exception('Proyecto no encontrado');
+            }
+
+            $project->update([
+                'name' => $data['project']['name'] ?? '',
+                'financiers_id' => $data['project']['financiers_id'] ?? null,
+                'followup_officer' => $data['project']['followup_officer'] ?? null,
+                'general_objective' => $data['project']['general_objective'] ?? '',
+                'background' => $data['project']['background'] ?? '',
+                'justification' => $data['project']['justification'] ?? '',
+                'start_date' => $data['project']['start_date'] ?? null,
+                'end_date' => $data['project']['end_date'] ?? null,
+                'total_cost' => $this->cleanNumericValue($data['project']['total_cost']),
+                'funded_amount' => $this->cleanNumericValue($data['project']['funded_amount']),
+                'co_financier_id' => $data['project']['cofinancier_id'] ?? null,
+                'cofunding_amount' => $this->cleanNumericValue($data['project']['cofinancier_amount']),
+            ]);
+
+            // 2. Eliminar objetivos específicos existentes y crear nuevos
+            \App\Models\SpecificObjective::where('projects_id', $project->id)->delete();
+            $objectiveUuidMap = [];
+            if (!empty($data['objectives'])) {
+                foreach ($data['objectives'] as $objective) {
+                    $obj = \App\Models\SpecificObjective::create([
+                        'description' => $objective['description'] ?? '',
+                        'projects_id' => $project->id,
+                        'created_by' => Auth::id(),
+                    ]);
+                    $objectiveUuidMap[$objective['uuid']] = $obj->id;
+                }
+            }
+
+            // 3. Eliminar KPIs existentes y crear nuevos
+            \App\Models\Kpi::where('projects_id', $project->id)->delete();
+            if (!empty($data['kpis'])) {
+                foreach ($data['kpis'] as $kpi) {
+                    \App\Models\Kpi::create([
+                        'name' => $kpi['name'] ?? '',
+                        'description' => $kpi['description'] ?? '',
+                        'initial_value' => $kpi['initial_value'] ?? 0,
+                        'final_value' => $kpi['final_value'] ?? 0,
+                        'is_percentage' => $kpi['is_percentage'] ?? false,
+                        'org_area' => $kpi['org_area'] ?? '',
+                        'projects_id' => $project->id,
+                        'created_by' => Auth::id(),
+                    ]);
+                }
+            }
+
+            // 4. Eliminar metas y actividades existentes y crear nuevas
+            $existingGoals = \App\Models\Goal::where('project_id', $project->id)->get();
+            foreach ($existingGoals as $goal) {
+                \App\Models\Activity::where('goals_id', $goal->id)->delete();
+            }
+            \App\Models\Goal::where('project_id', $project->id)->delete();
+
+            if (!empty($data['goals'])) {
+                foreach ($data['goals'] as $goal) {
+                    $goalModel = \App\Models\Goal::create([
+                        'project_id' => $project->id,
+                        'description' => $goal['description'] ?? '',
+                        'number' => $goal['number'] ?? null,
+                        'components_id' => $goal['components_id'] ?? null,
+                        'components_action_lines_id' => $goal['action_lines_id'] ?? null,
+                        'components_action_lines_program_id' => $goal['program_id'] ?? null,
+                        'organizations_id' => $goal['organizations_id'] ?? 1,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+
+                    // Guardar actividades asociadas a la meta
+                    if (!empty($goal['activities'])) {
+                        foreach ($goal['activities'] as $activity) {
+                            $uuid = $activity['specific_objective_id'] ?? null;
+                            $specificObjectiveId = $uuid && isset($objectiveUuidMap[$uuid]) ? $objectiveUuidMap[$uuid] : null;
+
+                            \App\Models\Activity::create([
+                                'name' => $activity['name'] ?? '',
+                                'description' => $activity['description'] ?? '',
+                                'specific_objective_id' => $specificObjectiveId,
+                                'goals_id' => $goalModel->id,
+                                'population_target_value' => $activity['population_target_value'] ?? 0,
+                                'product_target_value' => $activity['product_target_value'] ?? 0,
+                                'created_by' => Auth::id(),
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            DB::commit();
+            $this->clearFormData();
+            $this->dispatch('wizard::setStep', step: 0); // Regresa al paso 1
+            Notification::make()->title('Proyecto actualizado exitosamente')->success()->send();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Notification::make()->title('Error de validación')->body(implode("\n", $e->validator->errors()->all()))->danger()->send();
+            throw $e;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Notification::make()->title('Error al actualizar el proyecto')->body($e->getMessage())->danger()->send();
         }
     }
 

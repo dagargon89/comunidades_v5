@@ -32,6 +32,13 @@ class GoalResource extends Resource
                     ->description('Datos básicos de la meta')
                     ->icon('heroicon-o-flag')
                     ->schema([
+                        Forms\Components\Select::make('project_id')
+                            ->label('Proyecto')
+                            ->relationship('project', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
+                            ->required(),
                         Forms\Components\Select::make('components_id')
                             ->label('Componente')
                             ->relationship('components', 'name')
@@ -77,20 +84,23 @@ class GoalResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('project.name')
+                    ->label('Proyecto')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('number')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('components.name')
-                    ->numeric()
+                    ->label('Componente')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('componentsActionLines.name')
-                    ->numeric()
+                    ->label('Línea de Acción')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('componentsActionLinesProgram.name')
-                    ->numeric()
+                    ->label('Programa')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('organizations.name')
-                    ->numeric()
+                    ->label('Organización')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 23, 2025 at 06:50 PM
+-- Generation Time: Jul 23, 2025 at 10:11 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.16
 
@@ -358,6 +358,7 @@ INSERT INTO `financiers` (`id`, `name`, `created_at`, `updated_at`) VALUES
 
 CREATE TABLE `goals` (
   `id` bigint UNSIGNED NOT NULL,
+  `project_id` bigint UNSIGNED DEFAULT NULL,
   `description` text COLLATE utf8mb4_unicode_ci,
   `number` int DEFAULT NULL,
   `components_id` bigint UNSIGNED NOT NULL,
@@ -372,8 +373,8 @@ CREATE TABLE `goals` (
 -- Dumping data for table `goals`
 --
 
-INSERT INTO `goals` (`id`, `description`, `number`, `components_id`, `components_action_lines_id`, `components_action_lines_program_id`, `organizations_id`, `created_at`, `updated_at`) VALUES
-(3, 'meta prueba', NULL, 1, 1, 1, 1, '2025-07-23 04:50:27', '2025-07-23 04:50:27');
+INSERT INTO `goals` (`id`, `project_id`, `description`, `number`, `components_id`, `components_action_lines_id`, `components_action_lines_program_id`, `organizations_id`, `created_at`, `updated_at`) VALUES
+(3, NULL, 'meta prueba', NULL, 1, 1, 1, 1, '2025-07-23 04:50:27', '2025-07-23 04:50:27');
 
 -- --------------------------------------------------------
 
@@ -540,7 +541,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (102, '2024_07_22_000001_create_project_goal_table', 9),
 (103, '2025_07_22_175947_alter_longtext_fields_in_projects_table', 9),
 (104, '2025_07_23_182939_update_activity_calendars_table', 9),
-(105, '2025_07_23_182943_remove_activity_progress_log_id_from_tables', 9);
+(105, '2025_07_23_182943_remove_activity_progress_log_id_from_tables', 9),
+(106, '2025_07_23_200000_add_project_id_to_goals', 10);
 
 -- --------------------------------------------------------
 
@@ -1116,20 +1118,6 @@ INSERT INTO `project_disbursements` (`id`, `projects_id`, `amount`, `disbursemen
 -- --------------------------------------------------------
 
 --
--- Table structure for table `project_goal`
---
-
-CREATE TABLE `project_goal` (
-  `id` bigint UNSIGNED NOT NULL,
-  `project_id` bigint UNSIGNED NOT NULL,
-  `goal_id` bigint UNSIGNED NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `project_reports`
 --
 
@@ -1603,7 +1591,7 @@ CREATE TABLE `sessions` (
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
 ('BO3IroiB6OPEjlNRhCh4CqO8hqZY4WAEWKWwipFL', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo4OntzOjY6Il90b2tlbiI7czo0MDoiU1RSMWNheThrSTM0akpmZ0Q3ZDB4eDBMVnF1RWpaaVdKa2JkOG9iWCI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjQ1OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vZ2VzdGlvbi1wcm95ZWN0b3MiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO3M6MTc6InBhc3N3b3JkX2hhc2hfd2ViIjtzOjYwOiIkMnkkMTIkZTFCOEtzcVdsR1c3UHRnYm1ZMWxlZUlYb21Lb3NPU09YY2o1Wk5nL3U1TWxPUjdjd2FvcksiO3M6ODoiZmlsYW1lbnQiO2E6MDp7fXM6MTQ6InByb2plY3Rfd2l6YXJkIjthOjE6e3M6ODoiZm9ybURhdGEiO2E6NTp7czo3OiJwcm9qZWN0IjthOjEyOntzOjQ6Im5hbWUiO3M6MjE6InByb3llY3RvIHBydWViYSBudWV2byI7czoxMzoiZmluYW5jaWVyc19pZCI7czoxOiIxIjtzOjE2OiJmb2xsb3d1cF9vZmZpY2VyIjtzOjA6IiI7czoxNzoiZ2VuZXJhbF9vYmplY3RpdmUiO3M6MTM6ImZnZGZzZ2Rmc2dkZmciO3M6MTA6ImJhY2tncm91bmQiO3M6MTI6InNkZmdzZGZnZ3NmZCI7czoxMzoianVzdGlmaWNhdGlvbiI7czoxMToiZHNmZ2RzZmdkZnMiO3M6MTA6InN0YXJ0X2RhdGUiO3M6MTk6IjIwMjUtMDctMDQgMDA6MDA6MDAiO3M6ODoiZW5kX2RhdGUiO3M6MTk6IjIwMjUtMDctMzEgMDA6MDA6MDAiO3M6MTA6InRvdGFsX2Nvc3QiO3M6MToiMSI7czoxMzoiZnVuZGVkX2Ftb3VudCI7czoxOiIyIjtzOjE0OiJjb2ZpbmFuY2llcl9pZCI7czowOiIiO3M6MTg6ImNvZmluYW5jaWVyX2Ftb3VudCI7czowOiIiO31zOjEwOiJvYmplY3RpdmVzIjthOjE6e3M6MzY6IjM3YjhmNTc1LTMyNTMtNDg5NC1iMzFhLTBlODEzOTdjNDYzOSI7YToyOntzOjQ6InV1aWQiO3M6MzY6ImI0NWUwMGI5LTA5YWEtNGU1Yi1hMGYwLTRkY2ZiODgwNmI1MiI7czoxMToiZGVzY3JpcHRpb24iO3M6MzoiMTExIjt9fXM6NDoia3BpcyI7YToxOntzOjM2OiI5Y2ZlMTdjNS02OWFmLTQwYmEtYWFjYS0yODk0MDMyMTc4ODMiO2E6Njp7czo0OiJuYW1lIjtzOjg6InNhZGRhc3NhIjtzOjg6Im9yZ19hcmVhIjtOO3M6MTE6ImRlc2NyaXB0aW9uIjtOO3M6MTM6ImluaXRpYWxfdmFsdWUiO047czoxMToiZmluYWxfdmFsdWUiO047czoxMzoiaXNfcGVyY2VudGFnZSI7YjowO319czo1OiJnb2FscyI7YToyOntzOjM2OiIwNDAyNDdkOC1mNmNkLTRlZDEtOTVjNC02ZjE0MzlmNzE1NDciO2E6NTp7czoxMzoiY29tcG9uZW50c19pZCI7czoxOiIxIjtzOjE1OiJhY3Rpb25fbGluZXNfaWQiO3M6MToiMSI7czoxMDoicHJvZ3JhbV9pZCI7czoxOiIxIjtzOjExOiJkZXNjcmlwdGlvbiI7czoxNjoiZGJjdmJjdnhieHZjYmN4diI7czoxMDoiYWN0aXZpdGllcyI7YToxOntzOjM2OiIyMDdhZTIwMy1hODllLTQ0NjQtYjA2NS0yMjI3MzQxNDZmZjEiO2E6NTp7czo0OiJuYW1lIjtzOjExOiJoamdoZmhnamhnaiI7czoyMToic3BlY2lmaWNfb2JqZWN0aXZlX2lkIjtzOjM2OiJiNDVlMDBiOS0wOWFhLTRlNWItYTBmMC00ZGNmYjg4MDZiNTIiO3M6MTE6ImRlc2NyaXB0aW9uIjtOO3M6MjM6InBvcHVsYXRpb25fdGFyZ2V0X3ZhbHVlIjtOO3M6MjA6InByb2R1Y3RfdGFyZ2V0X3ZhbHVlIjtOO319fXM6MzY6IjljNDc2YTE5LWEwMjYtNGM4NS05Zjk5LTM2YWRiMDUxMjYzZiI7YTo1OntzOjEzOiJjb21wb25lbnRzX2lkIjtOO3M6MTU6ImFjdGlvbl9saW5lc19pZCI7TjtzOjEwOiJwcm9ncmFtX2lkIjtOO3M6MTE6ImRlc2NyaXB0aW9uIjtzOjg6ImhmZ2hmZ2hmIjtzOjEwOiJhY3Rpdml0aWVzIjthOjE6e3M6MzY6IjkwYWZmZGQ0LWIwMWEtNGMyYS1iNWJjLTE1ZGZhNDZmMGI5MyI7YTo1OntzOjQ6Im5hbWUiO047czoyMToic3BlY2lmaWNfb2JqZWN0aXZlX2lkIjtOO3M6MTE6ImRlc2NyaXB0aW9uIjtOO3M6MjM6InBvcHVsYXRpb25fdGFyZ2V0X3ZhbHVlIjtOO3M6MjA6InByb2R1Y3RfdGFyZ2V0X3ZhbHVlIjtOO319fX1zOjEwOiJhY3Rpdml0aWVzIjthOjA6e319fX0=', 1753283614),
 ('eiQcnJUlKq4kp07q0KR3CuqjLF4Duijj7mWRUIEG', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZTdPMWFaOGtRWTcxNnNtMUdHMHRaZ3dVUUswS0hnbHhPdENnWjVIayI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czoyNzoiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2FkbWluIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1753279382),
-('sCJNRjObCeeqZwezq2rdJ4lGacbCpZ8CxZHzZRoP', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoiQVVKRUMzeXJKV1h4ZUVTVFFPNjBORmNQa3d6dlFWWGQzSTlNUXpzRyI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjQ1OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vZ2VzdGlvbi1wcm95ZWN0b3MiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO3M6MTc6InBhc3N3b3JkX2hhc2hfd2ViIjtzOjYwOiIkMnkkMTIkZTFCOEtzcVdsR1c3UHRnYm1ZMWxlZUlYb21Lb3NPU09YY2o1Wk5nL3U1TWxPUjdjd2FvcksiO30=', 1753294675);
+('sCJNRjObCeeqZwezq2rdJ4lGacbCpZ8CxZHzZRoP', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo3OntzOjY6Il90b2tlbiI7czo0MDoiQVVKRUMzeXJKV1h4ZUVTVFFPNjBORmNQa3d6dlFWWGQzSTlNUXpzRyI7czozOiJ1cmwiO2E6MDp7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjQ1OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYWRtaW4vZ2VzdGlvbi1wcm95ZWN0b3MiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO3M6MTc6InBhc3N3b3JkX2hhc2hfd2ViIjtzOjYwOiIkMnkkMTIkZTFCOEtzcVdsR1c3UHRnYm1ZMWxlZUlYb21Lb3NPU09YY2o1Wk5nL3U1TWxPUjdjd2FvcksiO3M6MTQ6InByb2plY3Rfd2l6YXJkIjthOjE6e3M6ODoiZm9ybURhdGEiO2E6NTp7czo3OiJwcm9qZWN0IjthOjEyOntzOjQ6Im5hbWUiO3M6MjE6InByb3llY3RvIHBydWViYSBudWV2byI7czoxMzoiZmluYW5jaWVyc19pZCI7czoxOiIxIjtzOjE2OiJmb2xsb3d1cF9vZmZpY2VyIjtzOjg6ImZkYXNhc2RmIjtzOjE3OiJnZW5lcmFsX29iamVjdGl2ZSI7czoxMToiZGZzZGZzYWRmZHMiO3M6MTA6ImJhY2tncm91bmQiO3M6ODoic2RhZnNhZGYiO3M6MTM6Imp1c3RpZmljYXRpb24iO3M6ODoic2FkZnNhZGYiO3M6MTA6InN0YXJ0X2RhdGUiO3M6MTk6IjIwMjUtMDctMjMgMDA6MDA6MDAiO3M6ODoiZW5kX2RhdGUiO3M6MTk6IjIwMjUtMDctMzEgMDA6MDA6MDAiO3M6MTA6InRvdGFsX2Nvc3QiO3M6MToiOSI7czoxMzoiZnVuZGVkX2Ftb3VudCI7czoxOiI5IjtzOjE0OiJjb2ZpbmFuY2llcl9pZCI7czowOiIiO3M6MTg6ImNvZmluYW5jaWVyX2Ftb3VudCI7czowOiIiO31zOjEwOiJvYmplY3RpdmVzIjthOjE6e3M6MzY6IjdlMTAzZmFhLTYwZWEtNGI0OS04MWYzLWEwMTM4MDUzZTI2NCI7YToyOntzOjQ6InV1aWQiO3M6MzY6ImNlYzQxOTYxLTE4ZTItNGRlMy05OGJmLWY5ODdhMzE0NWMyNyI7czoxMToiZGVzY3JpcHRpb24iO3M6OToiaGdqZ2hqZ2hqIjt9fXM6NDoia3BpcyI7YTowOnt9czo1OiJnb2FscyI7YTowOnt9czoxMDoiYWN0aXZpdGllcyI7YTowOnt9fX19', 1753308232);
 
 -- --------------------------------------------------------
 
@@ -1756,7 +1744,8 @@ ALTER TABLE `financiers`
 -- Indexes for table `goals`
 --
 ALTER TABLE `goals`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `goals_project_id_foreign` (`project_id`);
 
 --
 -- Indexes for table `jobs`
@@ -1859,14 +1848,6 @@ ALTER TABLE `projects`
 --
 ALTER TABLE `project_disbursements`
   ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `project_goal`
---
-ALTER TABLE `project_goal`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `project_goal_project_id_goal_id_unique` (`project_id`,`goal_id`),
-  ADD KEY `project_goal_goal_id_foreign` (`goal_id`);
 
 --
 -- Indexes for table `project_reports`
@@ -2045,7 +2026,7 @@ ALTER TABLE `locations`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
 
 --
 -- AUTO_INCREMENT for table `organizations`
@@ -2094,12 +2075,6 @@ ALTER TABLE `projects`
 --
 ALTER TABLE `project_disbursements`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `project_goal`
---
-ALTER TABLE `project_goal`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `project_reports`
@@ -2166,6 +2141,12 @@ ALTER TABLE `data_publications`
   ADD CONSTRAINT `data_publications_published_by_foreign` FOREIGN KEY (`published_by`) REFERENCES `users` (`id`) ON DELETE RESTRICT;
 
 --
+-- Constraints for table `goals`
+--
+ALTER TABLE `goals`
+  ADD CONSTRAINT `goals_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `model_has_permissions`
 --
 ALTER TABLE `model_has_permissions`
@@ -2176,13 +2157,6 @@ ALTER TABLE `model_has_permissions`
 --
 ALTER TABLE `model_has_roles`
   ADD CONSTRAINT `model_has_roles_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `project_goal`
---
-ALTER TABLE `project_goal`
-  ADD CONSTRAINT `project_goal_goal_id_foreign` FOREIGN KEY (`goal_id`) REFERENCES `goals` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `project_goal_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `published_activities`

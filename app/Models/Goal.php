@@ -16,6 +16,7 @@ class Goal extends Model
      * @var array
      */
     protected $fillable = [
+        'project_id',
         'description',
         'number',
         'components_id',
@@ -33,11 +34,17 @@ class Goal extends Model
     {
         return [
             'id' => 'integer',
+            'project_id' => 'integer',
             'components_id' => 'integer',
             'components_action_lines_id' => 'integer',
             'components_action_lines_program_id' => 'integer',
             'organizations_id' => 'integer',
         ];
+    }
+
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class, 'project_id');
     }
 
     public function components(): BelongsTo

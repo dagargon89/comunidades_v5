@@ -33,7 +33,9 @@ use Filament\Forms\Components\Checkbox;
 
 class ProjectWizard extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?string $navigationLabel = 'Asistente de Proyectos';
+    protected static ?string $title = 'Asistente de Proyectos';
     protected static string $view = 'filament.pages.project-wizard';
 
     public $formData = [
@@ -108,20 +110,20 @@ class ProjectWizard extends Page
     {
         return $form->schema([
             Wizard::make([
-                Step::make('Información Básica del Proyecto')
+                Step::make(__('Información Básica del Proyecto'))
                     ->schema([
                         // Sección 1: Información General
-                        Section::make('Información General')
-                            ->description('Datos principales del proyecto')
+                        Section::make(__('Información General'))
+                            ->description(__('Datos principales del proyecto'))
                             ->schema([
                                 Grid::make(2)->schema([
                                     TextInput::make('project.name')
-                                        ->label('Nombre del Proyecto')
+                                        ->label(__('Nombre del Proyecto'))
                                         ->required()
                                         ->maxLength(255)
                                         ->afterStateUpdated(fn () => $this->saveToSession()),
                                     Select::make('project.financiers_id')
-                                        ->label('Financiadora Principal')
+                                        ->label(__('Financiadora Principal'))
                                         ->options(Financier::pluck('name', 'id'))
                                         ->searchable()
                                         ->required()
@@ -129,7 +131,7 @@ class ProjectWizard extends Page
                                 ]),
                                 Grid::make(1)->schema([
                                     TextInput::make('project.followup_officer')
-                                        ->label('Encargado de Seguimiento')
+                                        ->label(__('Encargado de Seguimiento'))
                                         ->maxLength(255)
                                         ->afterStateUpdated(fn () => $this->saveToSession()),
                                 ]),
@@ -138,12 +140,12 @@ class ProjectWizard extends Page
                             ->collapsed(false),
 
                         // Sección 2: Descripción del Proyecto
-                        Section::make('Descripción del Proyecto')
-                            ->description('Información detallada del proyecto')
+                        Section::make(__('Descripción del Proyecto'))
+                            ->description(__('Información detallada del proyecto'))
                             ->schema([
                                 Grid::make(1)->schema([
                                     Textarea::make('project.general_objective')
-                                        ->label('Objetivo General')
+                                        ->label(__('Objetivo General'))
                                         ->rows(4)
                                         ->required()
                                         ->maxLength(1000)
@@ -151,12 +153,12 @@ class ProjectWizard extends Page
                                 ]),
                                 Grid::make(2)->schema([
                                     Textarea::make('project.background')
-                                        ->label('Antecedentes')
+                                        ->label(__('Antecedentes'))
                                         ->rows(6)
                                         ->maxLength(2000)
                                         ->afterStateUpdated(fn () => $this->saveToSession()),
                                     Textarea::make('project.justification')
-                                        ->label('Justificación')
+                                        ->label(__('Justificación'))
                                         ->rows(6)
                                         ->maxLength(2000)
                                         ->afterStateUpdated(fn () => $this->saveToSession()),
@@ -166,18 +168,18 @@ class ProjectWizard extends Page
                             ->collapsed(false),
 
                         // Sección 3: Fechas y Duración
-                        Section::make('Fechas y Duración')
-                            ->description('Período de ejecución del proyecto')
+                        Section::make(__('Fechas y Duración'))
+                            ->description(__('Período de ejecución del proyecto'))
                             ->schema([
                                 Grid::make(2)->schema([
                                     DatePicker::make('project.start_date')
-                                        ->label('Fecha de Inicio')
+                                        ->label(__('Fecha de Inicio'))
                                         ->required()
                                         ->displayFormat('d/m/Y')
                                         ->native(false)
                                         ->afterStateUpdated(fn () => $this->saveToSession()),
                                     DatePicker::make('project.end_date')
-                                        ->label('Fecha de Finalización')
+                                        ->label(__('Fecha de Finalización'))
                                         ->required()
                                         ->displayFormat('d/m/Y')
                                         ->native(false)
@@ -189,18 +191,18 @@ class ProjectWizard extends Page
                             ->collapsed(false),
 
                         // Sección 4: Información Financiera
-                        Section::make('Información Financiera')
-                            ->description('Costos y financiamiento del proyecto')
+                        Section::make(__('Información Financiera'))
+                            ->description(__('Costos y financiamiento del proyecto'))
                             ->schema([
                                 Grid::make(2)->schema([
                                     TextInput::make('project.total_cost')
-                                        ->label('Costo Total del Proyecto')
+                                        ->label(__('Costo Total del Proyecto'))
                                         ->numeric()
                                         ->prefix('MXN $')
                                         ->required()
                                         ->afterStateUpdated(fn () => $this->saveToSession()),
                                     TextInput::make('project.funded_amount')
-                                        ->label('Cantidad Financiada')
+                                        ->label(__('Cantidad Financiada'))
                                         ->numeric()
                                         ->prefix('MXN $')
                                         ->required()
@@ -208,16 +210,16 @@ class ProjectWizard extends Page
                                 ]),
                                 Grid::make(2)->schema([
                                     Select::make('project.cofinancier_id')
-                                        ->label('Cofinanciador (Opcional)')
+                                        ->label(__('Cofinanciador (Opcional)'))
                                         ->options(Financier::pluck('name', 'id'))
                                         ->searchable()
-                                        ->placeholder('Seleccionar cofinanciador')
+                                        ->placeholder(__('Seleccionar cofinanciador'))
                                         ->afterStateUpdated(fn () => $this->saveToSession()),
                                     TextInput::make('project.cofinancier_amount')
-                                        ->label('Monto Cofinanciado (Opcional)')
+                                        ->label(__('Monto Cofinanciado (Opcional)'))
                                         ->numeric()
                                         ->prefix('MXN $')
-                                        ->helperText('Ingrese el monto si seleccionó un cofinanciador')
+                                        ->helperText(__('Ingrese el monto si seleccionó un cofinanciador'))
                                         ->afterStateUpdated(fn () => $this->saveToSession()),
                                 ]),
                             ])

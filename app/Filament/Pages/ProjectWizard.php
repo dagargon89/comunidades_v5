@@ -198,6 +198,7 @@ class ProjectWizard extends Page
                                         ->label(__('Financiadora Principal'))
                                         ->options(Financier::pluck('name', 'id'))
                                         ->searchable()
+                                        ->native(false)
                                         ->required()
                                         ->afterStateUpdated(fn () => $this->saveToSession()),
                                 ]),
@@ -285,6 +286,7 @@ class ProjectWizard extends Page
                                         ->label(__('Cofinanciador (Opcional)'))
                                         ->options(Financier::pluck('name', 'id'))
                                         ->searchable()
+                                        ->native(false)
                                         ->placeholder(__('Seleccionar cofinanciador'))
                                         ->afterStateUpdated(fn () => $this->saveToSession()),
                                     TextInput::make('project.cofinancier_amount')
@@ -361,6 +363,8 @@ class ProjectWizard extends Page
                                     Select::make('components_id')
                                         ->label('Componente')
                                         ->options(Component::pluck('name', 'id'))
+                                        ->searchable()
+                                        ->native(false)
                                         ->reactive(),
                                     Select::make('action_lines_id')
                                         ->label('Línea de Acción')
@@ -370,6 +374,8 @@ class ProjectWizard extends Page
                                             return ActionLine::where('id', Component::find($componentId)?->action_lines_id)
                                                 ->pluck('name', 'id');
                                         })
+                                        ->searchable()
+                                        ->native(false)
                                         ->reactive(),
                                     Select::make('program_id')
                                         ->label('Programa')
@@ -380,7 +386,9 @@ class ProjectWizard extends Page
                                             if (!$actionLine) return [];
                                             return Program::where('id', $actionLine->program_id)
                                                 ->pluck('name', 'id');
-                                        }),
+                                        })
+                                        ->searchable()
+                                        ->native(false),
                                 ]),
                                 Textarea::make('description')
                                     ->label('Descripción de la Meta')
@@ -400,6 +408,7 @@ class ProjectWizard extends Page
                                                     ->mapWithKeys(fn($obj) => [$obj['uuid'] => $obj['description'] ?? 'Sin descripción'])
                                                     ->toArray())
                                                 ->searchable()
+                                                ->native(false)
                                                 ->required()
                                                 ->columnSpan(1),
                                         ]),

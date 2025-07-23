@@ -111,13 +111,13 @@ class ProjectWizard extends Page
                         Grid::make(3)->schema([
                             Textarea::make('project.general_objective')
                                 ->label('Objetivo General')
-                                ->rows(2),
+                                ->rows(10),
                             Textarea::make('project.background')
                                 ->label('Antecedentes')
-                                ->rows(2),
+                                ->rows(10),
                             Textarea::make('project.justification')
                                 ->label('Justificación')
-                                ->rows(2),
+                                ->rows(10),
                         ]),
                         Grid::make(3)->schema([
                             DatePicker::make('project.start_date')

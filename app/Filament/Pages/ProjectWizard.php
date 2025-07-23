@@ -30,9 +30,11 @@ use App\Models\ActionLine;
 use App\Models\Program;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Checkbox;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class ProjectWizard extends Page
 {
+    use HasPageShield;
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
     protected static ?string $navigationLabel = 'Asistente de Proyectos';
     protected static ?string $title = 'Asistente de Proyectos';

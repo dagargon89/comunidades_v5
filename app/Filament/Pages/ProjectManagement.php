@@ -11,6 +11,7 @@ use App\Models\Project;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class ProjectManagement extends Page implements Tables\Contracts\HasTable
 {
@@ -21,6 +22,7 @@ class ProjectManagement extends Page implements Tables\Contracts\HasTable
     protected static string $view = 'filament.pages.project-management';
 
     use Tables\Concerns\InteractsWithTable;
+    use HasPageShield;
 
     public function table(Table $table): Table
     {

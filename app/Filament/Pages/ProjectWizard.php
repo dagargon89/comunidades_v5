@@ -36,6 +36,7 @@ class ProjectWizard extends Page
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
     protected static ?string $navigationLabel = 'Asistente de Proyectos';
     protected static ?string $title = 'Asistente de Proyectos';
+    protected static ?string $slug = 'asistente-proyectos';
     protected static string $view = 'filament.pages.project-wizard';
 
     public $formData = [
@@ -469,7 +470,8 @@ class ProjectWizard extends Page
             }
 
             DB::commit();
-            $this->form->fill(['formData' => []]);
+            $this->clearFormData();
+            $this->dispatch('wizard::setStep', step: 0); // Regresa al paso 1
             Notification::make()->title('Proyecto guardado exitosamente')->success()->send();
         } catch (\Illuminate\Validation\ValidationException $e) {
             Notification::make()->title('Error de validación')->body(implode("\n", $e->validator->errors()->all()))->danger()->send();

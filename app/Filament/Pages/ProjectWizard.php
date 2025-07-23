@@ -28,6 +28,8 @@ use Filament\Forms\Components\Hidden;
 use App\Models\Component;
 use App\Models\ActionLine;
 use App\Models\Program;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Checkbox;
 
 class ProjectWizard extends Page
 {
@@ -80,6 +82,11 @@ class ProjectWizard extends Page
 
     public function updated($propertyName)
     {
+        $this->saveToSession();
+    }
+
+    public function saveToSession()
+    {
         session(['project_wizard.formData' => $this->formData]);
     }
 
@@ -90,59 +97,132 @@ class ProjectWizard extends Page
         Notification::make()->title('Campos limpiados')->success()->send();
     }
 
+    public function cleanNumericValue($value)
+    {
+        if (empty($value)) return 0;
+        // Remover comas y convertir a float
+        return (float) str_replace(',', '', $value);
+    }
+
     public function form(Form $form): Form
     {
         return $form->schema([
             Wizard::make([
                 Step::make('Información Básica del Proyecto')
                     ->schema([
-                        Grid::make(3)->schema([
-                            TextInput::make('project.name')
-                                ->label('Nombre del Proyecto'),
-                            Select::make('project.financiers_id')
-                                ->label('Financiadora')
-                                ->options(Financier::pluck('name', 'id'))
-                                ->searchable(),
-                        ]),
-                        Grid::make(3)->schema([
-                            TextInput::make('project.followup_officer')
-                                ->label('Encargado de seguimiento'),
-                        ]),
-                        Grid::make(3)->schema([
-                            Textarea::make('project.general_objective')
-                                ->label('Objetivo General')
-                                ->rows(10),
-                            Textarea::make('project.background')
-                                ->label('Antecedentes')
-                                ->rows(10),
-                            Textarea::make('project.justification')
-                                ->label('Justificación')
-                                ->rows(10),
-                        ]),
-                        Grid::make(3)->schema([
-                            DatePicker::make('project.start_date')
-                                ->label('Fecha de inicio'),
-                            DatePicker::make('project.end_date')
-                                ->label('Fecha de finalización'),
-                            TextInput::make('project.total_cost')
-                                ->label('Costo total')
-                                ->numeric(),
-                        ]),
-                        Grid::make(2)->schema([
-                            TextInput::make('project.funded_amount')
-                                ->label('Cantidad financiada')
-                                ->numeric(),
-                        ]),
-                        // Sección de cofinanciador (opcional, solo uno)
-                        Grid::make(2)->schema([
-                            Select::make('project.cofinancier_id')
-                                ->label('Cofinanciador (opcional)')
-                                ->options(Financier::pluck('name', 'id'))
-                                ->searchable(),
-                            TextInput::make('project.cofinancier_amount')
-                                ->label('Monto cofinanciado (opcional)')
-                                ->numeric(),
-                        ]),
+                        // Sección 1: Información General
+                        Section::make('Información General')
+                            ->description('Datos principales del proyecto')
+                            ->schema([
+                                Grid::make(2)->schema([
+                                    TextInput::make('project.name')
+                                        ->label('Nombre del Proyecto')
+                                        ->required()
+                                        ->maxLength(255)
+                                        ->afterStateUpdated(fn () => $this->saveToSession()),
+                                    Select::make('project.financiers_id')
+                                        ->label('Financiadora Principal')
+                                        ->options(Financier::pluck('name', 'id'))
+                                        ->searchable()
+                                        ->required()
+                                        ->afterStateUpdated(fn () => $this->saveToSession()),
+                                ]),
+                                Grid::make(1)->schema([
+                                    TextInput::make('project.followup_officer')
+                                        ->label('Encargado de Seguimiento')
+                                        ->maxLength(255)
+                                        ->afterStateUpdated(fn () => $this->saveToSession()),
+                                ]),
+                            ])
+                            ->collapsible()
+                            ->collapsed(false),
+
+                        // Sección 2: Descripción del Proyecto
+                        Section::make('Descripción del Proyecto')
+                            ->description('Información detallada del proyecto')
+                            ->schema([
+                                Grid::make(1)->schema([
+                                    Textarea::make('project.general_objective')
+                                        ->label('Objetivo General')
+                                        ->rows(4)
+                                        ->required()
+                                        ->maxLength(1000)
+                                        ->afterStateUpdated(fn () => $this->saveToSession()),
+                                ]),
+                                Grid::make(2)->schema([
+                                    Textarea::make('project.background')
+                                        ->label('Antecedentes')
+                                        ->rows(6)
+                                        ->maxLength(2000)
+                                        ->afterStateUpdated(fn () => $this->saveToSession()),
+                                    Textarea::make('project.justification')
+                                        ->label('Justificación')
+                                        ->rows(6)
+                                        ->maxLength(2000)
+                                        ->afterStateUpdated(fn () => $this->saveToSession()),
+                                ]),
+                            ])
+                            ->collapsible()
+                            ->collapsed(false),
+
+                        // Sección 3: Fechas y Duración
+                        Section::make('Fechas y Duración')
+                            ->description('Período de ejecución del proyecto')
+                            ->schema([
+                                Grid::make(2)->schema([
+                                    DatePicker::make('project.start_date')
+                                        ->label('Fecha de Inicio')
+                                        ->required()
+                                        ->displayFormat('d/m/Y')
+                                        ->native(false)
+                                        ->afterStateUpdated(fn () => $this->saveToSession()),
+                                    DatePicker::make('project.end_date')
+                                        ->label('Fecha de Finalización')
+                                        ->required()
+                                        ->displayFormat('d/m/Y')
+                                        ->native(false)
+                                        ->after('project.start_date')
+                                        ->afterStateUpdated(fn () => $this->saveToSession()),
+                                ]),
+                            ])
+                            ->collapsible()
+                            ->collapsed(false),
+
+                        // Sección 4: Información Financiera
+                        Section::make('Información Financiera')
+                            ->description('Costos y financiamiento del proyecto')
+                            ->schema([
+                                Grid::make(2)->schema([
+                                    TextInput::make('project.total_cost')
+                                        ->label('Costo Total del Proyecto')
+                                        ->numeric()
+                                        ->prefix('MXN $')
+                                        ->required()
+                                        ->afterStateUpdated(fn () => $this->saveToSession()),
+                                    TextInput::make('project.funded_amount')
+                                        ->label('Cantidad Financiada')
+                                        ->numeric()
+                                        ->prefix('MXN $')
+                                        ->required()
+                                        ->afterStateUpdated(fn () => $this->saveToSession()),
+                                ]),
+                                Grid::make(2)->schema([
+                                    Select::make('project.cofinancier_id')
+                                        ->label('Cofinanciador (Opcional)')
+                                        ->options(Financier::pluck('name', 'id'))
+                                        ->searchable()
+                                        ->placeholder('Seleccionar cofinanciador')
+                                        ->afterStateUpdated(fn () => $this->saveToSession()),
+                                    TextInput::make('project.cofinancier_amount')
+                                        ->label('Monto Cofinanciado (Opcional)')
+                                        ->numeric()
+                                        ->prefix('MXN $')
+                                        ->helperText('Ingrese el monto si seleccionó un cofinanciador')
+                                        ->afterStateUpdated(fn () => $this->saveToSession()),
+                                ]),
+                            ])
+                            ->collapsible()
+                            ->collapsed(false),
                     ]),
                 Step::make('Objetivos Específicos')
                     ->schema([
@@ -164,23 +244,34 @@ class ProjectWizard extends Page
                     ->schema([
                         Repeater::make('kpis')
                             ->schema([
-                                TextInput::make('name')
-                                    ->label('Nombre del KPI'),
+                                Grid::make(2)->schema([
+                                    TextInput::make('name')
+                                        ->label('Nombre del KPI')
+                                        ->required()
+                                        ->columnSpan(1),
+                                    TextInput::make('org_area')
+                                        ->label('Área Organizacional')
+                                        ->maxLength(100)
+                                        ->columnSpan(1),
+                                ]),
                                 Textarea::make('description')
                                     ->label('Descripción')
-                                    ->rows(2),
-                                TextInput::make('initial_value')
-                                    ->label('Valor Inicial')
-                                    ->numeric(),
-                                TextInput::make('final_value')
-                                    ->label('Valor Final')
-                                    ->numeric(),
-                                Toggle::make('is_percentage')
-                                    ->label('¿Es Porcentaje?')
-                                    ->default(false),
-                                TextInput::make('org_area')
-                                    ->label('Área Organizacional')
-                                    ->maxLength(100),
+                                    ->rows(2)
+                                    ->columnSpanFull(),
+                                Grid::make(3)->schema([
+                                    TextInput::make('initial_value')
+                                        ->label('Valor Inicial')
+                                        ->numeric()
+                                        ->columnSpan(1),
+                                    TextInput::make('final_value')
+                                        ->label('Valor Final')
+                                        ->numeric()
+                                        ->columnSpan(1),
+                                    Checkbox::make('is_percentage')
+                                        ->label('¿Es Porcentaje?')
+                                        ->default(false)
+                                        ->columnSpan(1),
+                                ]),
                             ])
                             ->addActionLabel('Agregar KPI')
                             ->reorderable()
@@ -224,17 +315,34 @@ class ProjectWizard extends Page
                                 Repeater::make('activities')
                                     ->label('Actividades para esta meta')
                                     ->schema([
-                                        TextInput::make('name')->label('Nombre de la Actividad')->required(),
-                                        Select::make('specific_objective_id')
-                                            ->label('Objetivo Específico')
-                                            ->options(fn () => collect($this->formData['objectives'] ?? [])
-                                                ->mapWithKeys(fn($obj) => [$obj['uuid'] => $obj['description'] ?? 'Sin descripción'])
-                                                ->toArray())
-                                            ->searchable()
-                                            ->required(),
-                                        Textarea::make('description')->label('Descripción')->rows(2),
-                                        TextInput::make('population_target_value')->label('Meta de Población')->numeric(),
-                                        TextInput::make('product_target_value')->label('Meta de Producto')->numeric(),
+                                        Grid::make(2)->schema([
+                                            TextInput::make('name')
+                                                ->label('Nombre de la Actividad')
+                                                ->required()
+                                                ->columnSpan(1),
+                                            Select::make('specific_objective_id')
+                                                ->label('Objetivo Específico')
+                                                ->options(fn () => collect($this->formData['objectives'] ?? [])
+                                                    ->mapWithKeys(fn($obj) => [$obj['uuid'] => $obj['description'] ?? 'Sin descripción'])
+                                                    ->toArray())
+                                                ->searchable()
+                                                ->required()
+                                                ->columnSpan(1),
+                                        ]),
+                                        Textarea::make('description')
+                                            ->label('Descripción')
+                                            ->rows(2)
+                                            ->columnSpanFull(),
+                                        Grid::make(2)->schema([
+                                            TextInput::make('population_target_value')
+                                                ->label('Meta de Población')
+                                                ->numeric()
+                                                ->columnSpan(1),
+                                            TextInput::make('product_target_value')
+                                                ->label('Meta de Producto')
+                                                ->numeric()
+                                                ->columnSpan(1),
+                                        ]),
                                     ])
                                     ->addActionLabel('Agregar Actividad')
                                     ->reorderable()
@@ -249,8 +357,8 @@ class ProjectWizard extends Page
                 Step::make('Resumen')
                     ->schema([
                         Placeholder::make('resumen')
-                            ->label('Resumen de datos')
-                            ->content(fn () => '<pre>' . print_r($this->formData, true) . '</pre>'),
+                            ->label('Resumen del Proyecto')
+                            ->content(fn () => $this->getFormattedSummary()),
                     ]),
                 // Aquí se agregarán los siguientes pasos: ubicaciones, programación, resumen
             ])->statePath('formData')
@@ -290,10 +398,10 @@ class ProjectWizard extends Page
                 'justification' => $data['project']['justification'] ?? '',
                 'start_date' => $data['project']['start_date'] ?? null,
                 'end_date' => $data['project']['end_date'] ?? null,
-                'total_cost' => $data['project']['total_cost'] ?? 0,
-                'funded_amount' => $data['project']['funded_amount'] ?? 0,
+                'total_cost' => $this->cleanNumericValue($data['project']['total_cost']),
+                'funded_amount' => $this->cleanNumericValue($data['project']['funded_amount']),
                 'co_financier_id' => $data['project']['cofinancier_id'] ?? null,
-                'cofunding_amount' => $data['project']['cofinancier_amount'] ?? 0,
+                'cofunding_amount' => $this->cleanNumericValue($data['project']['cofinancier_amount']),
                 'created_by' => Auth::id(),
             ]);
 
@@ -368,5 +476,81 @@ class ProjectWizard extends Page
             DB::rollBack();
             Notification::make()->title('Error al guardar el proyecto')->body($e->getMessage())->danger()->send();
         }
+    }
+
+    protected function getFormattedSummary(): string
+    {
+        $summary = '<div class="bg-gray-100 p-4 rounded-lg">';
+        $summary .= '<h2 class="text-xl font-bold mb-4 flex items-center"><i class="fas fa-info-circle mr-2"></i> Resumen del Proyecto</h2>';
+
+        $summary .= '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+
+        // Proyecto
+        $summary .= '<div class="bg-white p-4 rounded-lg shadow-md">';
+        $summary .= '<h3 class="text-lg font-semibold mb-2 flex items-center"><i class="fas fa-project-diagram mr-2"></i> Información General</h3>';
+        $summary .= '<ul class="list-disc list-inside">';
+        $summary .= '<li><strong>Nombre del Proyecto:</strong> ' . ($this->formData['project']['name'] ?? 'N/A') . '</li>';
+        $summary .= '<li><strong>Financiadora Principal:</strong> ' . ($this->formData['project']['financiers_id'] ? Financier::find($this->formData['project']['financiers_id'])->name : 'N/A') . '</li>';
+        $summary .= '<li><strong>Encargado de Seguimiento:</strong> ' . ($this->formData['project']['followup_officer'] ?? 'N/A') . '</li>';
+        $summary .= '<li><strong>Objetivo General:</strong> ' . ($this->formData['project']['general_objective'] ?? 'N/A') . '</li>';
+        $summary .= '<li><strong>Fecha de Inicio:</strong> ' . ($this->formData['project']['start_date'] ? \Carbon\Carbon::parse($this->formData['project']['start_date'])->format('d/m/Y') : 'N/A') . '</li>';
+        $summary .= '<li><strong>Fecha de Finalización:</strong> ' . ($this->formData['project']['end_date'] ? \Carbon\Carbon::parse($this->formData['project']['end_date'])->format('d/m/Y') : 'N/A') . '</li>';
+        $summary .= '<li><strong>Costo Total:</strong> ' . ($this->formData['project']['total_cost'] ? 'MXN $' . number_format($this->formData['project']['total_cost'], 2, '.', ',') : 'N/A') . '</li>';
+        $summary .= '<li><strong>Cantidad Financiada:</strong> ' . ($this->formData['project']['funded_amount'] ? 'MXN $' . number_format($this->formData['project']['funded_amount'], 2, '.', ',') : 'N/A') . '</li>';
+        $summary .= '<li><strong>Cofinanciador:</strong> ' . ($this->formData['project']['cofinancier_id'] ? Financier::find($this->formData['project']['cofinancier_id'])->name : 'N/A') . '</li>';
+        $summary .= '<li><strong>Monto Cofinanciado:</strong> ' . ($this->formData['project']['cofinancier_amount'] ? 'MXN $' . number_format($this->formData['project']['cofinancier_amount'], 2, '.', ',') : 'N/A') . '</li>';
+        $summary .= '</ul>';
+        $summary .= '</div>';
+
+        // Objetivos Específicos
+        $summary .= '<div class="bg-white p-4 rounded-lg shadow-md">';
+        $summary .= '<h3 class="text-lg font-semibold mb-2 flex items-center"><i class="fas fa-bullseye mr-2"></i> Objetivos Específicos</h3>';
+        $summary .= '<ul class="list-disc list-inside">';
+        if (!empty($this->formData['objectives'])) {
+            foreach ($this->formData['objectives'] as $objective) {
+                $summary .= '<li>' . ($objective['description'] ?? 'Sin descripción') . '</li>';
+            }
+        } else {
+            $summary .= '<li>No hay objetivos específicos definidos.</li>';
+        }
+        $summary .= '</ul>';
+        $summary .= '</div>';
+
+        // KPIs
+        $summary .= '<div class="bg-white p-4 rounded-lg shadow-md">';
+        $summary .= '<h3 class="text-lg font-semibold mb-2 flex items-center"><i class="fas fa-chart-line mr-2"></i> Indicadores de Rendimiento (KPIs)</h3>';
+        $summary .= '<ul class="list-disc list-inside">';
+        if (!empty($this->formData['kpis'])) {
+            foreach ($this->formData['kpis'] as $kpi) {
+                $summary .= '<li>' . ($kpi['name'] ?? 'N/A') . ' - ' . ($kpi['description'] ?? 'N/A') . '</li>';
+            }
+        } else {
+            $summary .= '<li>No hay KPIs definidos.</li>';
+        }
+        $summary .= '</ul>';
+        $summary .= '</div>';
+
+        // Metas y Actividades
+        $summary .= '<div class="bg-white p-4 rounded-lg shadow-md">';
+        $summary .= '<h3 class="text-lg font-semibold mb-2 flex items-center"><i class="fas fa-tasks mr-2"></i> Metas y Actividades</h3>';
+        $summary .= '<ul class="list-disc list-inside">';
+        if (!empty($this->formData['goals'])) {
+            foreach ($this->formData['goals'] as $goal) {
+                $summary .= '<li><strong>' . ($goal['description'] ?? 'Sin descripción') . '</strong>';
+                if (!empty($goal['activities'])) {
+                    $summary .= ' (Actividades: ' . count($goal['activities']) . ')';
+                }
+                $summary .= '</li>';
+            }
+        } else {
+            $summary .= '<li>No hay metas definidas.</li>';
+        }
+        $summary .= '</ul>';
+        $summary .= '</div>';
+
+        $summary .= '</div>'; // End of grid
+        $summary .= '</div>'; // End of main container
+
+        return $summary;
     }
 }

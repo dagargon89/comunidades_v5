@@ -221,19 +221,16 @@ class ProjectWizard extends Page
                                         ->label(__('Objetivo General'))
                                         ->rows(4)
                                         ->required()
-                                        ->maxLength(1000)
                                         ->afterStateUpdated(fn () => $this->saveToSession()),
                                 ]),
                                 Grid::make(2)->schema([
                                     Textarea::make('project.background')
                                         ->label(__('Antecedentes'))
                                         ->rows(6)
-                                        ->maxLength(2000)
                                         ->afterStateUpdated(fn () => $this->saveToSession()),
                                     Textarea::make('project.justification')
                                         ->label(__('Justificación'))
                                         ->rows(6)
-                                        ->maxLength(2000)
                                         ->afterStateUpdated(fn () => $this->saveToSession()),
                                 ]),
                             ])

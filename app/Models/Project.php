@@ -55,6 +55,36 @@ class Project extends Model
         ];
     }
 
+    /**
+     * Boot the model and set up event listeners for cascading deletes
+     */
+    protected static function booted()
+    {
+        static::deleting(function ($project) {
+            // Eliminar actividades relacionadas a través de metas
+            $goalIds = $project->goals()->pluck('id');
+            \App\Models\Activity::whereIn('goals_id', $goalIds)->delete();
+
+            // Eliminar metas del proyecto
+            $project->goals()->delete();
+
+            // Eliminar objetivos específicos del proyecto
+            $project->specificObjectives()->delete();
+
+            // Eliminar KPIs del proyecto
+            $project->kpis()->delete();
+
+            // Eliminar reportes del proyecto
+            \App\Models\ProjectReport::where('projects_id', $project->id)->delete();
+
+            // Eliminar desembolsos del proyecto
+            \App\Models\ProjectDisbursement::where('projects_id', $project->id)->delete();
+
+            // Eliminar proyectos publicados relacionados
+            $project->publishedProjects()->delete();
+        });
+    }
+
     public function financiers(): BelongsTo
     {
         return $this->belongsTo(Financier::class, 'financiers_id');

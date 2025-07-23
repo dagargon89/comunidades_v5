@@ -237,7 +237,7 @@ class ProjectWizard extends Page
                                         ->afterStateUpdated(fn () => $this->saveToSession()),
                                 ]),
                             ])
-                            ->collapsible()
+                            ->collapsible(true)
                             ->collapsed(false),
 
                         // Sección 3: Fechas y Duración

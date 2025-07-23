@@ -66,4 +66,9 @@ class Goal extends Model
     {
         return $this->belongsTo(Organization::class);
     }
+
+    public function activities()
+    {
+        return $this->hasMany(\App\Models\Activity::class, 'goals_id');
+    }
 }

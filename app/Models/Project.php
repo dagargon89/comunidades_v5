@@ -62,8 +62,10 @@ class Project extends Model
     {
         static::deleting(function ($project) {
             // Eliminar actividades relacionadas a través de metas
-            $goalIds = $project->goals()->pluck('id');
-            \App\Models\Activity::whereIn('goals_id', $goalIds)->delete();
+            $goals = $project->goals;
+            foreach ($goals as $goal) {
+                $goal->activities()->delete();
+            }
 
             // Eliminar metas del proyecto
             $project->goals()->delete();

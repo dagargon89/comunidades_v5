@@ -17,6 +17,9 @@ use App\Models\Location;
 use App\Models\ActivityCalendar;
 use Illuminate\Support\Facades\Auth;
 use Filament\Notifications\Notification;
+use Illuminate\Validation\ValidationException;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ProjectGanttView extends Page
 {
@@ -54,61 +57,116 @@ class ProjectGanttView extends Page
                         ->searchable()
                         ->required()
                         ->reactive(),
-                    Select::make('activity_id')
-                        ->label('Actividad')
-                        ->options(function (callable $get) {
-                            $projectId = $get('project_id');
-                            if (!$projectId) return [];
-                            $goalIds = Goal::where('project_id', $projectId)->pluck('id');
-                            return Activity::whereIn('goals_id', $goalIds)->pluck('name', 'id');
-                        })
-                        ->searchable()
-                        ->required()
-                        ->reactive(),
-                    DatePicker::make('start_date')
-                        ->label('Fecha de inicio')
-                        ->required(),
-                    DatePicker::make('end_date')
-                        ->label('Fecha de finalización')
-                        ->required(),
-                    TimePicker::make('start_hour')
-                        ->label('Hora de inicio')
-                        ->required(),
-                    TimePicker::make('end_hour')
-                        ->label('Hora de finalización')
-                        ->required(),
-                    Select::make('assigned_person')
-                        ->label('Responsable')
-                        ->options(function () {
-                            // Solo usuarios que existan realmente
-                            return User::pluck('name', 'id')->filter();
-                        })
-                        ->searchable()
-                        ->required(),
-                    Select::make('location_id')
-                        ->label('Ubicación')
-                        ->options(Location::pluck('name', 'id'))
-                        ->searchable()
-                        ->required(),
+                    \Filament\Forms\Components\Placeholder::make('project_dates')
+                        ->label('Fechas del proyecto')
+                        ->content(fn ($get) => Project::find($get('project_id'))
+                            ? 'Inicio: ' . (Project::find($get('project_id'))->start_date ? \Carbon\Carbon::parse(Project::find($get('project_id'))->start_date)->format('d/m/Y') : '-') .
+                              ' - Fin: ' . (Project::find($get('project_id'))->end_date ? \Carbon\Carbon::parse(Project::find($get('project_id'))->end_date)->format('d/m/Y') : '-')
+                            : 'Seleccione un proyecto'),
+                    \Filament\Forms\Components\Fieldset::make('Datos de la actividad')
+                        ->schema([
+                            \Filament\Forms\Components\Grid::make(2)
+                                ->schema([
+                                    Select::make('activity_id')
+                                        ->label('Actividad')
+                                        ->options(function (callable $get) {
+                                            $projectId = $get('project_id');
+                                            if (!$projectId) return [];
+                                            $goalIds = Goal::where('project_id', $projectId)->pluck('id');
+                                            return Activity::whereIn('goals_id', $goalIds)->pluck('name', 'id');
+                                        })
+                                        ->searchable()
+                                        ->required()
+                                        ->reactive(),
+                                    Select::make('assigned_person')
+                                        ->label('Responsable')
+                                        ->options(function () {
+                                            return User::pluck('name', 'id')->filter();
+                                        })
+                                        ->searchable()
+                                        ->required(),
+                                ]),
+                            \Filament\Forms\Components\Grid::make(2)
+                                ->schema([
+                                    DatePicker::make('start_date')
+                                        ->label('Fecha de inicio')
+                                        ->required()
+                                        ->minDate(fn ($get) => Project::find($get('project_id'))?->start_date)
+                                        ->maxDate(fn ($get) => Project::find($get('project_id'))?->end_date),
+                                    DatePicker::make('end_date')
+                                        ->label('Fecha de finalización')
+                                        ->required()
+                                        ->minDate(fn ($get) => Project::find($get('project_id'))?->start_date)
+                                        ->maxDate(fn ($get) => Project::find($get('project_id'))?->end_date),
+                                ]),
+                            \Filament\Forms\Components\Grid::make(2)
+                                ->schema([
+                                    TimePicker::make('start_hour')
+                                        ->label('Hora de inicio')
+                                        ->required(),
+                                    TimePicker::make('end_hour')
+                                        ->label('Hora de finalización')
+                                        ->required(),
+                                ]),
+                            \Filament\Forms\Components\Grid::make(1)
+                                ->schema([
+                                    Select::make('location_id')
+                                        ->label('Ubicación')
+                                        ->options(Location::pluck('name', 'id'))
+                                        ->searchable()
+                                        ->required(),
+                                ]),
+                        ]),
                 ])
                 ->action(function (array $data) {
-                    if (!isset($data['assigned_person']) || !$data['assigned_person']) {
-                        throw \Filament\Forms\Components\Actions\ActionException::make('Debes seleccionar un responsable.');
+                    try {
+                        if (!isset($data['assigned_person']) || !$data['assigned_person']) {
+                            throw ValidationException::withMessages([
+                                'assigned_person' => 'Debes seleccionar un responsable.',
+                            ]);
+                        }
+                        // Validación extra para asegurar que las fechas estén dentro del rango del proyecto
+                        $project = Project::find($data['project_id']);
+                        if ($project) {
+                            $startDate = Carbon::parse($data['start_date']);
+                            $endDate = Carbon::parse($data['end_date']);
+                            $projectStart = Carbon::parse($project->start_date);
+                            $projectEnd = Carbon::parse($project->end_date);
+
+                            if ($startDate->lt($projectStart) || $endDate->gt($projectEnd)) {
+                                throw ValidationException::withMessages([
+                                    'start_date' => 'Las fechas de la actividad deben estar dentro del rango del proyecto.',
+                                ]);
+                            }
+                        }
+                        // Antes de crear la actividad calendarizada, loguear los datos recibidos
+                        Log::info('Datos recibidos para crear actividad:', $data);
+                        $activityCalendar = ActivityCalendar::create([
+                            'activity_id' => $data['activity_id'],
+                            'start_date' => $data['start_date'],
+                            'end_date' => $data['end_date'],
+                            'start_hour' => $data['start_hour'],
+                            'end_hour' => $data['end_hour'],
+                            'assigned_person' => $data['assigned_person'], // usuario seleccionado en el desplegable
+                            'created_by' => Auth::id(), // usuario autenticado
+                            'location_id' => $data['location_id'],
+                        ]);
+                        if (!$activityCalendar) {
+                            throw new \Exception('No se pudo guardar la actividad.');
+                        }
+                        Notification::make()
+                            ->title('Actividad calendarizada correctamente')
+                            ->success()
+                            ->send();
+                    } catch (\Throwable $e) {
+                        Log::error('Error al guardar actividad calendarizada: ' . $e->getMessage(), ['exception' => $e]);
+                        Notification::make()
+                            ->title('Error al guardar la actividad')
+                            ->body('Ocurrió un error al intentar guardar la actividad. Por favor, revisa los datos e inténtalo de nuevo.')
+                            ->danger()
+                            ->send();
+                        throw $e;
                     }
-                    ActivityCalendar::create([
-                        'activity_id' => $data['activity_id'],
-                        'start_date' => $data['start_date'],
-                        'end_date' => $data['end_date'],
-                        'start_hour' => $data['start_hour'],
-                        'end_hour' => $data['end_hour'],
-                        'assigned_person' => $data['assigned_person'],
-                        'location_id' => $data['location_id'],
-                        'created_by' => Auth::id(),
-                    ]);
-                    Notification::make()
-                        ->title('Actividad calendarizada correctamente')
-                        ->success()
-                        ->send();
                 }),
         ];
     }

@@ -26,7 +26,7 @@ class ActivityCalendar extends Model
         'cancelled',
         'change_reason',
         'created_by',
-        'asigned_person',
+        'assigned_person',
     ];
 
     /**
@@ -44,7 +44,7 @@ class ActivityCalendar extends Model
             'last_modified' => 'timestamp',
             'cancelled' => 'boolean',
             'created_by' => 'integer',
-            'asigned_person' => 'integer',
+            'assigned_person' => 'integer',
         ];
     }
 

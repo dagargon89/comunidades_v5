@@ -38,7 +38,7 @@ class ActivityCalendarResource extends Resource
                     ->icon('heroicon-o-calendar')
                     ->schema([
                         Forms\Components\Select::make('activity_id')
-                            ->relationship('activity', 'description')
+                            ->relationship('activity', 'name')
                             ->label('Actividad')
                             ->required()
                             ->searchable()

@@ -171,7 +171,9 @@ class ProjectGanttView extends Page
             Action::make('editar')
                 ->label('Editar actividades')
                 ->icon('heroicon-o-pencil-square')
-                ->color('secondary')
+                ->color('warning')
+                ->visible(true)
+                ->disabled(false)
                 ->form([
                     Select::make('project_id')
                         ->label('Proyecto')

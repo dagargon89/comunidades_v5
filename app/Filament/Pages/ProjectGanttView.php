@@ -141,6 +141,7 @@ class ProjectGanttView extends Page
                         }
                         // Antes de crear la actividad calendarizada, loguear los datos recibidos
                         Log::info('Datos recibidos para crear actividad:', $data);
+                        Log::info('Valor de location_id recibido al crear:', ['location_id' => $data['location_id'], 'data' => $data]);
                         $activityCalendar = ActivityCalendar::create([
                             'activity_id' => $data['activity_id'],
                             'start_date' => $data['start_date'],
@@ -149,7 +150,7 @@ class ProjectGanttView extends Page
                             'end_hour' => $data['end_hour'],
                             'assigned_person' => $data['assigned_person'], // usuario seleccionado en el desplegable
                             'created_by' => Auth::id(), // usuario autenticado
-                            'location_id' => $data['location_id'],
+                            'location_id' => $data['location_id'] ? (int) $data['location_id'] : null,
                         ]);
                         if (!$activityCalendar) {
                             throw new \Exception('No se pudo guardar la actividad.');
@@ -203,12 +204,12 @@ class ProjectGanttView extends Page
                         ->afterStateUpdated(function ($state, $set) {
                             $calendar = ActivityCalendar::find($state);
                             if ($calendar) {
-                                $set('start_date', $calendar->start_date);
-                                $set('end_date', $calendar->end_date);
+                                $set('start_date', $calendar->start_date ? \Carbon\Carbon::parse($calendar->start_date)->format('Y-m-d') : null);
+                                $set('end_date', $calendar->end_date ? \Carbon\Carbon::parse($calendar->end_date)->format('Y-m-d') : null);
                                 $set('start_hour', $calendar->start_hour);
                                 $set('end_hour', $calendar->end_hour);
                                 $set('assigned_person', $calendar->assigned_person);
-                                $set('location_id', $calendar->location_id);
+                                $set('location_id', $calendar->location_id ? (string) $calendar->location_id : null);
                             }
                         }),
                     DatePicker::make('start_date')
@@ -249,13 +250,14 @@ class ProjectGanttView extends Page
                             ->send();
                         return;
                     }
+                    Log::info('Valor de location_id recibido al actualizar:', ['location_id' => $data['location_id'], 'data' => $data]);
                     $calendar->update([
                         'start_date' => $data['start_date'],
                         'end_date' => $data['end_date'],
                         'start_hour' => $data['start_hour'],
                         'end_hour' => $data['end_hour'],
                         'assigned_person' => $data['assigned_person'],
-                        'location_id' => $data['location_id'],
+                        'location_id' => $data['location_id'] ? (int) $data['location_id'] : null,
                     ]);
                     Notification::make()
                         ->title('Actividad calendarizada actualizada correctamente')

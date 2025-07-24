@@ -27,6 +27,7 @@ class ActivityCalendar extends Model
         'change_reason',
         'created_by',
         'assigned_person',
+        'location_id',
     ];
 
     /**
@@ -45,6 +46,7 @@ class ActivityCalendar extends Model
             'cancelled' => 'boolean',
             'created_by' => 'integer',
             'assigned_person' => 'integer',
+            'location_id' => 'integer',
         ];
     }
 
@@ -61,5 +63,10 @@ class ActivityCalendar extends Model
     public function asignedPerson(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_person');
+    }
+
+    public function location(): BelongsTo
+    {
+        return $this->belongsTo(Location::class, 'location_id');
     }
 }

@@ -159,6 +159,7 @@ class ProjectGanttView extends Page
                             ->title('Actividad calendarizada correctamente')
                             ->success()
                             ->send();
+                        return redirect(request()->header('Referer'));
                     } catch (\Throwable $e) {
                         Log::error('Error al guardar actividad calendarizada: ' . $e->getMessage(), ['exception' => $e]);
                         Notification::make()
@@ -263,6 +264,7 @@ class ProjectGanttView extends Page
                         ->title('Actividad calendarizada actualizada correctamente')
                         ->success()
                         ->send();
+                    return redirect(request()->header('Referer'));
                 }),
         ];
     }

@@ -65,8 +65,8 @@ class ActivityCalendar extends Model
         return $this->belongsTo(User::class, 'assigned_person');
     }
 
-    public function location(): BelongsTo
+    public function location()
     {
-        return $this->belongsTo(Location::class, 'location_id');
+        return $this->belongsTo(\App\Models\Location::class, 'location_id');
     }
 }

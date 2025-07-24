@@ -458,6 +458,12 @@ class ProjectWizard extends Page
     public function getActions(): array
     {
         $actions = [
+            Action::make('regresar')
+                ->label('Regresar a Gestión de Proyectos')
+                ->icon('heroicon-o-arrow-left')
+                ->color('gray')
+                ->url(route('filament.admin.pages.gestion-proyectos'))
+                ->openUrlInNewTab(false),
             Action::make('limpiar')
                 ->label('Limpiar campos de proyecto')
                 ->color('danger')
@@ -572,6 +578,9 @@ class ProjectWizard extends Page
             $this->clearFormData();
             $this->dispatch('wizard::setStep', step: 0); // Regresa al paso 1
             Notification::make()->title('Proyecto guardado exitosamente')->success()->send();
+
+            // Redirigir a la gestión de proyectos
+            return redirect()->route('filament.admin.pages.gestion-proyectos');
         } catch (\Illuminate\Validation\ValidationException $e) {
             Notification::make()->title('Error de validación')->body(implode("\n", $e->validator->errors()->all()))->danger()->send();
             throw $e;
@@ -685,6 +694,9 @@ class ProjectWizard extends Page
             $this->clearFormData();
             $this->dispatch('wizard::setStep', step: 0); // Regresa al paso 1
             Notification::make()->title('Proyecto actualizado exitosamente')->success()->send();
+
+            // Redirigir a la gestión de proyectos
+            return redirect()->route('filament.admin.pages.gestion-proyectos');
         } catch (\Illuminate\Validation\ValidationException $e) {
             Notification::make()->title('Error de validación')->body(implode("\n", $e->validator->errors()->all()))->danger()->send();
             throw $e;

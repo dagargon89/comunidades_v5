@@ -256,7 +256,26 @@ class ProjectGanttView extends Page
                         ->options(Location::pluck('name', 'id'))
                         ->searchable()
                         ->required()
-                        ->reactive(),
+                        ->reactive()
+                        ->createOptionForm([
+                            Forms\Components\TextInput::make('name')->label('Nombre')->required(),
+                            Forms\Components\TextInput::make('category')->label('Categoría'),
+                            Forms\Components\TextInput::make('street')->label('Calle'),
+                            Forms\Components\TextInput::make('neighborhood')->label('Colonia'),
+                            Forms\Components\TextInput::make('ext_number')->label('Número exterior'),
+                            Forms\Components\TextInput::make('int_number')->label('Número interior'),
+                            Forms\Components\TextInput::make('google_place_id')->label('Google Place ID'),
+                            Forms\Components\Select::make('polygons_id')
+                                ->label('Polígono')
+                                ->options(Polygon::pluck('name', 'id'))
+                                ->searchable()
+                                ->required(),
+                        ])
+                        ->createOptionUsing(function (array $data) {
+                            $data['created_by'] = Auth::id();
+                            Location::create($data);
+                            return null; // No selecciona automáticamente la nueva ubicación
+                        }),
                 ])
                 ->action(function (array $data) {
                     $calendar = ActivityCalendar::find($data['activity_calendar_id']);

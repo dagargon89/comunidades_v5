@@ -44,6 +44,15 @@ class ProjectGanttView extends Page
             })->toArray();
     }
 
+    public function getViewData(): array
+    {
+        return [
+            'projects' => \App\Models\Project::pluck('name', 'id')->toArray(),
+            'users' => \App\Models\User::pluck('name', 'id')->toArray(),
+            'ganttTasks' => $this->ganttTasks,
+        ];
+    }
+
     public function getHeaderActions(): array
     {
         return [

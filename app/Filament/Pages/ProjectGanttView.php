@@ -14,6 +14,8 @@ use App\Models\Goal;
 use App\Models\Activity;
 use App\Models\User;
 use App\Models\Location;
+use App\Models\ActivityCalendar;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectGanttView extends Page
 {
@@ -69,10 +71,19 @@ class ProjectGanttView extends Page
                         ->required(),
                 ])
                 ->action(function (array $data) {
-                    // Aquí irá la lógica para guardar la calendarización
-                    // Por ahora solo placeholder
+                    // Guardar en activity_calendars
+                    ActivityCalendar::create([
+                        'activity_id' => $data['activity_id'],
+                        'start_date' => $data['start_date'],
+                        'end_date' => $data['end_date'],
+                        'start_hour' => $data['start_hour'],
+                        'end_hour' => $data['end_hour'],
+                        'assigned_person' => $data['assigned_person'],
+                        'location_id' => $data['location_id'],
+                        'created_by' => Auth::id(),
+                    ]);
                     \Filament\Notifications\Notification::make()
-                        ->title('Actividad calendarizada (demo)')
+                        ->title('Actividad calendarizada correctamente')
                         ->success()
                         ->send();
                 }),

@@ -100,7 +100,7 @@ class ProjectWizard extends Page
                         'activities' => $activities->map(function($a) {
                             return [
                                 'name' => $a->name,
-                                'specific_objective_id' => $a->specific_objective_id,
+                                'specific_objective_id' => $a->specific_objective_id, // <-- ID real
                                 'description' => $a->description,
                                 'population_target_value' => $a->population_target_value,
                                 'product_target_value' => $a->product_target_value,
@@ -417,13 +417,22 @@ class ProjectWizard extends Page
                                                 ->columnSpan(1),
                                             Select::make('specific_objective_id')
                                                 ->label('Objetivo Específico')
-                                                ->options(fn () => collect($this->formData['objectives'] ?? [])
-                                                    ->mapWithKeys(fn($obj) => [$obj['uuid'] => $obj['description'] ?? 'Sin descripción'])
-                                                    ->toArray())
+                                                ->options(function () {
+                                                    // Si es edición, usa los IDs reales de la base de datos
+                                                    $projectId = $this->editProjectId ?? $this->formData['project']['id'] ?? null;
+                                                    if ($projectId) {
+                                                        return \App\Models\SpecificObjective::where('projects_id', $projectId)
+                                                            ->pluck('description', 'id')
+                                                            ->toArray();
+                                                    }
+                                                    // Si es nuevo, usa los objetivos recién creados en el wizard
+                                                    return collect($this->formData['objectives'] ?? [])
+                                                        ->mapWithKeys(fn($obj) => [$obj['id'] ?? $obj['uuid'] => $obj['description'] ?? 'Sin descripción'])
+                                                        ->toArray();
+                                                })
                                                 ->searchable()
                                                 ->native(false)
-                                                ->required()
-                                                ->columnSpan(1),
+                                                ->required(),
                                         ]),
                                         Textarea::make('description')
                                             ->label('Descripción')
@@ -624,17 +633,30 @@ class ProjectWizard extends Page
                 'cofunding_amount' => $this->cleanNumericValue($data['project']['cofinancier_amount']),
             ]);
 
-            // 2. Eliminar objetivos específicos existentes y crear nuevos
-            \App\Models\SpecificObjective::where('projects_id', $project->id)->delete();
+            // 2. Actualizar objetivos específicos y mapear UUID a ID real
             $objectiveUuidMap = [];
             if (!empty($data['objectives'])) {
                 foreach ($data['objectives'] as $objective) {
-                    $obj = \App\Models\SpecificObjective::create([
-                        'description' => $objective['description'] ?? '',
-                        'projects_id' => $project->id,
-                        'created_by' => Auth::id(),
-                    ]);
-                    $objectiveUuidMap[$objective['uuid']] = $obj->id;
+                    if (!empty($objective['id'])) {
+                        // Actualizar si existe
+                        $obj = \App\Models\SpecificObjective::find($objective['id']);
+                        if ($obj) {
+                            $obj->update([
+                                'description' => $objective['description'] ?? '',
+                                'projects_id' => $project->id,
+                                'created_by' => Auth::id(),
+                            ]);
+                            $objectiveUuidMap[$objective['uuid']] = $obj->id;
+                        }
+                    } else {
+                        // Crear si es nuevo
+                        $obj = \App\Models\SpecificObjective::create([
+                            'description' => $objective['description'] ?? '',
+                            'projects_id' => $project->id,
+                            'created_by' => Auth::id(),
+                        ]);
+                        $objectiveUuidMap[$objective['uuid']] = $obj->id;
+                    }
                 }
             }
 

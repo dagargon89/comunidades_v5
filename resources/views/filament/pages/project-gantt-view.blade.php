@@ -1,3 +1,12 @@
+@php
+    use Carbon\Carbon;
+    // Determinar el rango de fechas a mostrar (ejemplo: de la fecha más temprana a la más lejana de las tareas)
+    $dates = collect($ganttTasks)->flatMap(fn($t) => [$t['start'], $t['end']])->filter()->sort()->values();
+    $startDate = $dates->first() ? Carbon::parse($dates->first()) : Carbon::now();
+    $endDate = $dates->last() ? Carbon::parse($dates->last()) : Carbon::now()->addDays(30);
+    $period = new DatePeriod($startDate, new DateInterval('P1D'), $endDate->copy()->addDay());
+    $dateHeaders = collect(iterator_to_array($period));
+@endphp
 <x-filament-panels::page>
     <div class="p-6 bg-white rounded-lg shadow-lg">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
@@ -16,76 +25,49 @@
                 </select>
             </div>
             <div class="flex gap-2">
-                <button id="today-btn" class="filament-button">Hoy</button>
-                <select id="view-mode" class="filament-input rounded border-gray-300">
-                    <option value="Day">Día</option>
-                    <option value="Week">Semana</option>
-                    <option value="Month" selected>Mes</option>
-                </select>
+                <!-- Botones de acción de Filament -->
+                @if (isset($this))
+                    @foreach ($this->getHeaderActions() as $action)
+                        {{ $action }}
+                    @endforeach
+                @endif
             </div>
         </div>
-        <div id="gantt" style="min-height: 400px;"></div>
-        <div id="no-tasks" style="display: none;">
-            <p class="mb-4 text-gray-500">No hay actividades calendarizadas.</p>
+        <div class="overflow-x-auto">
+            <table class="min-w-full border border-gray-200 rounded-lg">
+                <thead>
+                    <tr>
+                        <th class="bg-gray-50 px-2 py-1 text-xs font-bold text-gray-700 border-r border-gray-200">Actividad</th>
+                        @foreach($dateHeaders as $date)
+                            <th class="bg-gray-50 px-1 py-1 text-[10px] font-bold text-gray-500 border-r border-gray-100 whitespace-nowrap">
+                                {{ $date->format('d/m') }}
+                            </th>
+                        @endforeach
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($ganttTasks as $task)
+                        <tr>
+                            <td class="bg-white px-2 py-1 text-xs font-semibold text-gray-700 border-r border-gray-100 whitespace-nowrap">
+                                {{ $task['name'] }}
+                            </td>
+                            @foreach($dateHeaders as $date)
+                                @php
+                                    $start = Carbon::parse($task['start']);
+                                    $end = Carbon::parse($task['end']);
+                                    $isInRange = ($start <= $date && $date <= $end);
+                                    $color = $projectColors[$task['project_id']] ?? '#6b7280';
+                                @endphp
+                                <td class="px-1 py-1 border-r border-gray-100 text-center">
+                                    @if($isInRange)
+                                        <div style="height:18px; border-radius:4px; background:{{ $color }}; min-width:16px;" title="{{ $task['name'] }}"></div>
+                                    @endif
+                                </td>
+                            @endforeach
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.css">
-    <script src="https://cdn.jsdelivr.net/npm/frappe-gantt/dist/frappe-gantt.umd.js"></script>
-    <script>
-        let allTasks = @json($ganttTasks);
-        let gantt = null;
-
-        function renderGantt(tasks, viewMode = 'Month') {
-            document.getElementById('gantt').innerHTML = '';
-            if (tasks.length > 0) {
-                document.getElementById('gantt').style.display = '';
-                document.getElementById('no-tasks').style.display = 'none';
-                gantt = new Gantt("#gantt", tasks, {
-                    view_mode: viewMode,
-                    today_button: true,
-                    language: 'es',
-                    bar_height: 32,
-                    bar_corner_radius: 6,
-                    padding: 24,
-                    show_expected_progress: true,
-                    lines: 'both',
-                    popup_on: 'click',
-                    scroll_to: 'today',
-                });
-            } else {
-                document.getElementById('gantt').style.display = 'none';
-                document.getElementById('no-tasks').style.display = '';
-            }
-        }
-
-        function filterTasks() {
-            const projectId = document.getElementById('project-filter').value;
-            const responsibleId = document.getElementById('responsible-filter').value;
-            let filtered = allTasks;
-            if (projectId) {
-                filtered = filtered.filter(t => t.project_id == projectId);
-            }
-            if (responsibleId) {
-                filtered = filtered.filter(t => t.assigned_person == responsibleId);
-            }
-            return filtered;
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            renderGantt(allTasks);
-
-            document.getElementById('project-filter').addEventListener('change', function () {
-                renderGantt(filterTasks(), document.getElementById('view-mode').value);
-            });
-            document.getElementById('responsible-filter').addEventListener('change', function () {
-                renderGantt(filterTasks(), document.getElementById('view-mode').value);
-            });
-            document.getElementById('view-mode').addEventListener('change', function () {
-                renderGantt(filterTasks(), this.value);
-            });
-            document.getElementById('today-btn').addEventListener('click', function () {
-                if (gantt) gantt.scroll_current();
-            });
-        });
-    </script>
 </x-filament-panels::page>

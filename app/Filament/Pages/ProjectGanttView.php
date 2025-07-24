@@ -168,6 +168,111 @@ class ProjectGanttView extends Page
                         throw $e;
                     }
                 }),
+            Action::make('editar')
+                ->label('Editar actividades')
+                ->icon('heroicon-o-pencil-square')
+                ->color('secondary')
+                ->form([
+                    Select::make('project_id')
+                        ->label('Proyecto')
+                        ->options(Project::pluck('name', 'id'))
+                        ->searchable()
+                        ->required()
+                        ->reactive(),
+                    Select::make('activity_calendar_id')
+                        ->label('Actividad calendarizada')
+                        ->options(function (callable $get) {
+                            $projectId = $get('project_id');
+                            if (!$projectId) return [];
+                            $goalIds = Goal::where('project_id', $projectId)->pluck('id');
+                            $activityIds = Activity::whereIn('goals_id', $goalIds)->pluck('id');
+                            return ActivityCalendar::whereIn('activity_id', $activityIds)
+                                ->get()
+                                ->mapWithKeys(function ($calendar) {
+                                    $actividad = $calendar->activity ? $calendar->activity->name : 'Sin nombre';
+                                    $fecha = $calendar->start_date;
+                                    $hora = $calendar->start_hour;
+                                    return [$calendar->id => "$actividad ($fecha $hora)"];
+                                })->toArray();
+                        })
+                        ->searchable()
+                        ->required()
+                        ->reactive(),
+                    DatePicker::make('start_date')
+                        ->label('Fecha de inicio')
+                        ->required()
+                        ->reactive()
+                        ->afterStateHydrated(function ($set, $get) {
+                            $calendar = ActivityCalendar::find($get('activity_calendar_id'));
+                            if ($calendar) $set('start_date', $calendar->start_date);
+                        }),
+                    DatePicker::make('end_date')
+                        ->label('Fecha de finalización')
+                        ->required()
+                        ->reactive()
+                        ->afterStateHydrated(function ($set, $get) {
+                            $calendar = ActivityCalendar::find($get('activity_calendar_id'));
+                            if ($calendar) $set('end_date', $calendar->end_date);
+                        }),
+                    TimePicker::make('start_hour')
+                        ->label('Hora de inicio')
+                        ->required()
+                        ->reactive()
+                        ->afterStateHydrated(function ($set, $get) {
+                            $calendar = ActivityCalendar::find($get('activity_calendar_id'));
+                            if ($calendar) $set('start_hour', $calendar->start_hour);
+                        }),
+                    TimePicker::make('end_hour')
+                        ->label('Hora de finalización')
+                        ->required()
+                        ->reactive()
+                        ->afterStateHydrated(function ($set, $get) {
+                            $calendar = ActivityCalendar::find($get('activity_calendar_id'));
+                            if ($calendar) $set('end_hour', $calendar->end_hour);
+                        }),
+                    Select::make('assigned_person')
+                        ->label('Responsable')
+                        ->options(User::pluck('name', 'id'))
+                        ->searchable()
+                        ->required()
+                        ->reactive()
+                        ->afterStateHydrated(function ($set, $get) {
+                            $calendar = ActivityCalendar::find($get('activity_calendar_id'));
+                            if ($calendar) $set('assigned_person', $calendar->assigned_person);
+                        }),
+                    Select::make('location_id')
+                        ->label('Ubicación')
+                        ->options(Location::pluck('name', 'id'))
+                        ->searchable()
+                        ->required()
+                        ->reactive()
+                        ->afterStateHydrated(function ($set, $get) {
+                            $calendar = ActivityCalendar::find($get('activity_calendar_id'));
+                            if ($calendar) $set('location_id', $calendar->location_id);
+                        }),
+                ])
+                ->action(function (array $data) {
+                    $calendar = ActivityCalendar::find($data['activity_calendar_id']);
+                    if (!$calendar) {
+                        Notification::make()
+                            ->title('No se encontró la actividad calendarizada')
+                            ->danger()
+                            ->send();
+                        return;
+                    }
+                    $calendar->update([
+                        'start_date' => $data['start_date'],
+                        'end_date' => $data['end_date'],
+                        'start_hour' => $data['start_hour'],
+                        'end_hour' => $data['end_hour'],
+                        'assigned_person' => $data['assigned_person'],
+                        'location_id' => $data['location_id'],
+                    ]);
+                    Notification::make()
+                        ->title('Actividad calendarizada actualizada correctamente')
+                        ->success()
+                        ->send();
+                }),
         ];
     }
 }

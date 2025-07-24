@@ -93,7 +93,7 @@ class ActivityCalendarResource extends Resource
                             ->options(fn() => \App\Models\User::pluck('name', 'id'))
                             ->required()
                             ->placeholder('Seleccione el usuario creador'),
-                        Forms\Components\Select::make('asigned_person')
+                        Forms\Components\Select::make('assigned_person')
                             ->label('Persona asignada')
                             ->options(fn() => \App\Models\User::pluck('name', 'id'))
                             ->required()

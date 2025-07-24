@@ -96,6 +96,7 @@ class ProjectWizard extends Page
                         'components_id' => $goal->components_id,
                         'action_lines_id' => $goal->components_action_lines_id,
                         'program_id' => $goal->components_action_lines_program_id,
+                        'organizations_id' => $goal->organizations_id, // <-- Asegúrate de incluir esto
                         'activities' => $activities->map(function($a) {
                             return [
                                 'name' => $a->name,
@@ -540,7 +541,7 @@ class ProjectWizard extends Page
                         'components_id' => $goal['components_id'] ?? null,
                         'components_action_lines_id' => $goal['action_lines_id'] ?? null,
                         'components_action_lines_program_id' => $goal['program_id'] ?? null,
-                        'organizations_id' => $goal['organizations_id'] ?? 1, // Ajusta si tienes organizaciones
+                        'organizations_id' => $goal['organizations_id'] ?? null,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
@@ -548,16 +549,16 @@ class ProjectWizard extends Page
                     if (!empty($goal['activities'])) {
                         foreach ($goal['activities'] as $activity) {
                             $uuid = $activity['specific_objective_id'] ?? null;
-                            $specificObjectiveId = $uuid && isset($objectiveUuidMap[$uuid]) ? $objectiveUuidMap[$uuid] : null;
-                                                    \App\Models\Activity::create([
-                            'name' => $activity['name'] ?? '',
-                            'description' => $activity['description'] ?? '',
-                            'specific_objective_id' => $specificObjectiveId,
-                            'goals_id' => $goalModel->id,
-                            'population_target_value' => $activity['population_target_value'] ?? 0,
-                            'product_target_value' => $activity['product_target_value'] ?? 0,
-                            'created_by' => Auth::id(),
-                        ]);
+                            $specificObjectiveId = $uuid && isset($objectiveUuidMap[$uuid]) ? $objectiveUuidMap[$uuid] : $uuid;
+                            \App\Models\Activity::create([
+                                'name' => $activity['name'] ?? '',
+                                'description' => $activity['description'] ?? '',
+                                'specific_objective_id' => $specificObjectiveId,
+                                'goals_id' => $goalModel->id,
+                                'population_target_value' => $activity['population_target_value'] ?? 0,
+                                'product_target_value' => $activity['product_target_value'] ?? 0,
+                                'created_by' => Auth::id(),
+                            ]);
                         }
                     }
                 }
@@ -663,6 +664,7 @@ class ProjectWizard extends Page
 
             if (!empty($data['goals'])) {
                 foreach ($data['goals'] as $goal) {
+                    Log::info('Valor de organizations_id en meta:', ['organizations_id' => $goal['organizations_id'], 'goal' => $goal]);
                     $goalModel = \App\Models\Goal::create([
                         'project_id' => $project->id,
                         'description' => $goal['description'] ?? '',
@@ -670,7 +672,7 @@ class ProjectWizard extends Page
                         'components_id' => $goal['components_id'] ?? null,
                         'components_action_lines_id' => $goal['action_lines_id'] ?? null,
                         'components_action_lines_program_id' => $goal['program_id'] ?? null,
-                        'organizations_id' => $goal['organizations_id'] ?? 1,
+                        'organizations_id' => $goal['organizations_id'] ?? null,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
@@ -679,7 +681,7 @@ class ProjectWizard extends Page
                     if (!empty($goal['activities'])) {
                         foreach ($goal['activities'] as $activity) {
                             $uuid = $activity['specific_objective_id'] ?? null;
-                            $specificObjectiveId = $uuid && isset($objectiveUuidMap[$uuid]) ? $objectiveUuidMap[$uuid] : null;
+                            $specificObjectiveId = $uuid && isset($objectiveUuidMap[$uuid]) ? $objectiveUuidMap[$uuid] : $uuid;
 
                             \App\Models\Activity::create([
                                 'name' => $activity['name'] ?? '',

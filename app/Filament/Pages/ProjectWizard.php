@@ -396,6 +396,11 @@ class ProjectWizard extends Page
                                         })
                                         ->searchable()
                                         ->native(false),
+                                    Select::make('organizations_id')
+                                        ->label('Organización')
+                                        ->options(\App\Models\Organization::pluck('name', 'id'))
+                                        ->searchable()
+                                        ->native(false),
                                 ]),
                                 Textarea::make('description')
                                     ->label('Descripción de la Meta')

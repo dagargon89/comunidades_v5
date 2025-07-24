@@ -20,6 +20,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Models\Polygon;
 
 class ProjectGanttView extends Page
 {
@@ -114,7 +115,22 @@ class ProjectGanttView extends Page
                                         ->label('Ubicación')
                                         ->options(Location::pluck('name', 'id'))
                                         ->searchable()
-                                        ->required(),
+                                        ->required()
+                                        ->reactive()
+                                        ->createOptionForm([
+                                            Forms\Components\TextInput::make('name')->label('Nombre')->required(),
+                                            Forms\Components\TextInput::make('category')->label('Categoría'),
+                                            Forms\Components\TextInput::make('street')->label('Calle'),
+                                            Forms\Components\TextInput::make('neighborhood')->label('Colonia'),
+                                            Forms\Components\TextInput::make('ext_number')->label('Número exterior'),
+                                            Forms\Components\TextInput::make('int_number')->label('Número interior'),
+                                            Forms\Components\TextInput::make('google_place_id')->label('Google Place ID'),
+                                            Forms\Components\Select::make('polygons_id')
+                                                ->label('Polígono')
+                                                ->options(Polygon::pluck('name', 'id'))
+                                                ->searchable()
+                                                ->required(),
+                                        ]),
                                 ]),
                         ]),
                 ])

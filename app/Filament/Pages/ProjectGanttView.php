@@ -157,6 +157,10 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
                     ->icon('heroicon-o-pencil-square')
                     ->color('warning')
                     ->form([
+                        Select::make('activity_id')
+                            ->label('Actividad')
+                            ->options(Activity::pluck('name', 'id')->toArray())
+                            ->required(),
                         FormDatePicker::make('start_date')
                             ->label('Fecha de inicio'),
                         FormDatePicker::make('end_date')
@@ -174,6 +178,7 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
                     ])
                     ->mountUsing(function ($form, $record) {
                         $form->fill([
+                            'activity_id' => $record->activity_id,
                             'start_date' => $record->start_date,
                             'end_date' => $record->end_date,
                             'start_hour' => $record->start_hour,
@@ -184,6 +189,7 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
                     })
                     ->action(function (array $data, $record) {
                         $record->update([
+                            'activity_id' => $data['activity_id'],
                             'start_date' => $data['start_date'],
                             'end_date' => $data['end_date'],
                             'start_hour' => $data['start_hour'],

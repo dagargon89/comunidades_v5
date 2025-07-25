@@ -18,12 +18,12 @@ class EditProject extends EditRecord
                 ->before(function ($record) {
                     // Asegurar que se ejecute la lógica de borrado en cascada del modelo
                     $record->delete();
-                    
+
                     Notification::make()
                         ->title('Proyecto eliminado correctamente')
                         ->success()
                         ->send();
-                    
+
                     // Redirigir a la lista de proyectos
                     return redirect()->route('filament.admin.resources.proyectos.index');
                 })

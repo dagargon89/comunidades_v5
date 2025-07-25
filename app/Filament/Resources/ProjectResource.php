@@ -145,7 +145,7 @@ class ProjectResource extends Resource
                                 // Asegurar que se ejecute la lógica de borrado en cascada del modelo
                                 $record->delete();
                             }
-                            
+
                             \Filament\Notifications\Notification::make()
                                 ->title('Proyectos eliminados correctamente')
                                 ->success()

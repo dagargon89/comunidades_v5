@@ -25,14 +25,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="flex gap-2">
-                <!-- Botones de acción de Filament -->
-                @if (isset($this))
-                    @foreach ($this->getHeaderActions() as $action)
-                        {{ $action }}
-                    @endforeach
-                @endif
-            </div>
+            <!-- Botones eliminados para evitar error de ruta no definida -->
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full border border-gray-200 rounded-lg">

@@ -110,7 +110,7 @@ class ActivityCalendarResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('activity.description')
+                Tables\Columns\TextColumn::make('activity.name')
                     ->label('Actividad')
                     ->searchable()
                     ->sortable(),

@@ -15,6 +15,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker as FormDatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Section;
 
 class ProjectGanttView extends Page implements Tables\Contracts\HasTable
 {
@@ -226,33 +227,48 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
                     ->color('info')
                     ->modalHeading('Detalle de la actividad calendarizada')
                     ->form([
-                        TextInput::make('activity_name')
-                            ->label('Actividad')
-                            ->disabled(),
-                        TextInput::make('assigned_person')
-                            ->label('Encargado')
-                            ->disabled(),
-                        TextInput::make('start_date')
-                            ->label('Fecha de inicio')
-                            ->disabled(),
-                        TextInput::make('end_date')
-                            ->label('Fecha de fin')
-                            ->disabled(),
-                        TextInput::make('start_hour')
-                            ->label('Hora de inicio')
-                            ->disabled(),
-                        TextInput::make('end_hour')
-                            ->label('Hora de fin')
-                            ->disabled(),
-                        TextInput::make('location')
-                            ->label('Ubicación')
-                            ->disabled(),
-                        TextInput::make('cancelled')
-                            ->label('Cancelado')
-                            ->disabled(),
-                        TextInput::make('change_reason')
-                            ->label('Motivo de cancelación')
-                            ->disabled(),
+                        Section::make('Información general')
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('activity_name')
+                                    ->label('Actividad')
+                                    ->disabled(),
+                                TextInput::make('assigned_person')
+                                    ->label('Encargado')
+                                    ->disabled(),
+                            ]),
+                        Section::make('Fechas y horas')
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('start_date')
+                                    ->label('Fecha de inicio')
+                                    ->disabled(),
+                                TextInput::make('end_date')
+                                    ->label('Fecha de fin')
+                                    ->disabled(),
+                                TextInput::make('start_hour')
+                                    ->label('Hora de inicio')
+                                    ->disabled(),
+                                TextInput::make('end_hour')
+                                    ->label('Hora de fin')
+                                    ->disabled(),
+                            ]),
+                        Section::make('Ubicación')
+                            ->schema([
+                                TextInput::make('location')
+                                    ->label('Ubicación')
+                                    ->disabled(),
+                            ]),
+                        Section::make('Cancelación')
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('cancelled')
+                                    ->label('Cancelado')
+                                    ->disabled(),
+                                TextInput::make('change_reason')
+                                    ->label('Motivo de cancelación')
+                                    ->disabled(),
+                            ]),
                     ])
                     ->mountUsing(function ($form, $record) {
                         $form->fill([

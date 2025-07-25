@@ -172,6 +172,18 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
                             ->success()
                             ->send();
                     }),
+                TableAction::make('eliminar')
+                    ->label('Eliminar')
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        $record->delete();
+                        \Filament\Notifications\Notification::make()
+                            ->title('Actividad calendarizada eliminada correctamente')
+                            ->success()
+                            ->send();
+                    }),
             ]);
     }
 }

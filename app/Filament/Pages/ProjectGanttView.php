@@ -220,6 +220,54 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
                             ->danger()
                             ->send();
                     }),
+                TableAction::make('vista')
+                    ->label('Vista')
+                    ->icon('heroicon-o-eye')
+                    ->color('info')
+                    ->modalHeading('Detalle de la actividad calendarizada')
+                    ->form([
+                        TextInput::make('activity_name')
+                            ->label('Actividad')
+                            ->disabled(),
+                        TextInput::make('assigned_person')
+                            ->label('Encargado')
+                            ->disabled(),
+                        TextInput::make('start_date')
+                            ->label('Fecha de inicio')
+                            ->disabled(),
+                        TextInput::make('end_date')
+                            ->label('Fecha de fin')
+                            ->disabled(),
+                        TextInput::make('start_hour')
+                            ->label('Hora de inicio')
+                            ->disabled(),
+                        TextInput::make('end_hour')
+                            ->label('Hora de fin')
+                            ->disabled(),
+                        TextInput::make('location')
+                            ->label('Ubicación')
+                            ->disabled(),
+                        TextInput::make('cancelled')
+                            ->label('Cancelado')
+                            ->disabled(),
+                        TextInput::make('change_reason')
+                            ->label('Motivo de cancelación')
+                            ->disabled(),
+                    ])
+                    ->mountUsing(function ($form, $record) {
+                        $form->fill([
+                            'activity_name' => $record->activity?->name,
+                            'assigned_person' => \App\Models\User::find($record->assigned_person)?->name,
+                            'start_date' => $record->start_date,
+                            'end_date' => $record->end_date,
+                            'start_hour' => $record->start_hour,
+                            'end_hour' => $record->end_hour,
+                            'location' => \App\Models\Location::find($record->location_id)?->name,
+                            'cancelled' => $record->cancelled ? 'Sí' : 'No',
+                            'change_reason' => $record->change_reason,
+                        ]);
+                    })
+                    ->action(fn () => null),
             ])
             ->recordClasses(function ($record) {
                 return $record->cancelled ? 'bg-red-100' : '';

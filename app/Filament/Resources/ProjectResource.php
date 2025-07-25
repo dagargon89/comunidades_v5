@@ -139,7 +139,18 @@ class ProjectResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function ($records) {
+                            foreach ($records as $record) {
+                                // Asegurar que se ejecute la lógica de borrado en cascada del modelo
+                                $record->delete();
+                            }
+                            
+                            \Filament\Notifications\Notification::make()
+                                ->title('Proyectos eliminados correctamente')
+                                ->success()
+                                ->send();
+                        }),
                 ]),
             ]);
     }

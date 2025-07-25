@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\Project;
+use App\Observers\ProjectObserver;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -18,6 +21,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Project::observe(ProjectObserver::class); // Comentado porque el observer está en archivosprueba
     }
 }

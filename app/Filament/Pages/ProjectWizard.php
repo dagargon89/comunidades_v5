@@ -92,6 +92,7 @@ class ProjectWizard extends Page
                 $goalsData = $goals->map(function($goal) {
                     $activities = \App\Models\Activity::where('goals_id', $goal->id)->get();
                     return [
+                        'id' => $goal->id, // Agregar el ID existente de la meta
                         'description' => $goal->description,
                         'number' => $goal->number,
                         'components_id' => $goal->components_id,
@@ -105,6 +106,7 @@ class ProjectWizard extends Page
                             $productTarget = $plannedMetric ? $plannedMetric->product_target_value : 0;
 
                             return [
+                                'id' => $a->id, // Agregar el ID existente de la actividad
                                 'name' => $a->name,
                                 'specific_objective_id' => $a->specific_objective_id, // <-- ID real
                                 'description' => $a->description,
@@ -132,9 +134,11 @@ class ProjectWizard extends Page
                     ],
                     'objectives' => $objectives->map(fn($o) => [
                         'uuid' => (string) Str::uuid(),
+                        'id' => $o->id, // Agregar el ID existente
                         'description' => $o->description,
                     ])->toArray(),
                     'kpis' => $kpis->map(fn($k) => [
+                        'id' => $k->id, // Agregar el ID existente
                         'name' => $k->name,
                         'description' => $k->description,
                         'initial_value' => $k->initial_value,

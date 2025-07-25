@@ -76,9 +76,15 @@ class ActivityResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('description')->label('Descripción'),
-                Tables\Columns\TextColumn::make('specific_objective_id')->label('Objetivo Específico'),
-                Tables\Columns\TextColumn::make('goals_id')->label('Meta'),
-                Tables\Columns\TextColumn::make('created_by')->label('Creado por'),
+                Tables\Columns\TextColumn::make('specific_objective_id')
+                    ->label('Objetivo Específico')
+                    ->formatStateUsing(fn($state) => \App\Models\SpecificObjective::find($state)?->description ?? '-'),
+                Tables\Columns\TextColumn::make('goals_id')
+                    ->label('Meta')
+                    ->formatStateUsing(fn($state) => \App\Models\Goal::find($state)?->description ?? '-'),
+                Tables\Columns\TextColumn::make('created_by')
+                    ->label('Creado por')
+                    ->formatStateUsing(fn($state) => \App\Models\User::find($state)?->name ?? '-'),
                 Tables\Columns\TextColumn::make('created_at')->label('Creado'),
                 Tables\Columns\TextColumn::make('updated_at')->label('Actualizado'),
             ])

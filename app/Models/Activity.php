@@ -43,9 +43,9 @@ class Activity extends Model
         return $this->belongsTo(SpecificObjective::class, 'specific_objective_id');
     }
 
-    public function goals(): BelongsTo
+    public function goal()
     {
-        return $this->belongsTo(Goal::class, 'goals_id');
+        return $this->belongsTo(\App\Models\Goal::class, 'goals_id');
     }
 
     public function createdBy(): BelongsTo

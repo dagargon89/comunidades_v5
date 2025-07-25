@@ -21,8 +21,15 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
     protected static string $view = 'filament.pages.project-gantt-view';
+    protected static ?string $slug = 'gestor-actividades';
+    protected static ?string $navigationLabel = 'Gestor de actividades';
+
+    public function getTitle(): string
+    {
+        return 'Gestor de actividades';
+    }
 
     public function table(Table $table): Table
     {
@@ -66,12 +73,12 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
             ])
             ->headerActions([
                 TableAction::make('programar')
-                    ->label('Programar actividad')
+                    ->label('Programar actividad (Gestor)')
                     ->icon('heroicon-o-plus')
                     ->color('primary')
                     ->url(fn() => url('/admin/activity-calendar-view')),
                 TableAction::make('editar-avanzado')
-                    ->label('Editar actividad calendarizada')
+                    ->label('Edición avanzada (Gestor)')
                     ->icon('heroicon-o-pencil-square')
                     ->color('warning')
                     ->form([
@@ -222,7 +229,7 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
                             ->send();
                     }),
                 TableAction::make('vista')
-                    ->label('Vista')
+                    ->label('Ver detalle (Gestor)')
                     ->icon('heroicon-o-eye')
                     ->color('info')
                     ->modalHeading('Detalle de la actividad calendarizada')

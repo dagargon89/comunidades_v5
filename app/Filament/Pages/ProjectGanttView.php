@@ -14,6 +14,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker as FormDatePicker;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
 
 class ProjectGanttView extends Page implements Tables\Contracts\HasTable
 {
@@ -34,6 +35,12 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
                     ->searchable(),
                 Tables\Columns\TextColumn::make('start_date')->label('Fecha de inicio')->date('d/m/Y'),
                 Tables\Columns\TextColumn::make('end_date')->label('Fecha de fin')->date('d/m/Y'),
+                Tables\Columns\TextColumn::make('cancelled')
+                    ->label('Cancelado')
+                    ->formatStateUsing(fn($state) => $state ? 'Sí' : 'No'),
+                Tables\Columns\TextColumn::make('change_reason')
+                    ->label('Motivo de cancelación')
+                    ->limit(40),
             ])
             ->filters([
                 SelectFilter::make('project_id')
@@ -46,6 +53,15 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
                             });
                         }
                     }),
+                Tables\Filters\MultiSelectFilter::make('assigned_person')
+                    ->label('Encargado')
+                    ->options(User::pluck('name', 'id')->toArray()),
+                Tables\Filters\SelectFilter::make('cancelled')
+                    ->label('Cancelado')
+                    ->options([
+                        1 => 'Sí',
+                        0 => 'No',
+                    ]),
             ])
             ->headerActions([
                 TableAction::make('programar')
@@ -184,6 +200,29 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
                             ->success()
                             ->send();
                     }),
-            ]);
+                TableAction::make('cancelar')
+                    ->label('Cancelar')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->form([
+                        Textarea::make('change_reason')
+                            ->label('Motivo de cancelación')
+                            ->required(),
+                    ])
+                    ->requiresConfirmation()
+                    ->action(function (array $data, $record) {
+                        $record->update([
+                            'cancelled' => 1,
+                            'change_reason' => $data['change_reason'],
+                        ]);
+                        \Filament\Notifications\Notification::make()
+                            ->title('Actividad calendarizada cancelada')
+                            ->danger()
+                            ->send();
+                    }),
+            ])
+            ->recordClasses(function ($record) {
+                return $record->cancelled ? 'bg-red-100' : '';
+            });
     }
 }

@@ -651,115 +651,139 @@ class ProjectWizard extends Page
                 'cofunding_amount' => $this->cleanNumericValue($data['project']['cofinancier_amount']),
             ]);
 
-            // 2. Actualizar objetivos específicos y mapear UUID a ID real
+            // 2. Actualizar objetivos específicos existentes y crear nuevos si es necesario
             $objectiveUuidMap = [];
+            $existingObjectives = \App\Models\SpecificObjective::where('projects_id', $project->id)->get();
+            $objectiveIdsToKeep = [];
+
             if (!empty($data['objectives'])) {
-                foreach ($data['objectives'] as $objective) {
-                    if (!empty($objective['id'])) {
-                        // Actualizar si existe
+                foreach ($data['objectives'] as $index => $objective) {
+                    if (!empty($objective['id']) && $existingObjectives->contains('id', $objective['id'])) {
+                        // Actualizar objetivo existente
                         $obj = \App\Models\SpecificObjective::find($objective['id']);
                         if ($obj) {
                             $obj->update([
                                 'description' => $objective['description'] ?? '',
                                 'projects_id' => $project->id,
-                                'created_by' => Auth::id(),
                             ]);
                             $objectiveUuidMap[$objective['uuid']] = $obj->id;
+                            $objectiveIdsToKeep[] = $obj->id;
                         }
                     } else {
-                        // Crear si es nuevo
+                        // Crear nuevo objetivo
                         $obj = \App\Models\SpecificObjective::create([
                             'description' => $objective['description'] ?? '',
                             'projects_id' => $project->id,
                             'created_by' => Auth::id(),
                         ]);
                         $objectiveUuidMap[$objective['uuid']] = $obj->id;
+                        $objectiveIdsToKeep[] = $obj->id;
                     }
                 }
             }
 
-            // 3. Eliminar KPIs existentes y crear nuevos
-            \App\Models\Kpi::where('projects_id', $project->id)->delete();
+            // Eliminar objetivos que ya no están en el formulario
+            \App\Models\SpecificObjective::where('projects_id', $project->id)
+                ->whereNotIn('id', $objectiveIdsToKeep)
+                ->delete();
+
+            // 3. Actualizar KPIs existentes y crear nuevos si es necesario
+            $existingKpis = \App\Models\Kpi::where('projects_id', $project->id)->get();
+            $kpiIdsToKeep = [];
+
             if (!empty($data['kpis'])) {
-                foreach ($data['kpis'] as $kpi) {
-                    \App\Models\Kpi::create([
-                        'name' => $kpi['name'] ?? '',
-                        'description' => $kpi['description'] ?? '',
-                        'initial_value' => $kpi['initial_value'] ?? 0,
-                        'final_value' => $kpi['final_value'] ?? 0,
-                        'is_percentage' => $kpi['is_percentage'] ?? false,
-                        'org_area' => $kpi['org_area'] ?? '',
-                        'projects_id' => $project->id,
-                        'created_by' => Auth::id(),
-                    ]);
+                foreach ($data['kpis'] as $index => $kpi) {
+                    if (!empty($kpi['id']) && $existingKpis->contains('id', $kpi['id'])) {
+                        // Actualizar KPI existente
+                        $kpiModel = \App\Models\Kpi::find($kpi['id']);
+                        if ($kpiModel) {
+                            $kpiModel->update([
+                                'name' => $kpi['name'] ?? '',
+                                'description' => $kpi['description'] ?? '',
+                                'initial_value' => $kpi['initial_value'] ?? 0,
+                                'final_value' => $kpi['final_value'] ?? 0,
+                                'is_percentage' => $kpi['is_percentage'] ?? false,
+                                'org_area' => $kpi['org_area'] ?? '',
+                                'projects_id' => $project->id,
+                            ]);
+                            $kpiIdsToKeep[] = $kpiModel->id;
+                        }
+                    } else {
+                        // Crear nuevo KPI
+                        $kpiModel = \App\Models\Kpi::create([
+                            'name' => $kpi['name'] ?? '',
+                            'description' => $kpi['description'] ?? '',
+                            'initial_value' => $kpi['initial_value'] ?? 0,
+                            'final_value' => $kpi['final_value'] ?? 0,
+                            'is_percentage' => $kpi['is_percentage'] ?? false,
+                            'org_area' => $kpi['org_area'] ?? '',
+                            'projects_id' => $project->id,
+                            'created_by' => Auth::id(),
+                        ]);
+                        $kpiIdsToKeep[] = $kpiModel->id;
+                    }
                 }
             }
 
-            // 4. Eliminar metas y actividades existentes y crear nuevas
+            // Eliminar KPIs que ya no están en el formulario
+            \App\Models\Kpi::where('projects_id', $project->id)
+                ->whereNotIn('id', $kpiIdsToKeep)
+                ->delete();
+
+            // 4. Actualizar metas y actividades existentes
             $existingGoals = \App\Models\Goal::where('project_id', $project->id)->get();
-            foreach ($existingGoals as $goal) {
-                // Eliminar PlannedMetric asociados a las actividades de esta meta
-                $activities = \App\Models\Activity::where('goals_id', $goal->id)->get();
-                foreach ($activities as $activity) {
-                    PlannedMetric::where('activity_id', $activity->id)->delete();
-                }
-                \App\Models\Activity::where('goals_id', $goal->id)->delete();
-            }
-            \App\Models\Goal::where('project_id', $project->id)->delete();
+            $goalIdsToKeep = [];
 
             if (!empty($data['goals'])) {
-                foreach ($data['goals'] as $goal) {
-                    Log::info('Valor de organizations_id en meta:', ['organizations_id' => $goal['organizations_id'], 'goal' => $goal]);
-                    $goalModel = \App\Models\Goal::create([
-                        'project_id' => $project->id,
-                        'description' => $goal['description'] ?? '',
-                        'number' => $goal['number'] ?? null,
-                        'components_id' => $goal['components_id'] ?? null,
-                        'components_action_lines_id' => $goal['action_lines_id'] ?? null,
-                        'components_action_lines_program_id' => $goal['program_id'] ?? null,
-                        'organizations_id' => $goal['organizations_id'] ?? null,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-
-                    // Guardar actividades asociadas a la meta
-                    if (!empty($goal['activities'])) {
-                        foreach ($goal['activities'] as $activity) {
-                            $uuid = $activity['specific_objective_id'] ?? null;
-                            $specificObjectiveId = $uuid && isset($objectiveUuidMap[$uuid]) ? $objectiveUuidMap[$uuid] : $uuid;
-
-                            \App\Models\Activity::create([
-                                'name' => $activity['name'] ?? '',
-                                'description' => $activity['description'] ?? '',
-                                'specific_objective_id' => $specificObjectiveId,
-                                'goals_id' => $goalModel->id,
-                                'population_target_value' => $activity['population_target_value'] ?? 0,
-                                'product_target_value' => $activity['product_target_value'] ?? 0,
-                                'created_by' => Auth::id(),
+                foreach ($data['goals'] as $index => $goal) {
+                    if (!empty($goal['id']) && $existingGoals->contains('id', $goal['id'])) {
+                        // Actualizar meta existente
+                        $goalModel = \App\Models\Goal::find($goal['id']);
+                        if ($goalModel) {
+                            $goalModel->update([
+                                'description' => $goal['description'] ?? '',
+                                'number' => $goal['number'] ?? null,
+                                'components_id' => $goal['components_id'] ?? null,
+                                'components_action_lines_id' => $goal['action_lines_id'] ?? null,
+                                'components_action_lines_program_id' => $goal['program_id'] ?? null,
+                                'organizations_id' => $goal['organizations_id'] ?? null,
                             ]);
-                            // Crear registro en PlannedMetric para esta actividad
-                            $activityModel = \App\Models\Activity::where('name', $activity['name'] ?? '')
-                                ->where('goals_id', $goalModel->id)
-                                ->latest()
-                                ->first();
-                            if ($activityModel) {
-                                PlannedMetric::create([
-                                    'activity_id' => $activityModel->id,
-                                    'population_target_value' => $activity['population_target_value'] ?? 0,
-                                    'product_target_value' => $activity['product_target_value'] ?? 0,
-                                ]);
-                            }
+
+                            // Actualizar actividades de esta meta
+                            $this->updateActivitiesForGoal($goalModel, $goal['activities'] ?? [], $objectiveUuidMap);
+                            $goalIdsToKeep[] = $goalModel->id;
                         }
+                    } else {
+                        // Crear nueva meta
+                        $goalModel = \App\Models\Goal::create([
+                            'project_id' => $project->id,
+                            'description' => $goal['description'] ?? '',
+                            'number' => $goal['number'] ?? null,
+                            'components_id' => $goal['components_id'] ?? null,
+                            'components_action_lines_id' => $goal['action_lines_id'] ?? null,
+                            'components_action_lines_program_id' => $goal['program_id'] ?? null,
+                            'organizations_id' => $goal['organizations_id'] ?? null,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+
+                        // Crear actividades para esta nueva meta
+                        $this->createActivitiesForGoal($goalModel, $goal['activities'] ?? [], $objectiveUuidMap);
+                        $goalIdsToKeep[] = $goalModel->id;
                     }
                 }
             }
+
+            // Eliminar metas que ya no están en el formulario
+            \App\Models\Goal::where('project_id', $project->id)
+                ->whereNotIn('id', $goalIdsToKeep)
+                ->delete();
 
             DB::commit();
             $this->clearFormData();
-            $this->dispatch('wizard::setStep', step: 0); // Regresa al paso 1
+            $this->dispatch('wizard::setStep', step: 0);
             Notification::make()->title('Proyecto actualizado exitosamente')->success()->send();
 
-            // Redirigir a la gestión de proyectos
             return redirect()->route('filament.admin.pages.gestion-proyectos');
         } catch (\Illuminate\Validation\ValidationException $e) {
             Notification::make()->title('Error de validación')->body(implode("\n", $e->validator->errors()->all()))->danger()->send();
@@ -767,6 +791,107 @@ class ProjectWizard extends Page
         } catch (\Exception $e) {
             DB::rollBack();
             Notification::make()->title('Error al actualizar el proyecto')->body($e->getMessage())->danger()->send();
+        }
+    }
+
+    private function updateActivitiesForGoal($goalModel, $activities, $objectiveUuidMap)
+    {
+        $existingActivities = \App\Models\Activity::where('goals_id', $goalModel->id)->get();
+        $activityIdsToKeep = [];
+
+        foreach ($activities as $activity) {
+            if (!empty($activity['id']) && $existingActivities->contains('id', $activity['id'])) {
+                // Actualizar actividad existente
+                $activityModel = \App\Models\Activity::find($activity['id']);
+                if ($activityModel) {
+                    $uuid = $activity['specific_objective_id'] ?? null;
+                    $specificObjectiveId = $uuid && isset($objectiveUuidMap[$uuid]) ? $objectiveUuidMap[$uuid] : $uuid;
+
+                    $activityModel->update([
+                        'name' => $activity['name'] ?? '',
+                        'description' => $activity['description'] ?? '',
+                        'specific_objective_id' => $specificObjectiveId,
+                        'population_target_value' => $activity['population_target_value'] ?? 0,
+                        'product_target_value' => $activity['product_target_value'] ?? 0,
+                    ]);
+
+                    // Actualizar PlannedMetric
+                    $plannedMetric = PlannedMetric::where('activity_id', $activityModel->id)->first();
+                    if ($plannedMetric) {
+                        $plannedMetric->update([
+                            'population_target_value' => $activity['population_target_value'] ?? 0,
+                            'product_target_value' => $activity['product_target_value'] ?? 0,
+                        ]);
+                    } else {
+                        // Crear PlannedMetric si no existe
+                        PlannedMetric::create([
+                            'activity_id' => $activityModel->id,
+                            'population_target_value' => $activity['population_target_value'] ?? 0,
+                            'product_target_value' => $activity['product_target_value'] ?? 0,
+                        ]);
+                    }
+
+                    $activityIdsToKeep[] = $activityModel->id;
+                }
+            } else {
+                // Crear nueva actividad
+                $uuid = $activity['specific_objective_id'] ?? null;
+                $specificObjectiveId = $uuid && isset($objectiveUuidMap[$uuid]) ? $objectiveUuidMap[$uuid] : $uuid;
+
+                $activityModel = \App\Models\Activity::create([
+                    'name' => $activity['name'] ?? '',
+                    'description' => $activity['description'] ?? '',
+                    'specific_objective_id' => $specificObjectiveId,
+                    'goals_id' => $goalModel->id,
+                    'population_target_value' => $activity['population_target_value'] ?? 0,
+                    'product_target_value' => $activity['product_target_value'] ?? 0,
+                    'created_by' => Auth::id(),
+                ]);
+
+                // Crear PlannedMetric para la nueva actividad
+                PlannedMetric::create([
+                    'activity_id' => $activityModel->id,
+                    'population_target_value' => $activity['population_target_value'] ?? 0,
+                    'product_target_value' => $activity['product_target_value'] ?? 0,
+                ]);
+
+                $activityIdsToKeep[] = $activityModel->id;
+            }
+        }
+
+        // Eliminar actividades que ya no están en el formulario
+        $activitiesToDelete = \App\Models\Activity::where('goals_id', $goalModel->id)
+            ->whereNotIn('id', $activityIdsToKeep)
+            ->get();
+
+        foreach ($activitiesToDelete as $activity) {
+            PlannedMetric::where('activity_id', $activity->id)->delete();
+            $activity->delete();
+        }
+    }
+
+    private function createActivitiesForGoal($goalModel, $activities, $objectiveUuidMap)
+    {
+        foreach ($activities as $activity) {
+            $uuid = $activity['specific_objective_id'] ?? null;
+            $specificObjectiveId = $uuid && isset($objectiveUuidMap[$uuid]) ? $objectiveUuidMap[$uuid] : $uuid;
+
+            $activityModel = \App\Models\Activity::create([
+                'name' => $activity['name'] ?? '',
+                'description' => $activity['description'] ?? '',
+                'specific_objective_id' => $specificObjectiveId,
+                'goals_id' => $goalModel->id,
+                'population_target_value' => $activity['population_target_value'] ?? 0,
+                'product_target_value' => $activity['product_target_value'] ?? 0,
+                'created_by' => Auth::id(),
+            ]);
+
+            // Crear PlannedMetric para la nueva actividad
+            PlannedMetric::create([
+                'activity_id' => $activityModel->id,
+                'population_target_value' => $activity['population_target_value'] ?? 0,
+                'product_target_value' => $activity['product_target_value'] ?? 0,
+            ]);
         }
     }
 

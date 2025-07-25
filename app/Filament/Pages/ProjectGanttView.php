@@ -34,7 +34,7 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(ActivityCalendar::query()->with(['activity.goal']))
+            ->query(ActivityCalendar::query()->with(['activity', 'activity.goal']))
             ->columns([
                 Tables\Columns\TextColumn::make('activity.name')->label('Actividad')->searchable(),
                 Tables\Columns\TextColumn::make('assigned_person')

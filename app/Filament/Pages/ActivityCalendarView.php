@@ -27,6 +27,7 @@ class ActivityCalendarView extends Page implements Forms\Contracts\HasForms
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static string $view = 'filament.pages.activity-calendar-view';
+    protected static ?string $slug = 'activity-calendar-view';
 
     public ?array $data = [];
 

@@ -71,11 +71,9 @@ class LocationResource extends Resource
                             ->placeholder('Nombre de la colonia'),
                         Forms\Components\TextInput::make('ext_number')
                             ->label('Número exterior')
-                            ->numeric()
                             ->placeholder('Número exterior'),
                         Forms\Components\TextInput::make('int_number')
                             ->label('Número interior')
-                            ->numeric()
                             ->placeholder('Número interior (opcional)'),
                     ])
                     ->columns(2),
@@ -115,11 +113,9 @@ class LocationResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('ext_number')
                     ->label('Número exterior')
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('int_number')
                     ->label('Número interior')
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('google_place_id')
                     ->label('ID Google Places')

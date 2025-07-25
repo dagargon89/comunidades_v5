@@ -25,7 +25,13 @@
                     @endforeach
                 </select>
             </div>
-            <!-- Botones eliminados para evitar error de ruta no definida -->
+            <div class="flex gap-2">
+                <a href="{{ url('/admin/activity-calendar-view') }}">
+                    <x-filament::button color="primary" icon="heroicon-o-plus">
+                        Programar actividad
+                    </x-filament::button>
+                </a>
+            </div>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full border border-gray-200 rounded-lg">

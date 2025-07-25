@@ -31,6 +31,7 @@ use App\Models\Program;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Checkbox;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use App\Models\PlannedMetric;
 
 class ProjectWizard extends Page
 {
@@ -98,12 +99,17 @@ class ProjectWizard extends Page
                         'program_id' => $goal->components_action_lines_program_id,
                         'organizations_id' => $goal->organizations_id, // <-- Asegúrate de incluir esto
                         'activities' => $activities->map(function($a) {
+                            // Buscar los valores de meta desde planned_metrics
+                            $plannedMetric = PlannedMetric::where('activity_id', $a->id)->first();
+                            $populationTarget = $plannedMetric ? $plannedMetric->population_target_value : 0;
+                            $productTarget = $plannedMetric ? $plannedMetric->product_target_value : 0;
+
                             return [
                                 'name' => $a->name,
                                 'specific_objective_id' => $a->specific_objective_id, // <-- ID real
                                 'description' => $a->description,
-                                'population_target_value' => $a->population_target_value,
-                                'product_target_value' => $a->product_target_value,
+                                'population_target_value' => $populationTarget,
+                                'product_target_value' => $productTarget,
                             ];
                         })->toArray(),
                     ];
@@ -568,6 +574,18 @@ class ProjectWizard extends Page
                                 'product_target_value' => $activity['product_target_value'] ?? 0,
                                 'created_by' => Auth::id(),
                             ]);
+                            // Crear registro en PlannedMetric para esta actividad
+                            $activityModel = \App\Models\Activity::where('name', $activity['name'] ?? '')
+                                ->where('goals_id', $goalModel->id)
+                                ->latest()
+                                ->first();
+                            if ($activityModel) {
+                                PlannedMetric::create([
+                                    'activity_id' => $activityModel->id,
+                                    'population_target_value' => $activity['population_target_value'] ?? 0,
+                                    'product_target_value' => $activity['product_target_value'] ?? 0,
+                                ]);
+                            }
                         }
                     }
                 }
@@ -680,6 +698,11 @@ class ProjectWizard extends Page
             // 4. Eliminar metas y actividades existentes y crear nuevas
             $existingGoals = \App\Models\Goal::where('project_id', $project->id)->get();
             foreach ($existingGoals as $goal) {
+                // Eliminar PlannedMetric asociados a las actividades de esta meta
+                $activities = \App\Models\Activity::where('goals_id', $goal->id)->get();
+                foreach ($activities as $activity) {
+                    PlannedMetric::where('activity_id', $activity->id)->delete();
+                }
                 \App\Models\Activity::where('goals_id', $goal->id)->delete();
             }
             \App\Models\Goal::where('project_id', $project->id)->delete();
@@ -714,6 +737,18 @@ class ProjectWizard extends Page
                                 'product_target_value' => $activity['product_target_value'] ?? 0,
                                 'created_by' => Auth::id(),
                             ]);
+                            // Crear registro en PlannedMetric para esta actividad
+                            $activityModel = \App\Models\Activity::where('name', $activity['name'] ?? '')
+                                ->where('goals_id', $goalModel->id)
+                                ->latest()
+                                ->first();
+                            if ($activityModel) {
+                                PlannedMetric::create([
+                                    'activity_id' => $activityModel->id,
+                                    'population_target_value' => $activity['population_target_value'] ?? 0,
+                                    'product_target_value' => $activity['product_target_value'] ?? 0,
+                                ]);
+                            }
                         }
                     }
                 }

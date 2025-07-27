@@ -16,6 +16,7 @@ use Filament\Forms\Components\DatePicker as FormDatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Section;
+use App\Filament\Widgets\ActivityCalendarCount;
 
 class ProjectGanttView extends Page implements Tables\Contracts\HasTable
 {
@@ -29,6 +30,13 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
     public function getTitle(): string
     {
         return 'Gestor de actividades';
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ActivityCalendarCount::class,
+        ];
     }
 
     public function table(Table $table): Table

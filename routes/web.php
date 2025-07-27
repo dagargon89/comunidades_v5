@@ -26,6 +26,13 @@ Route::middleware(['auth'])->group(function () {
         return view('capturista.dashboard');
     })->name('capturista.dashboard');
 
+    // Rutas del capturista
+    Route::prefix('capturista')->name('capturista.')->group(function () {
+        Route::get('/beneficiary-capture', function () {
+            return view('capturista.beneficiary-capture');
+        })->name('beneficiary-capture');
+    });
+
     // Dashboard para financiadoras
     Route::get('/financiadora/dashboard', function () {
         return view('financiadora.dashboard');

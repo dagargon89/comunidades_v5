@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Plataforma de Planeación Estratégica</title>
+        <title>Captura de Beneficiarios - Capturista</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -22,8 +22,8 @@
         <!-- Livewire Styles -->
         @livewireStyles
     </head>
-    <body>
-        @livewire('welcome-page')
+    <body class="antialiased">
+        <livewire:capturista.beneficiary-capture />
 
         <!-- Livewire Scripts -->
         @livewireScripts

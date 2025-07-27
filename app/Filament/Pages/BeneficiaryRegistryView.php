@@ -375,7 +375,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
                             Header::make('birth_year')->label('Año Nac.')->markAsRequired(),
                             Header::make('gender')->label('Género')->markAsRequired(),
                             Header::make('phone')->label('Teléfono'),
-                            Header::make('signature')->label('Firma')->markAsRequired(),
+                            Header::make('signature')->label('Firma')->markAsRequired()->width('250px'),
                         ])
                         ->schema([
                             \Filament\Forms\Components\TextInput::make('search_identifier')

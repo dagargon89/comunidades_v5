@@ -242,66 +242,126 @@ class BeneficiaryRegistryView extends Page implements HasTable
                 ->label('Registrar beneficiario único')
                 ->icon('heroicon-o-user-plus')
                 ->form([
-                    // Campo de búsqueda por identificador
-                    TextInput::make('search_identifier')
-                        ->label('Buscar por identificador')
-                        ->placeholder('Ej: PEREZ2025M')
-                        ->helperText('Ingresa el identificador para buscar un beneficiario existente')
-                        ->live(onBlur: true)
-                        ->afterStateUpdated(function ($state, $set, $get) {
-                            if (!empty($state)) {
-                                $beneficiary = \App\Models\Beneficiary::where('identifier', $state)->first();
-                                if ($beneficiary) {
-                                    $set('last_name', $beneficiary->last_name);
-                                    $set('mother_last_name', $beneficiary->mother_last_name);
-                                    $set('first_names', $beneficiary->first_names);
-                                    $set('birth_year', $beneficiary->birth_year);
-                                    $set('gender', $beneficiary->gender);
-                                    $set('phone', $beneficiary->phone);
-                                    $set('address_backup', $beneficiary->address_backup);
+                    // Sección de búsqueda
+                    Section::make('Búsqueda de Beneficiario')
+                        ->description('Busca un beneficiario existente por su identificador')
+                        ->icon('heroicon-m-magnifying-glass')
+                        ->schema([
+                            TextInput::make('search_identifier')
+                                ->label('Buscar por identificador')
+                                ->placeholder('Ej: PEREZ2025M')
+                                ->helperText('Ingresa el identificador para buscar un beneficiario existente')
+                                ->live(onBlur: true)
+                                ->afterStateUpdated(function ($state, $set, $get) {
+                                    if (!empty($state)) {
+                                        $beneficiary = \App\Models\Beneficiary::where('identifier', $state)->first();
+                                        if ($beneficiary) {
+                                            $set('last_name', $beneficiary->last_name);
+                                            $set('mother_last_name', $beneficiary->mother_last_name);
+                                            $set('first_names', $beneficiary->first_names);
+                                            $set('birth_year', $beneficiary->birth_year);
+                                            $set('gender', $beneficiary->gender);
+                                            $set('phone', $beneficiary->phone);
+                                            $set('address_backup', $beneficiary->address_backup);
 
-                                    // Mostrar notificación de beneficiario encontrado
-                                    \Filament\Notifications\Notification::make()
-                                        ->title('Beneficiario encontrado')
-                                        ->body("Identificador: {$beneficiary->identifier}. Los datos han sido pre-llenados. Solo necesitas capturar la nueva firma.")
-                                        ->success()
-                                        ->send();
-                                } else {
-                                    // Limpiar campos si no se encuentra
-                                    $set('last_name', '');
-                                    $set('mother_last_name', '');
-                                    $set('first_names', '');
-                                    $set('birth_year', '');
-                                    $set('gender', '');
-                                    $set('phone', '');
-                                    $set('address_backup', '');
+                                            // Mostrar notificación de beneficiario encontrado
+                                            \Filament\Notifications\Notification::make()
+                                                ->title('Beneficiario encontrado')
+                                                ->body("Identificador: {$beneficiary->identifier}. Los datos han sido pre-llenados. Solo necesitas capturar la nueva firma.")
+                                                ->success()
+                                                ->send();
+                                        } else {
+                                            // Limpiar campos si no se encuentra
+                                            $set('last_name', '');
+                                            $set('mother_last_name', '');
+                                            $set('first_names', '');
+                                            $set('birth_year', '');
+                                            $set('gender', '');
+                                            $set('phone', '');
+                                            $set('address_backup', '');
 
-                                    \Filament\Notifications\Notification::make()
-                                        ->title('Beneficiario no encontrado')
-                                        ->body('No se encontró un beneficiario con ese identificador. Puedes proceder con el registro normal.')
-                                        ->warning()
-                                        ->send();
-                                }
-                            }
-                        })
-                        ->columnSpanFull(),
+                                            \Filament\Notifications\Notification::make()
+                                                ->title('Beneficiario no encontrado')
+                                                ->body('No se encontró un beneficiario con ese identificador. Puedes proceder con el registro normal.')
+                                                ->warning()
+                                                ->send();
+                                        }
+                                    }
+                                })
+                                ->columnSpanFull(),
+                        ])
+                        ->collapsible()
+                        ->collapsed(),
 
-                    TextInput::make('last_name')->label('Apellido paterno')->required()->maxLength(100),
-                    TextInput::make('mother_last_name')->label('Apellido materno')->required()->maxLength(100),
-                    TextInput::make('first_names')->label('Nombres')->required()->maxLength(100),
-                    TextInput::make('birth_year')->label('Año de nacimiento')->required()->maxLength(4),
-                    Select::make('gender')->label('Género')->required()
-                        ->options([
-                            'M' => 'Masculino',
-                            'F' => 'Femenino',
-                            'Male' => 'Male',
-                            'Female' => 'Female',
+                    // Sección de datos personales
+                    Section::make('Datos Personales')
+                        ->description('Información básica del beneficiario')
+                        ->icon('heroicon-m-user')
+                        ->schema([
+                            TextInput::make('last_name')
+                                ->label('Apellido paterno')
+                                ->required()
+                                ->maxLength(100)
+                                ->columnSpan(1),
+                            TextInput::make('mother_last_name')
+                                ->label('Apellido materno')
+                                ->required()
+                                ->maxLength(100)
+                                ->columnSpan(1),
+                            TextInput::make('first_names')
+                                ->label('Nombres')
+                                ->required()
+                                ->maxLength(100)
+                                ->columnSpan(2),
+                            TextInput::make('birth_year')
+                                ->label('Año de nacimiento')
+                                ->required()
+                                ->maxLength(4)
+                                ->columnSpan(1),
+                            Select::make('gender')
+                                ->label('Género')
+                                ->required()
+                                ->options([
+                                    'M' => 'Masculino',
+                                    'F' => 'Femenino',
+                                    'Male' => 'Male',
+                                    'Female' => 'Female',
+                                ])
+                                ->columnSpan(1),
+                        ])
+                        ->columns(2),
+
+                    // Sección de información de contacto
+                    Section::make('Información de Contacto')
+                        ->description('Datos de contacto del beneficiario')
+                        ->icon('heroicon-m-phone')
+                        ->schema([
+                            TextInput::make('phone')
+                                ->label('Teléfono')
+                                ->maxLength(20)
+                                ->columnSpan(1),
+                            Textarea::make('address_backup')
+                                ->label('Dirección de respaldo')
+                                ->rows(3)
+                                ->columnSpan(1),
+                        ])
+                        ->columns(2)
+                        ->collapsible()
+                        ->collapsed(),
+
+                    // Sección de firma
+                    Section::make('Firma del Beneficiario')
+                        ->description('Captura la firma del beneficiario')
+                        ->icon('heroicon-m-pencil-square')
+                        ->schema([
+                            SignaturePad::make('signature')
+                                ->label('Firma del beneficiario')
+                                ->required()
+                                ->extraAttributes([
+                                    'style' => 'min-height: 200px; min-width: 100%;'
+                                ])
+                                ->columnSpanFull(),
                         ]),
-                    TextInput::make('phone')->label('Teléfono')->maxLength(20),
-                    Textarea::make('address_backup')->label('Dirección de respaldo'),
-                    SignaturePad::make('signature')
-                        ->label('Firma del beneficiario')
-                        ->required(),
                 ])
                 ->action(function (array $data) {
                     // Log temporal para depurar

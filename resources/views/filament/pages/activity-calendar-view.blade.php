@@ -1,6 +1,6 @@
 <x-filament-panels::page>
     <div class="mb-4">
-        <a href="{{ url('/admin/project-gantt-view') }}">
+        <a href="{{ url('/admin/gestor-actividades') }}">
             <x-filament::button color="warning" icon="heroicon-o-arrow-left">
                 Regresar a Gantt de Proyectos
             </x-filament::button>

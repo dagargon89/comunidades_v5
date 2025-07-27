@@ -64,7 +64,9 @@ class BeneficiaryCapture extends Component
 
     public function mount()
     {
+        \Log::info('BeneficiaryCapture mount() called');
         $this->activity_id = Activity::query()->min('id') ?? null;
+        \Log::info('activity_id: ' . $this->activity_id);
         $firstCalendar = null;
         if ($this->activity_id) {
             $firstCalendar = ActivityCalendar::where('activity_id', $this->activity_id)
@@ -73,6 +75,7 @@ class BeneficiaryCapture extends Component
                 ->first();
         }
         $this->activity_calendar_id = $firstCalendar ? $firstCalendar->id : null;
+        \Log::info('activity_calendar_id: ' . $this->activity_calendar_id);
     }
 
     public function updatedActivityId($value)
@@ -249,6 +252,7 @@ class BeneficiaryCapture extends Component
 
     public function showMassiveForm()
     {
+        \Log::info('showMassiveForm method called');
         $this->showMassiveForm = true;
         $this->showSingleForm = false;
         $this->beneficiarios = [
@@ -263,6 +267,11 @@ class BeneficiaryCapture extends Component
                 'signature' => '',
             ]
         ];
+        \Log::info('showMassiveForm completed, beneficiarios count: ' . count($this->beneficiarios));
+
+        // Agregar un mensaje de sesión para debug
+        session()->flash('message', 'showMassiveForm ejecutado correctamente');
+        session()->flash('messageType', 'success');
     }
 
     public function addBeneficiaryRow()
@@ -474,6 +483,37 @@ class BeneficiaryCapture extends Component
     public function updatedFilterYear()
     {
         $this->resetPage();
+    }
+
+    public function searchBeneficiaryInRepeater($index, $identifier)
+    {
+        if (!empty($identifier)) {
+            $beneficiary = Beneficiary::where('identifier', $identifier)->first();
+            if ($beneficiary) {
+                $this->beneficiarios[$index]['last_name'] = $beneficiary->last_name;
+                $this->beneficiarios[$index]['mother_last_name'] = $beneficiary->mother_last_name;
+                $this->beneficiarios[$index]['first_names'] = $beneficiary->first_names;
+                $this->beneficiarios[$index]['birth_year'] = $beneficiary->birth_year;
+                $this->beneficiarios[$index]['gender'] = $beneficiary->gender;
+                $this->beneficiarios[$index]['phone'] = $beneficiary->phone;
+                $this->beneficiarios[$index]['address_backup'] = $beneficiary->address_backup;
+
+                session()->flash('message', "Beneficiario encontrado: {$beneficiary->identifier}. Los datos han sido pre-llenados. Solo necesitas capturar la nueva firma.");
+                session()->flash('messageType', 'success');
+            } else {
+                // Limpiar campos si no se encuentra
+                $this->beneficiarios[$index]['last_name'] = '';
+                $this->beneficiarios[$index]['mother_last_name'] = '';
+                $this->beneficiarios[$index]['first_names'] = '';
+                $this->beneficiarios[$index]['birth_year'] = '';
+                $this->beneficiarios[$index]['gender'] = '';
+                $this->beneficiarios[$index]['phone'] = '';
+                $this->beneficiarios[$index]['address_backup'] = '';
+
+                session()->flash('message', 'No se encontró un beneficiario con ese identificador. Puedes proceder con el registro normal.');
+                session()->flash('messageType', 'warning');
+            }
+        }
     }
 
     public function render()

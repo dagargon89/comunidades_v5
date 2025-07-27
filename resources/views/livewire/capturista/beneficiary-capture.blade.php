@@ -96,6 +96,7 @@
         </div>
 
         <!-- Botones de acción -->
+        <!-- Debug: activity_calendar_id = {{ $activity_calendar_id }} -->
         @if($activity_calendar_id)
             <div class="mb-6 flex flex-wrap gap-4">
                 <button wire:click="showSingleForm" class="inline-flex items-center px-4 py-2 bg-amber-600 border border-transparent rounded-lg font-medium text-sm text-white shadow-sm hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors duration-200">
@@ -109,7 +110,7 @@
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
-                    Registro Masivo
+                    Registro Masivo (Debug: showMassiveForm={{ $showMassiveForm ? 'true' : 'false' }})
                 </button>
             </div>
         @endif
@@ -273,33 +274,47 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Identificador</label>
-                                        <input type="text" wire:model="beneficiarios.{{ $index }}.search_identifier"
-                                               class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-amber-500 focus:border-amber-500"
-                                               placeholder="Ej: PEREZ2025M">
+                                        <div class="flex space-x-2">
+                                            <input type="text" wire:model="beneficiarios.{{ $index }}.search_identifier"
+                                                   class="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-amber-500 focus:border-amber-500"
+                                                   placeholder="Ej: PEREZ2025M">
+                                            <button type="button"
+                                                    wire:click="searchBeneficiaryInRepeater({{ $index }}, '{{ $beneficiario['search_identifier'] }}')"
+                                                    class="px-3 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors duration-200">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">Ingresa el identificador y haz clic en buscar para pre-llenar los datos</p>
                                     </div>
 
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Apellido Paterno *</label>
                                         <input type="text" wire:model="beneficiarios.{{ $index }}.last_name" required
                                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-amber-500 focus:border-amber-500">
+                                        @error("beneficiarios.{$index}.last_name") <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Apellido Materno *</label>
                                         <input type="text" wire:model="beneficiarios.{{ $index }}.mother_last_name" required
                                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-amber-500 focus:border-amber-500">
+                                        @error("beneficiarios.{$index}.mother_last_name") <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Nombres *</label>
                                         <input type="text" wire:model="beneficiarios.{{ $index }}.first_names" required
                                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-amber-500 focus:border-amber-500">
+                                        @error("beneficiarios.{$index}.first_names") <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Año Nacimiento *</label>
                                         <input type="text" wire:model="beneficiarios.{{ $index }}.birth_year" required maxlength="4"
                                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-amber-500 focus:border-amber-500">
+                                        @error("beneficiarios.{$index}.birth_year") <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div>
@@ -310,12 +325,14 @@
                                             <option value="M">Masculino</option>
                                             <option value="F">Femenino</option>
                                         </select>
+                                        @error("beneficiarios.{$index}.gender") <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
                                         <input type="text" wire:model="beneficiarios.{{ $index }}.phone"
                                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-amber-500 focus:border-amber-500">
+                                        @error("beneficiarios.{$index}.phone") <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div class="md:col-span-2">
@@ -323,6 +340,7 @@
                                         <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
                                             <p class="text-gray-500">Componente de firma aquí</p>
                                         </div>
+                                        @error("beneficiarios.{$index}.signature") <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                     </div>
                                 </div>
                             </div>

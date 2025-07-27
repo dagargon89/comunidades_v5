@@ -20,10 +20,11 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Notifications\Notification;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class ActivityCalendarView extends Page implements Forms\Contracts\HasForms
 {
-    use Forms\Concerns\InteractsWithForms;
+    use Forms\Concerns\InteractsWithForms, HasPageShield;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
     protected static string $view = 'filament.pages.activity-calendar-view';

@@ -12,6 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DatePicker;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use App\Filament\Widgets\ProjectCount;
 
 class ProjectManagement extends Page implements Tables\Contracts\HasTable
 {
@@ -23,6 +24,13 @@ class ProjectManagement extends Page implements Tables\Contracts\HasTable
 
     use Tables\Concerns\InteractsWithTable;
     use HasPageShield;
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ProjectCount::class,
+        ];
+    }
 
     public function table(Table $table): Table
     {

@@ -53,9 +53,11 @@ class UserResource extends Resource
                             ->label('Contraseña')
                             ->password()
                             ->required(fn(string $context): bool => $context === 'create')
+                            ->dehydrated(fn($state): bool => filled($state))
                             ->minLength(8)
                             ->maxLength(255)
-                            ->placeholder('Mínimo 8 caracteres'),
+                            ->placeholder('Mínimo 8 caracteres')
+                            ->helperText('Dejar vacío para mantener la contraseña actual'),
                         Forms\Components\DateTimePicker::make('email_verified_at')
                             ->label('Email Verificado')
                             ->nullable(),

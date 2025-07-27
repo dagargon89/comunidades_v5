@@ -36,19 +36,22 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
         return $table
             ->query(ActivityCalendar::query()->with(['activity', 'activity.goal']))
             ->columns([
-                Tables\Columns\TextColumn::make('activity.name')->label('Actividad')->searchable(),
+                Tables\Columns\TextColumn::make('activity.name')->label('Actividad')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('assigned_person')
                     ->label('Encargado')
                     ->formatStateUsing(fn($state) => User::find($state)?->name ?? '-')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('start_date')->label('Fecha de inicio')->date('d/m/Y'),
-                Tables\Columns\TextColumn::make('end_date')->label('Fecha de fin')->date('d/m/Y'),
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('start_date')->label('Fecha de inicio')->date('d/m/Y')->sortable(),
+                Tables\Columns\TextColumn::make('end_date')->label('Fecha de fin')->date('d/m/Y')->sortable(),
                 Tables\Columns\TextColumn::make('cancelled')
                     ->label('Cancelado')
-                    ->formatStateUsing(fn($state) => $state ? 'Sí' : 'No'),
+                    ->formatStateUsing(fn($state) => $state ? 'Sí' : 'No')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('change_reason')
                     ->label('Motivo de cancelación')
-                    ->limit(40),
+                    ->limit(40)
+                    ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('project_id')

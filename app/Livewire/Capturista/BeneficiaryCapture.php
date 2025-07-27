@@ -35,6 +35,13 @@ class BeneficiaryCapture extends Component
     public $showMassiveForm = false;
     public $beneficiarios = [];
 
+    // Propiedades para ordenamiento y filtros
+    public $sortField = 'created_at';
+    public $sortDirection = 'desc';
+    public $search = '';
+    public $filterGender = '';
+    public $filterYear = '';
+
     protected $rules = [
         'last_name' => 'required|max:100',
         'mother_last_name' => 'required|max:100',
@@ -185,10 +192,52 @@ class BeneficiaryCapture extends Component
             return collect();
         }
 
-        return BeneficiaryRegistryModel::with(['beneficiaries', 'activityCalendar'])
-            ->where('activity_calendar_id', $this->activity_calendar_id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $query = BeneficiaryRegistryModel::with(['beneficiaries', 'activityCalendar'])
+            ->where('activity_calendar_id', $this->activity_calendar_id);
+
+        // Aplicar filtros
+        if (!empty($this->search)) {
+            $query->whereHas('beneficiaries', function ($q) {
+                $q->where('identifier', 'like', '%' . $this->search . '%')
+                  ->orWhere('last_name', 'like', '%' . $this->search . '%')
+                  ->orWhere('mother_last_name', 'like', '%' . $this->search . '%')
+                  ->orWhere('first_names', 'like', '%' . $this->search . '%');
+            });
+        }
+
+        if (!empty($this->filterGender)) {
+            $query->whereHas('beneficiaries', function ($q) {
+                $q->where('gender', $this->filterGender);
+            });
+        }
+
+        if (!empty($this->filterYear)) {
+            $query->whereHas('beneficiaries', function ($q) {
+                $q->where('birth_year', $this->filterYear);
+            });
+        }
+
+        // Aplicar ordenamiento
+        if ($this->sortField === 'identifier') {
+            $query->join('beneficiaries', 'beneficiary_registries.beneficiaries_id', '=', 'beneficiaries.id')
+                  ->orderBy('beneficiaries.identifier', $this->sortDirection);
+        } elseif ($this->sortField === 'last_name') {
+            $query->join('beneficiaries', 'beneficiary_registries.beneficiaries_id', '=', 'beneficiaries.id')
+                  ->orderBy('beneficiaries.last_name', $this->sortDirection);
+        } elseif ($this->sortField === 'first_names') {
+            $query->join('beneficiaries', 'beneficiary_registries.beneficiaries_id', '=', 'beneficiaries.id')
+                  ->orderBy('beneficiaries.first_names', $this->sortDirection);
+        } elseif ($this->sortField === 'gender') {
+            $query->join('beneficiaries', 'beneficiary_registries.beneficiaries_id', '=', 'beneficiaries.id')
+                  ->orderBy('beneficiaries.gender', $this->sortDirection);
+        } elseif ($this->sortField === 'birth_year') {
+            $query->join('beneficiaries', 'beneficiary_registries.beneficiaries_id', '=', 'beneficiaries.id')
+                  ->orderBy('beneficiaries.birth_year', $this->sortDirection);
+        } else {
+            $query->orderBy($this->sortField, $this->sortDirection);
+        }
+
+        return $query->paginate(10);
     }
 
     public function showSingleForm()
@@ -392,6 +441,39 @@ class BeneficiaryCapture extends Component
         $this->showMassiveForm = false;
         $this->resetForm();
         $this->beneficiarios = [];
+    }
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
+
+    public function clearFilters()
+    {
+        $this->search = '';
+        $this->filterGender = '';
+        $this->filterYear = '';
+        $this->resetPage();
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterGender()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFilterYear()
+    {
+        $this->resetPage();
     }
 
     public function render()

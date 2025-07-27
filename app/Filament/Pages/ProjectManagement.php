@@ -35,11 +35,47 @@ class ProjectManagement extends Page implements Tables\Contracts\HasTable
             ])
             ->query(Project::query())
             ->columns([
-                Tables\Columns\TextColumn::make('name')->label('Nombre')->searchable(),
-                Tables\Columns\TextColumn::make('financiers.name')->label('Financiadora')->searchable(),
-                Tables\Columns\TextColumn::make('start_date')->label('Inicio')->date('d/m/Y'),
-                Tables\Columns\TextColumn::make('end_date')->label('Fin')->date('d/m/Y'),
-                Tables\Columns\TextColumn::make('created_at')->label('Creado')->dateTime('d/m/Y H:i'),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Nombre')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('financiers.name')
+                    ->label('Financiadora')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('start_date')
+                    ->label('Inicio')
+                    ->date('d/m/Y')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('end_date')
+                    ->label('Fin')
+                    ->date('d/m/Y')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Creado')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable(),
+            ])
+            ->filters([
+                Tables\Filters\SelectFilter::make('financier')
+                    ->label('Financiadora')
+                    ->relationship('financiers', 'name')
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\Filter::make('name')
+                    ->label('Nombre del proyecto')
+                    ->form([
+                        TextInput::make('name')
+                            ->label('Buscar por nombre')
+                            ->placeholder('Escriba el nombre del proyecto...')
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['name'],
+                                fn ($query, $name) => $query->where('name', 'like', "%{$name}%")
+                            );
+                    })
             ])
             ->actions([
                 Tables\Actions\Action::make('edit')

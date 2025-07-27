@@ -102,7 +102,13 @@ class ProjectManagement extends Page implements Tables\Contracts\HasTable
                         $record->specificObjectives()->delete();
                         $record->kpis()->delete();
                         $record->goals()->each(function($goal) {
-                            $goal->activities()->delete();
+                            $goal->activities()->each(function($activity) {
+                                // Eliminar planned metrics de la actividad
+                                $activity->plannedMetrics()->delete();
+                                // Eliminar activity logs relacionados
+                                \App\Models\ActivityLog::whereIn('planned_metrics_id', $activity->plannedMetrics()->pluck('id'))->delete();
+                                $activity->delete();
+                            });
                             $goal->delete();
                         });
                         $record->delete();
@@ -122,7 +128,13 @@ class ProjectManagement extends Page implements Tables\Contracts\HasTable
                                 $record->specificObjectives()->delete();
                                 $record->kpis()->delete();
                                 $record->goals()->each(function($goal) {
-                                    $goal->activities()->delete();
+                                    $goal->activities()->each(function($activity) {
+                                        // Eliminar planned metrics de la actividad
+                                        $activity->plannedMetrics()->delete();
+                                        // Eliminar activity logs relacionados
+                                        \App\Models\ActivityLog::whereIn('planned_metrics_id', $activity->plannedMetrics()->pluck('id'))->delete();
+                                        $activity->delete();
+                                    });
                                     $goal->delete();
                                 });
                                 $record->delete();

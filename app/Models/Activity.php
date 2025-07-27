@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Activity extends Model
 {
@@ -56,5 +57,10 @@ class Activity extends Model
     public function publishedActivities()
     {
         return $this->hasMany(\App\Models\PublishedActivity::class, 'original_activity_id');
+    }
+
+    public function plannedMetrics(): HasMany
+    {
+        return $this->hasMany(PlannedMetric::class, 'activity_id');
     }
 }

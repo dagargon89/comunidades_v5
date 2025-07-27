@@ -34,6 +34,7 @@ class ProjectManagement extends Page implements Tables\Contracts\HasTable
                     ->url(fn() => route('filament.admin.pages.asistente-proyectos')),
             ])
             ->query(Project::query())
+            ->recordUrl(fn(Project $record) => url('/admin/asistente-proyectos?edit=' . $record->id))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')

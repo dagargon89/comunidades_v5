@@ -44,7 +44,14 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
         return $table
             ->query(ActivityCalendar::query()->with(['activity', 'activity.goal']))
             ->columns([
-                Tables\Columns\TextColumn::make('activity.name')->label('Actividad')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('activity.name')
+                    ->label('Actividad')
+                    ->searchable()
+                    ->sortable()
+                    ->limit(50)
+                    ->tooltip(function ($record) {
+                        return $record->activity?->name;
+                    }),
                 Tables\Columns\TextColumn::make('assigned_person')
                     ->label('Encargado')
                     ->formatStateUsing(fn($state) => User::find($state)?->name ?? '-')

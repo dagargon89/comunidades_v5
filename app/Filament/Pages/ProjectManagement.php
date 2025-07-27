@@ -47,7 +47,9 @@ class ProjectManagement extends Page implements Tables\Contracts\HasTable
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->limit(50)
+                    ->tooltip(fn (Project $record) => $record->name),
                 Tables\Columns\TextColumn::make('financiers.name')
                     ->label('Financiadora')
                     ->searchable()

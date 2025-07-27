@@ -73,6 +73,25 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
                         1 => 'Sí',
                         0 => 'No',
                     ]),
+                Tables\Filters\Filter::make('date_filter')
+                    ->label('Filtro por fechas')
+                    ->form([
+                        FormDatePicker::make('start_date')
+                            ->label('Fecha de inicio'),
+                        FormDatePicker::make('end_date')
+                            ->label('Fecha de fin'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['start_date'],
+                                fn ($query, $date) => $query->where('start_date', '>=', $date)
+                            )
+                            ->when(
+                                $data['end_date'],
+                                fn ($query, $date) => $query->where('end_date', '<=', $date)
+                            );
+                    }),
             ])
             ->headerActions([
                 TableAction::make('programar')

@@ -108,6 +108,29 @@ class ProjectManagement extends Page implements Tables\Contracts\HasTable
                         $record->delete();
                     }),
             ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->label('Eliminar seleccionados')
+                        ->requiresConfirmation()
+                        ->modalHeading('¿Eliminar proyectos seleccionados?')
+                        ->modalDescription('Esta acción eliminará todos los proyectos seleccionados y toda su información relacionada. Esta acción no se puede deshacer.')
+                        ->modalSubmitActionLabel('Sí, eliminar todos')
+                        ->modalCancelActionLabel('Cancelar')
+                        ->action(function ($records) {
+                            foreach ($records as $record) {
+                                $record->specificObjectives()->delete();
+                                $record->kpis()->delete();
+                                $record->goals()->each(function($goal) {
+                                    $goal->activities()->delete();
+                                    $goal->delete();
+                                });
+                                $record->delete();
+                            }
+                        })
+                        ->deselectRecordsAfterCompletion(),
+                ]),
+            ])
             ->defaultSort('created_at', 'desc');
     }
 }

@@ -1,14 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-// use App\Livewire\Auth\LoginForm;
+use App\Livewire\Auth\LoginForm;
 
-// Ruta principal - redirige al panel de administración de Filament
+// Ruta principal
 Route::get('/', function () {
-    return redirect('/admin');
+    return view('welcome');
 })->name('welcome');
 
-/*
 // Rutas de autenticación
 Route::get('/login', function () {
     return view('auth.login');
@@ -45,4 +44,3 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('welcome');
     })->name('logout');
 });
-*/

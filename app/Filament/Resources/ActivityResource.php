@@ -50,7 +50,7 @@ class ActivityResource extends Resource
                             ->maxLength(500),
                         Forms\Components\Select::make('goals_id')
                             ->label('Meta')
-                            ->relationship('goals', 'description')
+                            ->relationship('goal', 'description')
                             ->searchable()
                             ->preload()
                             ->native(false)

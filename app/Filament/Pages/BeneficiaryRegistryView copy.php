@@ -306,7 +306,6 @@ class BeneficiaryRegistryView extends Page implements HasTable
                         ->schema([
                             TextInput::make('last_name')
                                 ->label('Apellido paterno')
-                                ->required()
                                 ->maxLength(100)
                                 ->columnSpan(1),
                             TextInput::make('mother_last_name')
@@ -497,7 +496,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                         }
                                     }
                                 }),
-                            \Filament\Forms\Components\TextInput::make('last_name')->label('Apellido Paterno')->required(),
+                            \Filament\Forms\Components\TextInput::make('last_name')->label('Apellido Paterno'),
                             \Filament\Forms\Components\TextInput::make('mother_last_name')->label('Apellido Materno'),
                             \Filament\Forms\Components\TextInput::make('first_names')->label('Nombres')->required(),
                             \Filament\Forms\Components\TextInput::make('birth_year')->label('Año Nacimiento')->required(),

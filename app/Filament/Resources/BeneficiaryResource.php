@@ -49,9 +49,13 @@ class BeneficiaryResource extends Resource
                             ->label('Año de nacimiento')
                             ->maxLength(4)
                             ->placeholder('Ej: 1990'),
-                        Forms\Components\TextInput::make('gender')
+                        Forms\Components\Select::make('gender')
                             ->label('Género')
-                            ->placeholder('Masculino/Femenino'),
+                            ->options([
+                                'M' => 'Masculino',
+                                'F' => 'Femenino',
+                            ])
+                            ->placeholder('Seleccione el género'),
                         Forms\Components\TextInput::make('phone')
                             ->label('Teléfono')
                             ->tel()
@@ -122,7 +126,14 @@ class BeneficiaryResource extends Resource
                     ->label('Año de nacimiento')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('gender')
-                    ->label('Género'),
+                    ->label('Género')
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'M' => 'Masculino',
+                        'F' => 'Femenino',
+                        'Male' => 'Masculino',
+                        'Female' => 'Femenino',
+                        default => $state,
+                    }),
                 Tables\Columns\TextColumn::make('phone')
                     ->label('Teléfono')
                     ->searchable(),

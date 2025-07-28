@@ -6,9 +6,12 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Models\ActivityCalendar;
 use Carbon\Carbon;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 
 class ActivityCalendarCount extends BaseWidget
 {
+    use HasWidgetShield;
+
     protected function getStats(): array
     {
         $totalActivities = ActivityCalendar::count();

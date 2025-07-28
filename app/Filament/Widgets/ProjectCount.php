@@ -5,9 +5,12 @@ namespace App\Filament\Widgets;
 use App\Models\Project;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 
 class ProjectCount extends BaseWidget
 {
+    use HasWidgetShield;
+
     protected function getStats(): array
     {
         return [

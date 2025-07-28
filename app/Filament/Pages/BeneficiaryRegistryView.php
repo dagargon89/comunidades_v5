@@ -47,6 +47,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
         $firstCalendar = null;
         if ($this->activity_id) {
             $firstCalendar = ActivityCalendar::where('activity_id', $this->activity_id)
+                ->where('cancelled', false) // Filtrar fechas canceladas
                 ->orderBy('start_date')
                 ->orderBy('start_hour')
                 ->first();
@@ -61,6 +62,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
         $firstCalendar = null;
         if ($this->activity_id) {
             $firstCalendar = ActivityCalendar::where('activity_id', $this->activity_id)
+                ->where('cancelled', false) // Filtrar fechas canceladas
                 ->orderBy('start_date')
                 ->orderBy('start_hour')
                 ->first();
@@ -98,6 +100,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                 return [];
                             }
                             $calendars = ActivityCalendar::where('activity_id', $activityId)
+                                ->where('cancelled', false) // Filtrar fechas canceladas
                                 ->orderBy('start_date')
                                 ->orderBy('start_hour')
                                 ->get();
@@ -122,6 +125,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                 return null;
                             }
                             $firstCalendar = ActivityCalendar::where('activity_id', $activityId)
+                                ->where('cancelled', false) // Filtrar fechas canceladas
                                 ->orderBy('start_date')
                                 ->orderBy('start_hour')
                                 ->first();
@@ -138,11 +142,13 @@ class BeneficiaryRegistryView extends Page implements HasTable
                             if (!$activityId) {
                                 return 'Selecciona una actividad primero';
                             }
-                            $count = ActivityCalendar::where('activity_id', $activityId)->count();
+                            $count = ActivityCalendar::where('activity_id', $activityId)
+                                ->where('cancelled', false) // Filtrar fechas canceladas
+                                ->count();
                             if ($count === 0) {
-                                return 'Esta actividad no tiene fechas y horarios programados';
+                                return 'Esta actividad no tiene fechas y horarios programados disponibles';
                             }
-                            return "Esta actividad tiene {$count} fecha(s) programada(s)";
+                            return "Esta actividad tiene {$count} fecha(s) programada(s) disponible(s)";
                         }),
                 ]),
         ]);

@@ -5,9 +5,10 @@ use App\Livewire\Auth\LoginForm;
 
 // Ruta principal
 Route::get('/', function () {
-    return view('welcome');
+    //return view('welcome');
+    return redirect('/admin');
 })->name('welcome');
-
+/*
 // Rutas de autenticación
 Route::get('/login', function () {
     return view('auth.login');
@@ -43,4 +44,4 @@ Route::middleware(['auth'])->group(function () {
         auth()->logout();
         return redirect()->route('welcome');
     })->name('logout');
-});
+});*/

@@ -28,6 +28,7 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
     protected static ?string $slug = 'gestor-actividades';
     protected static ?string $navigationLabel = 'Gestor de actividades';
 
+
     public function getTitle(): string
     {
         return 'Gestor de actividades';

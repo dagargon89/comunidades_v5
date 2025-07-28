@@ -17,10 +17,11 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Section;
 use App\Filament\Widgets\ActivityCalendarCount;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class ProjectGanttView extends Page implements Tables\Contracts\HasTable
 {
-    use Tables\Concerns\InteractsWithTable;
+    use Tables\Concerns\InteractsWithTable, HasPageShield;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
     protected static string $view = 'filament.pages.project-gantt-view';

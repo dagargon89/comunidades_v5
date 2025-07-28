@@ -20,7 +20,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-
+use Awcodes\TableRepeater\Components\TableRepeater;
+use Awcodes\TableRepeater\Header;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class BeneficiaryRegistryView extends Page implements HasTable
@@ -84,7 +85,6 @@ class BeneficiaryRegistryView extends Page implements HasTable
                         ->label('Actividad')
                         ->options(Activity::pluck('name', 'id')->toArray())
                         ->searchable()
-                        ->required()
                         ->live()
                         ->default(Activity::query()->min('id'))
                         ->afterStateUpdated(function ($state, $set) {
@@ -115,7 +115,6 @@ class BeneficiaryRegistryView extends Page implements HasTable
                             })
                             ->toArray();
                         })
-                        ->required()
                         ->live()
                         ->default(function () {
                             $activityId = $this->activity_id;
@@ -305,7 +304,6 @@ class BeneficiaryRegistryView extends Page implements HasTable
                         ->schema([
                             TextInput::make('last_name')
                                 ->label('Apellido paterno')
-                                ->required()
                                 ->maxLength(100)
                                 ->columnSpan(1),
                             TextInput::make('mother_last_name')
@@ -314,17 +312,14 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                 ->columnSpan(1),
                             TextInput::make('first_names')
                                 ->label('Nombres')
-                                ->required()
                                 ->maxLength(100)
                                 ->columnSpan(2),
                             TextInput::make('birth_year')
                                 ->label('Año de nacimiento')
-                                ->required()
                                 ->maxLength(4)
                                 ->columnSpan(1),
                             Select::make('gender')
                                 ->label('Género')
-                                ->required()
                                 ->options([
                                     'M' => 'Masculino',
                                     'F' => 'Femenino',
@@ -442,102 +437,73 @@ class BeneficiaryRegistryView extends Page implements HasTable
                 ->icon('heroicon-o-users')
                 ->modalWidth('10xl')
                 ->form([
-                    Forms\Components\Repeater::make('beneficiarios')
+                    TableRepeater::make('beneficiarios')
+                        ->headers([
+                            Header::make('search_identifier')->label('Identificador'),
+                            Header::make('last_name')->label('Apellido Paterno'),
+                            Header::make('mother_last_name')->label('Apellido Materno'),
+                            Header::make('first_names')->label('Nombres'),
+                            Header::make('birth_year')->label('Año Nac.'),
+                            Header::make('gender')->label('Género'),
+                            Header::make('phone')->label('Teléfono'),
+                            Header::make('street')->label('Calle'),
+                            Header::make('ext_number')->label('Número'),
+                            Header::make('neighborhood')->label('Colonia'),
+                            Header::make('signature')->label('Firma')->width('250px'),
+                        ])
                         ->schema([
-                            Forms\Components\Section::make('Beneficiario')
-                                ->schema([
-                                    Forms\Components\TextInput::make('search_identifier')
-                                        ->label('Identificador')
-                                        ->placeholder('Ej: PEREZ2025M')
-                                        ->live(onBlur: true)
-                                        ->afterStateUpdated(function ($state, $set, $get) {
-                                            if (!empty($state)) {
-                                                $beneficiary = \App\Models\Beneficiary::where('identifier', $state)->first();
-                                                if ($beneficiary) {
-                                                    $set('last_name', $beneficiary->last_name);
-                                                    $set('mother_last_name', $beneficiary->mother_last_name);
-                                                    $set('first_names', $beneficiary->first_names);
-                                                    $set('birth_year', $beneficiary->birth_year);
-                                                    $set('gender', $beneficiary->gender);
-                                                    $set('phone', $beneficiary->phone);
-                                                    $set('street', $beneficiary->street);
-                                                    $set('ext_number', $beneficiary->ext_number);
-                                                    $set('neighborhood', $beneficiary->neighborhood);
-                                                    $set('address_backup', $beneficiary->address_backup);
-                                                    \Filament\Notifications\Notification::make()
-                                                        ->title('Beneficiario encontrado')
-                                                        ->body('Datos prellenados. Solo captura la firma.')
-                                                        ->success()
-                                                        ->send();
-                                                } else {
-                                                    $set('last_name', '');
-                                                    $set('mother_last_name', '');
-                                                    $set('first_names', '');
-                                                    $set('birth_year', '');
-                                                    $set('gender', '');
-                                                    $set('phone', '');
-                                                    $set('address_backup', '');
-                                                    \Filament\Notifications\Notification::make()
-                                                        ->title('Beneficiario no encontrado')
-                                                        ->body('Puedes registrar manualmente.')
-                                                        ->warning()
-                                                        ->send();
-                                                }
-                                            }
-                                        })
-                                        ->columnSpanFull(),
-
-                                    Forms\Components\Grid::make(2)
-                                        ->schema([
-                                            Forms\Components\TextInput::make('last_name')
-                                                ->label('Apellido Paterno')
-                                                ->required()
-                                                ->maxLength(100),
-                                            Forms\Components\TextInput::make('mother_last_name')
-                                                ->label('Apellido Materno')
-                                                ->maxLength(100),
-                                            Forms\Components\TextInput::make('first_names')
-                                                ->label('Nombres')
-                                                ->required()
-                                                ->maxLength(100)
-                                                ->columnSpan(2),
-                                            Forms\Components\TextInput::make('birth_year')
-                                                ->label('Año de nacimiento')
-                                                ->required()
-                                                ->maxLength(4),
-                                            Forms\Components\Select::make('gender')
-                                                ->label('Género')
-                                                ->required()
-                                                ->options([
-                                                    'M' => 'Masculino',
-                                                    'F' => 'Femenino',
-                                                ]),
-                                        ]),
-
-                                    Forms\Components\Grid::make(2)
-                                        ->schema([
-                                            Forms\Components\TextInput::make('phone')
-                                                ->label('Teléfono')
-                                                ->maxLength(20),
-                                            Forms\Components\TextInput::make('street')
-                                                ->label('Calle')
-                                                ->maxLength(255),
-                                            Forms\Components\TextInput::make('ext_number')
-                                                ->label('Número')
-                                                ->maxLength(50),
-                                            Forms\Components\TextInput::make('neighborhood')
-                                                ->label('Colonia')
-                                                ->maxLength(255),
-                                        ]),
-
-                                    \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('signature')
-                                        ->label('Firma del beneficiario')
-                                        ->extraAttributes([
-                                            'style' => 'min-height: 200px; min-width: 100%;'
-                                        ])
-                                        ->columnSpanFull(),
-                                ])
-                                ->columns(1)
+                            \Filament\Forms\Components\TextInput::make('search_identifier')
+                                ->label('Identificador')
+                                ->placeholder('Ej: PEREZ2025M')
+                                ->live(onBlur: true)
+                                ->afterStateUpdated(function ($state, $set, $get) {
+                                    if (!empty($state)) {
+                                        $beneficiary = \App\Models\Beneficiary::where('identifier', $state)->first();
+                                        if ($beneficiary) {
+                                            $set('last_name', $beneficiary->last_name);
+                                            $set('mother_last_name', $beneficiary->mother_last_name);
+                                            $set('first_names', $beneficiary->first_names);
+                                            $set('birth_year', $beneficiary->birth_year);
+                                            $set('gender', $beneficiary->gender);
+                                            $set('phone', $beneficiary->phone);
+                                            $set('street', $beneficiary->street);
+                                            $set('ext_number', $beneficiary->ext_number);
+                                            $set('neighborhood', $beneficiary->neighborhood);
+                                            $set('address_backup', $beneficiary->address_backup);
+                                            \Filament\Notifications\Notification::make()
+                                                ->title('Beneficiario encontrado')
+                                                ->body('Datos prellenados. Solo captura la firma.')
+                                                ->success()
+                                                ->send();
+                                        } else {
+                                            $set('last_name', '');
+                                            $set('mother_last_name', '');
+                                            $set('first_names', '');
+                                            $set('birth_year', '');
+                                            $set('gender', '');
+                                            $set('phone', '');
+                                            $set('address_backup', '');
+                                            \Filament\Notifications\Notification::make()
+                                                ->title('Beneficiario no encontrado')
+                                                ->body('Puedes registrar manualmente.')
+                                                ->warning()
+                                                ->send();
+                                        }
+                                    }
+                                }),
+                            \Filament\Forms\Components\TextInput::make('last_name')->label('Apellido Paterno'),
+                            \Filament\Forms\Components\TextInput::make('mother_last_name')->label('Apellido Materno'),
+                            \Filament\Forms\Components\TextInput::make('first_names')->label('Nombres'),
+                            \Filament\Forms\Components\TextInput::make('birth_year')->label('Año Nacimiento'),
+                            \Filament\Forms\Components\Select::make('gender')->label('Género')->options([
+                                'M' => 'Masculino',
+                                'F' => 'Femenino',
+                            ]),
+                            \Filament\Forms\Components\TextInput::make('phone')->label('Teléfono'),
+                            \Filament\Forms\Components\TextInput::make('street')->label('Calle'),
+                            \Filament\Forms\Components\TextInput::make('ext_number')->label('Número'),
+                            \Filament\Forms\Components\TextInput::make('neighborhood')->label('Colonia'),
+                            \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('signature')->label('Firma'),
                         ])
                         ->minItems(1)
                         ->columnSpan('full'),
@@ -606,7 +572,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
             Actions\EditAction::make()
                 ->label('Editar')
                 ->form([
-                    SignaturePad::make('signature')->label('Firma del beneficiario')->required(),
+                    SignaturePad::make('signature')->label('Firma del beneficiario'),
                 ]),
             Actions\DeleteAction::make()
                 ->label('Eliminar')

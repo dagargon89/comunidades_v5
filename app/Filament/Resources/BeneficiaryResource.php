@@ -57,6 +57,18 @@ class BeneficiaryResource extends Resource
                             ->tel()
                             ->maxLength(20)
                             ->placeholder('Ingrese el teléfono'),
+                        Forms\Components\TextInput::make('street')
+                            ->label('Calle')
+                            ->maxLength(255)
+                            ->placeholder('Ingrese la calle'),
+                        Forms\Components\TextInput::make('ext_number')
+                            ->label('Número')
+                            ->maxLength(50)
+                            ->placeholder('Ingrese el número'),
+                        Forms\Components\TextInput::make('neighborhood')
+                            ->label('Colonia')
+                            ->maxLength(255)
+                            ->placeholder('Ingrese la colonia'),
                         Forms\Components\TextInput::make('identifier')
                             ->label('Identificador')
                             ->placeholder('Identificador único generado automáticamente')
@@ -113,6 +125,15 @@ class BeneficiaryResource extends Resource
                     ->label('Género'),
                 Tables\Columns\TextColumn::make('phone')
                     ->label('Teléfono')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('street')
+                    ->label('Calle')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('ext_number')
+                    ->label('Número')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('neighborhood')
+                    ->label('Colonia')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_by')
                     ->label('Usuario creador')

@@ -19,6 +19,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Awcodes\TableRepeater\Components\TableRepeater;
 use Awcodes\TableRepeater\Header;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
@@ -155,12 +156,13 @@ class BeneficiaryRegistryView extends Page implements HasTable
             return null;
         }
         $calendar = ActivityCalendar::where('id', $this->activity_calendar_id)
+            ->with(['asignedPerson', 'activity'])
             ->first();
         if (!$calendar) {
             return null;
         }
         $activity = $calendar->activity;
-        $responsible = $activity?->createdBy?->name ?? '-';
+        $responsible = $calendar->asignedPerson?->name ?? '-';
         return [
             'actividad' => $activity?->name ?? '-',
             'descripcion' => $activity?->description ?? '-',
@@ -262,6 +264,9 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                             $set('birth_year', $beneficiary->birth_year);
                                             $set('gender', $beneficiary->gender);
                                             $set('phone', $beneficiary->phone);
+                                            $set('street', $beneficiary->street);
+                                            $set('ext_number', $beneficiary->ext_number);
+                                            $set('neighborhood', $beneficiary->neighborhood);
                                             $set('address_backup', $beneficiary->address_backup);
 
                                             // Mostrar notificación de beneficiario encontrado
@@ -340,10 +345,22 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                 ->label('Teléfono')
                                 ->maxLength(20)
                                 ->columnSpan(1),
+                            TextInput::make('street')
+                                ->label('Calle')
+                                ->maxLength(255)
+                                ->columnSpan(1),
+                            TextInput::make('ext_number')
+                                ->label('Número')
+                                ->maxLength(50)
+                                ->columnSpan(1),
+                            TextInput::make('neighborhood')
+                                ->label('Colonia')
+                                ->maxLength(255)
+                                ->columnSpan(1),
                             Textarea::make('address_backup')
                                 ->label('Dirección de respaldo')
                                 ->rows(3)
-                                ->columnSpan(1),
+                                ->columnSpan(2),
                         ])
                         ->columns(2)
                         ->collapsible()
@@ -386,9 +403,12 @@ class BeneficiaryRegistryView extends Page implements HasTable
                             'birth_year' => $data['birth_year'],
                             'gender' => $data['gender'],
                             'phone' => $data['phone'] ?? null,
+                            'street' => $data['street'] ?? null,
+                            'ext_number' => $data['ext_number'] ?? null,
+                            'neighborhood' => $data['neighborhood'] ?? null,
                             'address_backup' => $data['address_backup'] ?? null,
                             'identifier' => $identifier,
-                            'created_by' => auth()->id(),
+                            'created_by' => Auth::id(),
                         ]
                     );
 
@@ -411,8 +431,8 @@ class BeneficiaryRegistryView extends Page implements HasTable
                     \App\Models\BeneficiaryRegistry::create([
                         'activity_calendar_id' => $this->activity_calendar_id,
                         'beneficiaries_id' => $beneficiary->id,
-                        'data_collectors_id' => auth()->id(),
-                        'created_by' => auth()->id(),
+                        'data_collectors_id' => Auth::id(),
+                        'created_by' => Auth::id(),
                         'signature' => $data['signature'] ?? null,
                     ]);
 
@@ -424,7 +444,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
             Actions\Action::make('addMassive')
                 ->label('Registrar beneficiarios masivos')
                 ->icon('heroicon-o-users')
-                ->modalWidth('7xl')
+                ->modalWidth('10xl')
                 ->form([
                     TableRepeater::make('beneficiarios')
                         ->headers([
@@ -435,7 +455,10 @@ class BeneficiaryRegistryView extends Page implements HasTable
                             Header::make('birth_year')->label('Año Nac.')->markAsRequired(),
                             Header::make('gender')->label('Género')->markAsRequired(),
                             Header::make('phone')->label('Teléfono'),
-                            Header::make('signature')->label('Firma')->markAsRequired()->width('250px'),
+                            Header::make('street')->label('Calle'),
+                            Header::make('ext_number')->label('Número'),
+                            Header::make('neighborhood')->label('Colonia'),
+                            Header::make('signature')->label('Firma')->width('250px'),
                         ])
                         ->schema([
                             \Filament\Forms\Components\TextInput::make('search_identifier')
@@ -452,6 +475,9 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                             $set('birth_year', $beneficiary->birth_year);
                                             $set('gender', $beneficiary->gender);
                                             $set('phone', $beneficiary->phone);
+                                            $set('street', $beneficiary->street);
+                                            $set('ext_number', $beneficiary->ext_number);
+                                            $set('neighborhood', $beneficiary->neighborhood);
                                             $set('address_backup', $beneficiary->address_backup);
                                             \Filament\Notifications\Notification::make()
                                                 ->title('Beneficiario encontrado')
@@ -483,6 +509,9 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                 'F' => 'Femenino',
                             ])->required(),
                             \Filament\Forms\Components\TextInput::make('phone')->label('Teléfono'),
+                            \Filament\Forms\Components\TextInput::make('street')->label('Calle'),
+                            \Filament\Forms\Components\TextInput::make('ext_number')->label('Número'),
+                            \Filament\Forms\Components\TextInput::make('neighborhood')->label('Colonia'),
                             \Saade\FilamentAutograph\Forms\Components\SignaturePad::make('signature')->label('Firma')->required(),
                         ])
                         ->minItems(1)
@@ -508,9 +537,12 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                 'birth_year' => $beneficiary['birth_year'],
                                 'gender' => $beneficiary['gender'],
                                 'phone' => $beneficiary['phone'] ?? null,
+                                'street' => $beneficiary['street'] ?? null,
+                                'ext_number' => $beneficiary['ext_number'] ?? null,
+                                'neighborhood' => $beneficiary['neighborhood'] ?? null,
                                 'address_backup' => $beneficiary['address_backup'] ?? null,
                                 'identifier' => $identifier,
-                                'created_by' => auth()->id(),
+                                'created_by' => Auth::id(),
                             ]
                         );
                         $exists = \App\Models\BeneficiaryRegistry::where([
@@ -524,8 +556,8 @@ class BeneficiaryRegistryView extends Page implements HasTable
                         \App\Models\BeneficiaryRegistry::create([
                             'activity_calendar_id' => $this->activity_calendar_id,
                             'beneficiaries_id' => $beneficiaryModel->id,
-                            'data_collectors_id' => auth()->id(),
-                            'created_by' => auth()->id(),
+                            'data_collectors_id' => Auth::id(),
+                            'created_by' => Auth::id(),
                             'signature' => $beneficiary['signature'] ?? null,
                         ]);
                         $registered++;

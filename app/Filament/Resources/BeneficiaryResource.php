@@ -84,10 +84,6 @@ class BeneficiaryResource extends Resource
                     ->description('Datos de registro y control')
                     ->icon('heroicon-o-clipboard-document')
                     ->schema([
-                        Forms\Components\Textarea::make('signature')
-                            ->label('Firma')
-                            ->placeholder('Firma digital o imagen')
-                            ->columnSpanFull(),
                         Forms\Components\Textarea::make('address_backup')
                             ->label('Dirección de respaldo')
                             ->placeholder('Dirección completa')

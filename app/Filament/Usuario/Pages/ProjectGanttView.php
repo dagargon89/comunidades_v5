@@ -16,7 +16,7 @@ use Filament\Forms\Components\DatePicker as FormDatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Section;
-use App\Filament\Widgets\ActivityCalendarCount;
+use App\Filament\Usuario\Widgets\ActivityCalendarCount;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class ProjectGanttView extends Page implements Tables\Contracts\HasTable
@@ -24,10 +24,14 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
     use Tables\Concerns\InteractsWithTable, HasPageShield;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
-    protected static string $view = 'filament.pages.project-gantt-view';
+    protected static string $view = 'filament.usuario.pages.project-gantt-view';
     protected static ?string $slug = 'gestor-actividades';
     protected static ?string $navigationLabel = 'Gestor de actividades';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return true;
+    }
 
     public function getTitle(): string
     {
@@ -112,12 +116,12 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
             ])
             ->headerActions([
                 TableAction::make('programar')
-                    ->label('Programar actividad (Gestor)')
+                    ->label('Programar actividad (Usuario)')
                     ->icon('heroicon-o-plus')
                     ->color('primary')
-                    ->url(fn() => url('/admin/activity-calendar-view')),
+                    ->url(fn() => url('/usuario/activity-calendar-view')),
                 TableAction::make('editar-avanzado')
-                    ->label('Edición avanzada (Gestor)')
+                    ->label('Edición avanzada (Usuario)')
                     ->icon('heroicon-o-pencil-square')
                     ->color('warning')
                     ->form([
@@ -274,7 +278,7 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
                             ->send();
                     }),
                 TableAction::make('vista')
-                    ->label('Ver detalle (Gestor)')
+                    ->label('Ver detalle (Usuario)')
                     ->icon('heroicon-o-eye')
                     ->color('info')
                     ->modalHeading('Detalle de la actividad calendarizada')

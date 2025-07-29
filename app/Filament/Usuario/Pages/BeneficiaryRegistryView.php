@@ -315,12 +315,10 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                 ->schema([
                                     TextInput::make('last_name')
                                         ->label('Apellido paterno')
-                                        ->required()
                                         ->maxLength(100)
                                         ->columnSpan(1),
                                     TextInput::make('mother_last_name')
                                         ->label('Apellido materno')
-                                        ->required()
                                         ->maxLength(100)
                                         ->columnSpan(1),
                                     TextInput::make('first_names')
@@ -330,7 +328,6 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                         ->columnSpan(2),
                                     TextInput::make('birth_year')
                                         ->label('Año de nacimiento')
-                                        ->required()
                                         ->maxLength(4)
                                         ->columnSpan(1),
                                     Select::make('gender')
@@ -342,9 +339,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                         ])
                                         ->columnSpan(1),
                                 ])
-                                ->columns(2)
-                                ->collapsible()
-                                ->collapsed(),
+                                ->columns(2),
 
                             // Sección de información de contacto
                             Forms\Components\Section::make('Información de Contacto')
@@ -383,14 +378,11 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                 ->schema([
                                     SignaturePad::make('signature')
                                         ->label('Firma del beneficiario')
-                                        ->required()
                                         ->extraAttributes([
                                             'style' => 'min-height: 200px; min-width: 100%;'
                                         ])
                                         ->columnSpanFull(),
-                                ])
-                                ->collapsible()
-                                ->collapsed(),
+                                ]),
                         ])
                         ->collapsible()
                         ->collapsed(),
@@ -525,12 +517,10 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                         ->schema([
                                             TextInput::make('last_name')
                                                 ->label('Apellido Paterno')
-                                                ->required()
                                                 ->maxLength(100)
                                                 ->columnSpan(1),
                                             TextInput::make('mother_last_name')
                                                 ->label('Apellido Materno')
-                                                ->required()
                                                 ->maxLength(100)
                                                 ->columnSpan(1),
                                             TextInput::make('first_names')
@@ -540,7 +530,6 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                                 ->columnSpan(2),
                                             TextInput::make('birth_year')
                                                 ->label('Año de Nacimiento')
-                                                ->required()
                                                 ->maxLength(4)
                                                 ->columnSpan(1),
                                             Select::make('gender')
@@ -552,9 +541,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                                 ])
                                                 ->columnSpan(1),
                                         ])
-                                        ->columns(2)
-                                        ->collapsible()
-                                        ->collapsed(),
+                                        ->columns(2),
 
                                     // Sección de información de contacto
                                     Forms\Components\Section::make('Información de Contacto')
@@ -593,7 +580,6 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                         ->schema([
                                             SignaturePad::make('signature')
                                                 ->label('Firma del beneficiario')
-                                                ->required()
                                                 ->extraAttributes([
                                                     'style' => 'min-height: 200px; min-width: 100%;'
                                                 ])

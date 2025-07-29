@@ -29,7 +29,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
 {
     use InteractsWithTable, HasPageShield;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     protected static string $view = 'filament.pages.beneficiary-registry-view';
 

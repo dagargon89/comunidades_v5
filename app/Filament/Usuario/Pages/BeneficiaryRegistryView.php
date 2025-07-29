@@ -325,19 +325,42 @@ class BeneficiaryRegistryView extends Page implements HasTable
                         ->description('Registra un beneficiario individual con todos sus datos')
                         ->icon('heroicon-o-user-plus')
                         ->schema([
-                            // Sección de búsqueda
+                                                        // Sección de búsqueda
                             Forms\Components\Section::make('Búsqueda de Beneficiario')
-                                ->description('Busca un beneficiario existente por su identificador')
+                                ->description('Busca un beneficiario existente')
                                 ->icon('heroicon-m-magnifying-glass')
                                 ->schema([
-                                    TextInput::make('search_identifier')
-                                        ->label('Buscar por identificador')
-                                        ->placeholder('Ej: PEREZ2025M')
-                                        ->helperText('Ingresa el identificador para buscar un beneficiario existente')
-                                        ->live(onBlur: true)
-                                        ->afterStateUpdated(function ($state, $set, $get) {
-                                            if (!empty($state)) {
-                                                $beneficiary = \App\Models\Beneficiary::where('identifier', $state)->first();
+                                    // Campo de búsqueda con dropdown de opciones
+                                    Select::make('search_beneficiary_dropdown')
+                                        ->label('Búsqueda con opciones')
+                                        ->placeholder('Escribe para buscar beneficiarios...')
+                                        ->helperText('Escribe nombre, apellido o identificador para ver opciones disponibles')
+                                        ->searchable()
+                                        ->getSearchResultsUsing(function (string $search) {
+                                            if (strlen($search) < 2) {
+                                                return [];
+                                            }
+
+                                            return \App\Models\Beneficiary::where('identifier', 'like', "%{$search}%")
+                                                ->orWhere('first_names', 'like', "%{$search}%")
+                                                ->orWhere('last_name', 'like', "%{$search}%")
+                                                ->orWhere('mother_last_name', 'like', "%{$search}%")
+                                                ->limit(10)
+                                                ->get()
+                                                ->mapWithKeys(function ($beneficiary) {
+                                                    $label = "{$beneficiary->first_names} {$beneficiary->last_name} ({$beneficiary->identifier})";
+                                                    return [$beneficiary->id => $label];
+                                                });
+                                        })
+                                        ->getOptionLabelUsing(fn ($value): ?string =>
+                                            \App\Models\Beneficiary::find($value)?->first_names . ' ' .
+                                            \App\Models\Beneficiary::find($value)?->last_name . ' (' .
+                                            \App\Models\Beneficiary::find($value)?->identifier . ')'
+                                        )
+                                        ->live()
+                                        ->afterStateUpdated(function ($state, $set) {
+                                            if ($state) {
+                                                $beneficiary = \App\Models\Beneficiary::find($state);
                                                 if ($beneficiary) {
                                                     $set('last_name', $beneficiary->last_name);
                                                     $set('mother_last_name', $beneficiary->mother_last_name);
@@ -350,26 +373,10 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                                     $set('neighborhood', $beneficiary->neighborhood);
                                                     $set('address_backup', $beneficiary->address_backup);
 
-                                                    // Mostrar notificación de beneficiario encontrado
                                                     \Filament\Notifications\Notification::make()
-                                                        ->title('Beneficiario encontrado')
-                                                        ->body("Identificador: {$beneficiary->identifier}. Los datos han sido pre-llenados. Solo necesitas capturar la nueva firma.")
+                                                        ->title('Beneficiario seleccionado')
+                                                        ->body("Se prellenaron los datos de: {$beneficiary->first_names} {$beneficiary->last_name}")
                                                         ->success()
-                                                        ->send();
-                                                } else {
-                                                    // Limpiar campos si no se encuentra
-                                                    $set('last_name', '');
-                                                    $set('mother_last_name', '');
-                                                    $set('first_names', '');
-                                                    $set('birth_year', '');
-                                                    $set('gender', '');
-                                                    $set('phone', '');
-                                                    $set('address_backup', '');
-
-                                                    \Filament\Notifications\Notification::make()
-                                                        ->title('Beneficiario no encontrado')
-                                                        ->body('No se encontró un beneficiario con ese identificador. Puedes proceder con el registro normal.')
-                                                        ->warning()
                                                         ->send();
                                                 }
                                             }
@@ -531,19 +538,42 @@ class BeneficiaryRegistryView extends Page implements HasTable
                             Repeater::make('beneficiarios')
                                 ->label('Lista de Beneficiarios')
                                 ->schema([
-                                    // Sección de búsqueda por identificador
+                                                                        // Sección de búsqueda
                                     Forms\Components\Section::make('Búsqueda Rápida')
-                                        ->description('Busca un beneficiario existente por identificador')
+                                        ->description('Busca un beneficiario existente')
                                         ->icon('heroicon-m-magnifying-glass')
                                         ->schema([
-                                            TextInput::make('search_identifier')
-                                                ->label('Buscar por identificador')
-                                                ->placeholder('Ej: PEREZ2025M')
-                                                ->helperText('Ingresa el identificador para buscar un beneficiario existente')
-                                                ->live(onBlur: true)
-                                                ->afterStateUpdated(function ($state, $set, $get) {
-                                                    if (!empty($state)) {
-                                                        $beneficiary = \App\Models\Beneficiary::where('identifier', $state)->first();
+                                            // Campo de búsqueda con dropdown de opciones
+                                            Select::make('search_beneficiary_dropdown')
+                                                ->label('Búsqueda con opciones')
+                                                ->placeholder('Escribe para buscar beneficiarios...')
+                                                ->helperText('Escribe nombre, apellido o identificador para ver opciones disponibles')
+                                                ->searchable()
+                                                ->getSearchResultsUsing(function (string $search) {
+                                                    if (strlen($search) < 2) {
+                                                        return [];
+                                                    }
+
+                                                    return \App\Models\Beneficiary::where('identifier', 'like', "%{$search}%")
+                                                        ->orWhere('first_names', 'like', "%{$search}%")
+                                                        ->orWhere('last_name', 'like', "%{$search}%")
+                                                        ->orWhere('mother_last_name', 'like', "%{$search}%")
+                                                        ->limit(10)
+                                                        ->get()
+                                                        ->mapWithKeys(function ($beneficiary) {
+                                                            $label = "{$beneficiary->first_names} {$beneficiary->last_name} ({$beneficiary->identifier})";
+                                                            return [$beneficiary->id => $label];
+                                                        });
+                                                })
+                                                ->getOptionLabelUsing(fn ($value): ?string =>
+                                                    \App\Models\Beneficiary::find($value)?->first_names . ' ' .
+                                                    \App\Models\Beneficiary::find($value)?->last_name . ' (' .
+                                                    \App\Models\Beneficiary::find($value)?->identifier . ')'
+                                                )
+                                                ->live()
+                                                ->afterStateUpdated(function ($state, $set) {
+                                                    if ($state) {
+                                                        $beneficiary = \App\Models\Beneficiary::find($state);
                                                         if ($beneficiary) {
                                                             $set('last_name', $beneficiary->last_name);
                                                             $set('mother_last_name', $beneficiary->mother_last_name);
@@ -555,23 +585,11 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                                             $set('ext_number', $beneficiary->ext_number);
                                                             $set('neighborhood', $beneficiary->neighborhood);
                                                             $set('address_backup', $beneficiary->address_backup);
+
                                                             \Filament\Notifications\Notification::make()
-                                                                ->title('Beneficiario encontrado')
-                                                                ->body('Datos prellenados. Solo captura la firma.')
+                                                                ->title('Beneficiario seleccionado')
+                                                                ->body("Se prellenaron los datos de: {$beneficiary->first_names} {$beneficiary->last_name}")
                                                                 ->success()
-                                                                ->send();
-                                                        } else {
-                                                            $set('last_name', '');
-                                                            $set('mother_last_name', '');
-                                                            $set('first_names', '');
-                                                            $set('birth_year', '');
-                                                            $set('gender', '');
-                                                            $set('phone', '');
-                                                            $set('address_backup', '');
-                                                            \Filament\Notifications\Notification::make()
-                                                                ->title('Beneficiario no encontrado')
-                                                                ->body('Puedes registrar manualmente.')
-                                                                ->warning()
                                                                 ->send();
                                                         }
                                                     }

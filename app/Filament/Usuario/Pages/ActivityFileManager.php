@@ -238,23 +238,62 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                     ->label('Agregar archivos')
                     ->icon('heroicon-o-plus')
                     ->form([
-                        Repeater::make('files')
-                            ->label('Archivos')
+                        Forms\Components\Section::make('Gestión de Archivos de Actividad')
+                            ->description('Sube múltiples archivos relacionados con la actividad seleccionada')
+                            ->icon('heroicon-o-document-plus')
                             ->schema([
-                                FileUpload::make('file_upload')
-                                    ->label('Archivo')
-                                    ->required()
-                                    ->directory('activity-files')
-                                    ->preserveFilenames(),
-                                TextInput::make('month')
-                                    ->label('Mes')
-                                    ->placeholder('Ej: Enero, Febrero'),
-                                TextInput::make('type')
-                                    ->label('Tipo de archivo')
-                                    ->placeholder('Ej: PDF, Imagen, Documento'),
+                                Repeater::make('files')
+                                    ->label('Lista de Archivos')
+                                    ->schema([
+                                        // Sección de información del archivo
+                                        Forms\Components\Section::make('Información del Archivo')
+                                            ->description('Datos básicos del archivo a subir')
+                                            ->icon('heroicon-m-document-text')
+                                            ->schema([
+                                                FileUpload::make('file_upload')
+                                                    ->label('Archivo')
+                                                    ->required()
+                                                    ->directory('activity-files')
+                                                    ->preserveFilenames()
+                                                    ->acceptedFileTypes(['application/pdf', 'image/*', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
+                                                    ->helperText('Formatos permitidos: PDF, imágenes, Word, Excel')
+                                                    ->columnSpanFull(),
+                                            ])
+                                            ->collapsible()
+                                            ->collapsed(),
+
+                                        // Sección de metadatos
+                                        Forms\Components\Section::make('Metadatos del Archivo')
+                                            ->description('Información adicional sobre el archivo')
+                                            ->icon('heroicon-m-tag')
+                                            ->schema([
+                                                TextInput::make('month')
+                                                    ->label('Mes')
+                                                    ->placeholder('Ej: Enero, Febrero, Marzo')
+                                                    ->helperText('Especifica el mes al que corresponde este archivo')
+                                                    ->columnSpan(1),
+                                                TextInput::make('type')
+                                                    ->label('Tipo de archivo')
+                                                    ->placeholder('Ej: PDF, Imagen, Documento, Reporte')
+                                                    ->helperText('Describe el tipo o categoría del archivo')
+                                                    ->columnSpan(1),
+                                            ])
+                                            ->columns(2)
+                                            ->collapsible()
+                                            ->collapsed(),
+                                    ])
+                                    ->addActionLabel('Agregar Otro Archivo')
+                                    ->reorderable()
+                                    ->collapsible()
+                                    ->itemLabel(fn (array $state): ?string =>
+                                        $state['type'] ?? $state['month'] ?? 'Nuevo Archivo'
+                                    )
+                                    ->minItems(1)
+                                    ->maxItems(20)
+                                    ->columnSpanFull(),
                             ])
-                            ->addActionLabel('Agregar otro archivo')
-                            ->minItems(1),
+                            ->collapsible()
+                            ->collapsed(),
                     ])
                     ->action(function (array $data) {
                         $activityId = $this->activity_id;

@@ -213,12 +213,29 @@ class BeneficiaryRegistryView extends Page implements HasTable
     protected function getTableColumns(): array
     {
         return [
-            Tables\Columns\TextColumn::make('beneficiaries.identifier')->label('Identificador'),
-            Tables\Columns\TextColumn::make('beneficiaries.last_name')->label('Apellido Paterno'),
-            Tables\Columns\TextColumn::make('beneficiaries.mother_last_name')->label('Apellido Materno'),
-            Tables\Columns\TextColumn::make('beneficiaries.first_names')->label('Nombres'),
-            Tables\Columns\TextColumn::make('beneficiaries.birth_year')->label('Año Nacimiento'),
-            Tables\Columns\TextColumn::make('beneficiaries.gender')->label('Género')
+            Tables\Columns\TextColumn::make('beneficiaries.identifier')
+                ->label('Identificador')
+                ->sortable()
+                ->searchable(),
+            Tables\Columns\TextColumn::make('beneficiaries.last_name')
+                ->label('Apellido Paterno')
+                ->sortable()
+                ->searchable(),
+            Tables\Columns\TextColumn::make('beneficiaries.mother_last_name')
+                ->label('Apellido Materno')
+                ->sortable()
+                ->searchable(),
+            Tables\Columns\TextColumn::make('beneficiaries.first_names')
+                ->label('Nombres')
+                ->sortable()
+                ->searchable(),
+            Tables\Columns\TextColumn::make('beneficiaries.birth_year')
+                ->label('Año Nacimiento')
+                ->sortable()
+                ->searchable(),
+            Tables\Columns\TextColumn::make('beneficiaries.gender')
+                ->label('Género')
+                ->sortable()
                 ->formatStateUsing(fn ($state) => match ($state) {
                     'M' => 'Masculino',
                     'F' => 'Femenino',
@@ -226,9 +243,18 @@ class BeneficiaryRegistryView extends Page implements HasTable
                     'Female' => 'Femenino',
                     default => $state,
                 }),
-            Tables\Columns\TextColumn::make('beneficiaries.phone')->label('Teléfono'),
-            ImageColumn::make('signature')->label('Firma')->height(60)->width(180),
-            Tables\Columns\TextColumn::make('created_at')->label('Registrado el')->dateTime('d/m/Y H:i'),
+            Tables\Columns\TextColumn::make('beneficiaries.phone')
+                ->label('Teléfono')
+                ->sortable()
+                ->searchable(),
+            ImageColumn::make('signature')
+                ->label('Firma')
+                ->height(60)
+                ->width(180),
+            Tables\Columns\TextColumn::make('created_at')
+                ->label('Registrado el')
+                ->dateTime('d/m/Y H:i')
+                ->sortable(),
         ];
     }
 
@@ -662,13 +688,138 @@ class BeneficiaryRegistryView extends Page implements HasTable
     protected function getTableActions(): array
     {
         return [
+            Actions\Action::make('editBeneficiary')
+                ->label('Editar Datos')
+                ->icon('heroicon-o-user')
+                ->form([
+                    Forms\Components\Section::make('Editar Datos del Beneficiario')
+                        ->description('Modifica la información personal del beneficiario')
+                        ->icon('heroicon-o-user')
+                        ->schema([
+                            // Sección de datos personales
+                            Forms\Components\Section::make('Datos Personales')
+                                ->description('Información básica del beneficiario')
+                                ->icon('heroicon-m-user')
+                                ->schema([
+                                    TextInput::make('last_name')
+                                        ->label('Apellido paterno')
+                                        ->maxLength(100)
+                                        ->columnSpan(1),
+                                    TextInput::make('mother_last_name')
+                                        ->label('Apellido materno')
+                                        ->maxLength(100)
+                                        ->columnSpan(1),
+                                    TextInput::make('first_names')
+                                        ->label('Nombres')
+                                        ->required()
+                                        ->maxLength(100)
+                                        ->columnSpan(2),
+                                    TextInput::make('birth_year')
+                                        ->label('Año de nacimiento')
+                                        ->maxLength(4)
+                                        ->columnSpan(1),
+                                    Select::make('gender')
+                                        ->label('Género')
+                                        ->required()
+                                        ->options([
+                                            'M' => 'Masculino',
+                                            'F' => 'Femenino',
+                                        ])
+                                        ->columnSpan(1),
+                                ])
+                                ->columns(2),
+
+                            // Sección de información de contacto
+                            Forms\Components\Section::make('Información de Contacto')
+                                ->description('Datos de contacto del beneficiario')
+                                ->icon('heroicon-m-phone')
+                                ->schema([
+                                    TextInput::make('phone')
+                                        ->label('Teléfono')
+                                        ->maxLength(20)
+                                        ->columnSpan(1),
+                                    TextInput::make('street')
+                                        ->label('Calle')
+                                        ->maxLength(255)
+                                        ->columnSpan(1),
+                                    TextInput::make('ext_number')
+                                        ->label('Número')
+                                        ->maxLength(50)
+                                        ->columnSpan(1),
+                                    TextInput::make('neighborhood')
+                                        ->label('Colonia')
+                                        ->maxLength(255)
+                                        ->columnSpan(1),
+                                    Textarea::make('address_backup')
+                                        ->label('Dirección de respaldo')
+                                        ->rows(3)
+                                        ->columnSpan(2),
+                                ])
+                                ->columns(2)
+                                ->collapsible()
+                                ->collapsed(),
+                        ])
+                        ->collapsible()
+                        ->collapsed(),
+                ])
+                ->action(function (array $data, $record) {
+                    // Obtener el beneficiario asociado al registro
+                    $beneficiary = $record->beneficiaries;
+
+                    if (!$beneficiary) {
+                        \Filament\Notifications\Notification::make()
+                            ->title('Error')
+                            ->body('No se encontró el beneficiario asociado.')
+                            ->danger()
+                            ->send();
+                        return;
+                    }
+
+                    // Actualizar los datos del beneficiario
+                    $beneficiary->update([
+                        'last_name' => $data['last_name'],
+                        'mother_last_name' => $data['mother_last_name'],
+                        'first_names' => $data['first_names'],
+                        'birth_year' => $data['birth_year'],
+                        'gender' => $data['gender'],
+                        'phone' => $data['phone'] ?? null,
+                        'street' => $data['street'] ?? null,
+                        'ext_number' => $data['ext_number'] ?? null,
+                        'neighborhood' => $data['neighborhood'] ?? null,
+                        'address_backup' => $data['address_backup'] ?? null,
+                    ]);
+
+                    \Filament\Notifications\Notification::make()
+                        ->title('Datos actualizados')
+                        ->body('Los datos del beneficiario han sido actualizados correctamente.')
+                        ->success()
+                        ->send();
+                })
+                ->fillForm(function ($record) {
+                    // Prellenar el formulario con los datos actuales del beneficiario
+                    $beneficiary = $record->beneficiaries;
+                    return [
+                        'last_name' => $beneficiary->last_name,
+                        'mother_last_name' => $beneficiary->mother_last_name,
+                        'first_names' => $beneficiary->first_names,
+                        'birth_year' => $beneficiary->birth_year,
+                        'gender' => $beneficiary->gender,
+                        'phone' => $beneficiary->phone,
+                        'street' => $beneficiary->street,
+                        'ext_number' => $beneficiary->ext_number,
+                        'neighborhood' => $beneficiary->neighborhood,
+                        'address_backup' => $beneficiary->address_backup,
+                    ];
+                }),
             Actions\EditAction::make()
-                ->label('Editar')
+                ->label('Editar Firma')
+                ->icon('heroicon-o-pencil-square')
                 ->form([
                     SignaturePad::make('signature')->label('Firma del beneficiario'),
                 ]),
             Actions\DeleteAction::make()
                 ->label('Eliminar')
+                ->icon('heroicon-o-trash')
                 ->requiresConfirmation()
                 ->modalHeading('¿Eliminar registro?')
                 ->modalDescription('Esta acción eliminará el registro del beneficiario de esta actividad. ¿Estás seguro?')

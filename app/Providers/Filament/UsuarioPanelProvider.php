@@ -6,10 +6,12 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -25,8 +27,20 @@ class UsuarioPanelProvider extends PanelProvider
         return $panel
             ->id('usuario')
             ->path('usuario')
+            ->login()
+            ->registration()
+            ->maxContentWidth(MaxWidth::Full)
+            ->topNavigation()
+            ->passwordReset()
+            ->emailVerification()
+            ->profile()
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Perfil')
+                    ->url(fn (): string => \Filament\Pages\Auth\EditProfile::getUrl()),
+            ])
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Emerald,
             ])
             ->discoverResources(in: app_path('Filament/Usuario/Resources'), for: 'App\\Filament\\Usuario\\Resources')
             ->discoverPages(in: app_path('Filament/Usuario/Pages'), for: 'App\\Filament\\Usuario\\Pages')

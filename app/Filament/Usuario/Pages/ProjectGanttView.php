@@ -42,7 +42,7 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
     protected function getHeaderWidgets(): array
     {
         return [
-            ActivityCalendarCount::class,
+            \App\Filament\Usuario\Widgets\ActivityCalendarCount::class,
         ];
     }
 

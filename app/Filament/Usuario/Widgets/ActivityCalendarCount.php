@@ -7,6 +7,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Models\ActivityCalendar;
 use Carbon\Carbon;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
+use Illuminate\Support\Facades\Auth;
 
 class ActivityCalendarCount extends BaseWidget
 {
@@ -14,11 +15,12 @@ class ActivityCalendarCount extends BaseWidget
 
     protected function getStats(): array
     {
-        $totalActivities = ActivityCalendar::count();
-        $cancelledActivities = ActivityCalendar::where('cancelled', 1)->count();
-        $activeActivities = ActivityCalendar::where('cancelled', 0)->count();
-        $todayActivities = ActivityCalendar::whereDate('start_date', Carbon::today())->count();
-        $thisWeekActivities = ActivityCalendar::whereBetween('start_date', [
+        $userId = Auth::id();
+        $totalActivities = ActivityCalendar::where('assigned_person', $userId)->count();
+        $cancelledActivities = ActivityCalendar::where('assigned_person', $userId)->where('cancelled', 1)->count();
+        $activeActivities = ActivityCalendar::where('assigned_person', $userId)->where('cancelled', 0)->count();
+        $todayActivities = ActivityCalendar::where('assigned_person', $userId)->whereDate('start_date', Carbon::today())->count();
+        $thisWeekActivities = ActivityCalendar::where('assigned_person', $userId)->whereBetween('start_date', [
             Carbon::now()->startOfWeek(),
             Carbon::now()->endOfWeek()
         ])->count();

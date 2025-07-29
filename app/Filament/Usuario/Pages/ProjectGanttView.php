@@ -18,6 +18,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Section;
 use App\Filament\Usuario\Widgets\ActivityCalendarCount;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectGanttView extends Page implements Tables\Contracts\HasTable
 {
@@ -48,7 +49,10 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(ActivityCalendar::query()->with(['activity', 'activity.goal']))
+            ->query(ActivityCalendar::query()
+                ->with(['activity', 'activity.goal'])
+                ->where('assigned_person', Auth::id()) // Filtrar solo actividades donde el usuario es responsable
+            )
             ->columns([
                 Tables\Columns\TextColumn::make('activity.name')
                     ->label('Actividad')

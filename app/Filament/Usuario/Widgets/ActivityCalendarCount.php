@@ -8,6 +8,7 @@ use App\Models\ActivityCalendar;
 use Carbon\Carbon;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth as AuthFacade;
 
 class ActivityCalendarCount extends BaseWidget
 {
@@ -17,10 +18,12 @@ class ActivityCalendarCount extends BaseWidget
 
     protected static bool $isLazy = false;
 
+    protected static ?int $sort = 1;
+
     protected function getStats(): array
     {
         try {
-            $userId = Auth::id();
+            $userId = \Illuminate\Support\Facades\Auth::id();
             $totalActivities = ActivityCalendar::where('assigned_person', $userId)->count();
             $cancelledActivities = ActivityCalendar::where('assigned_person', $userId)->where('cancelled', 1)->count();
             $activeActivities = ActivityCalendar::where('assigned_person', $userId)->where('cancelled', 0)->count();

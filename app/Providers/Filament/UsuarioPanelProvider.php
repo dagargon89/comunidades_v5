@@ -51,7 +51,6 @@ class UsuarioPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
-                \App\Filament\Usuario\Widgets\ActivityCalendarCount::class,
             ])
             ->middleware([
                 EncryptCookies::class,

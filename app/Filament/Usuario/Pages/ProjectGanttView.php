@@ -24,6 +24,8 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable, HasPageShield;
 
+    protected static bool $shouldRegisterNavigation = true;
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-group';
     protected static string $view = 'filament.usuario.pages.project-gantt-view';
     protected static ?string $slug = 'gestor-actividades';

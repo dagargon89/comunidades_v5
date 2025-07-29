@@ -44,11 +44,18 @@ class BeneficiaryRegistryView extends Page implements HasTable
 
     public function mount(): void
     {
-        $this->activity_id = Activity::query()->min('id') ?? null;
+        $userId = auth()->id();
+        $firstActivityId = ActivityCalendar::where('assigned_person', $userId)
+            ->pluck('activity_id')
+            ->unique()
+            ->first();
+        $this->activity_id = $firstActivityId ?? null;
+
         $firstCalendar = null;
         if ($this->activity_id) {
             $firstCalendar = ActivityCalendar::where('activity_id', $this->activity_id)
                 ->where('cancelled', false) // Filtrar fechas canceladas
+                ->where('assigned_person', $userId) // Filtrar por responsable
                 ->orderBy('start_date')
                 ->orderBy('start_hour')
                 ->first();
@@ -59,11 +66,13 @@ class BeneficiaryRegistryView extends Page implements HasTable
     public function updatedActivityId($value): void
     {
         $this->activity_id = $value ? (int) $value : null;
+        $userId = auth()->id();
         // Buscar la primera fecha disponible para la nueva actividad
         $firstCalendar = null;
         if ($this->activity_id) {
             $firstCalendar = ActivityCalendar::where('activity_id', $this->activity_id)
                 ->where('cancelled', false) // Filtrar fechas canceladas
+                ->where('assigned_person', $userId) // Filtrar por responsable
                 ->orderBy('start_date')
                 ->orderBy('start_hour')
                 ->first();
@@ -86,10 +95,33 @@ class BeneficiaryRegistryView extends Page implements HasTable
                 ->schema([
                     Select::make('activity_id')
                         ->label('Actividad')
-                        ->options(Activity::pluck('name', 'id')->toArray())
+                        ->options(function () {
+                            // Obtener el usuario logueado
+                            $userId = auth()->id();
+
+                            // Obtener las actividades donde el usuario es responsable
+                            $activityIds = ActivityCalendar::where('assigned_person', $userId)
+                                ->pluck('activity_id')
+                                ->unique()
+                                ->toArray();
+
+                            // Obtener las actividades correspondientes
+                            $activities = Activity::whereIn('id', $activityIds)
+                                ->pluck('name', 'id')
+                                ->toArray();
+
+                            return $activities;
+                        })
                         ->searchable()
                         ->live()
-                        ->default(Activity::query()->min('id'))
+                        ->default(function () {
+                            $userId = auth()->id();
+                            $firstActivityId = ActivityCalendar::where('assigned_person', $userId)
+                                ->pluck('activity_id')
+                                ->unique()
+                                ->first();
+                            return $firstActivityId;
+                        })
                         ->afterStateUpdated(function ($state, $set) {
                             $set('activity_id', $state);
                         }),
@@ -97,11 +129,15 @@ class BeneficiaryRegistryView extends Page implements HasTable
                         ->label('Fecha y hora de la actividad')
                         ->options(function () {
                             $activityId = $this->activity_id;
+                            $userId = auth()->id();
+
                             if (!$activityId) {
                                 return [];
                             }
+
                             $calendars = ActivityCalendar::where('activity_id', $activityId)
                                 ->where('cancelled', false) // Filtrar fechas canceladas
+                                ->where('assigned_person', $userId) // Filtrar por responsable
                                 ->orderBy('start_date')
                                 ->orderBy('start_hour')
                                 ->get();
@@ -122,11 +158,15 @@ class BeneficiaryRegistryView extends Page implements HasTable
                         ->live()
                         ->default(function () {
                             $activityId = $this->activity_id;
+                            $userId = auth()->id();
+
                             if (!$activityId) {
                                 return null;
                             }
+
                             $firstCalendar = ActivityCalendar::where('activity_id', $activityId)
                                 ->where('cancelled', false) // Filtrar fechas canceladas
+                                ->where('assigned_person', $userId) // Filtrar por responsable
                                 ->orderBy('start_date')
                                 ->orderBy('start_hour')
                                 ->first();
@@ -140,16 +180,21 @@ class BeneficiaryRegistryView extends Page implements HasTable
                         })
                         ->helperText(function () {
                             $activityId = $this->activity_id;
+                            $userId = auth()->id();
+
                             if (!$activityId) {
                                 return 'Selecciona una actividad primero';
                             }
+
                             $count = ActivityCalendar::where('activity_id', $activityId)
                                 ->where('cancelled', false) // Filtrar fechas canceladas
+                                ->where('assigned_person', $userId) // Filtrar por responsable
                                 ->count();
+
                             if ($count === 0) {
-                                return 'Esta actividad no tiene fechas y horarios programados disponibles';
+                                return 'Esta actividad no tiene fechas y horarios programados disponibles donde seas responsable';
                             }
-                            return "Esta actividad tiene {$count} fecha(s) programada(s) disponible(s)";
+                            return "Esta actividad tiene {$count} fecha(s) programada(s) disponible(s) donde eres responsable";
                         }),
                 ]),
         ]);

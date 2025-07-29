@@ -758,6 +758,52 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                 ->columns(2)
                                 ->collapsible()
                                 ->collapsed(),
+
+                            // Sección de acciones peligrosas
+                            Forms\Components\Section::make('Acciones Peligrosas')
+                                ->description('Acciones que no se pueden deshacer')
+                                ->icon('heroicon-m-exclamation-triangle')
+                                ->schema([
+                                    Forms\Components\Actions::make([
+                                        Forms\Components\Actions\Action::make('deleteBeneficiary')
+                                            ->label('Eliminar Beneficiario')
+                                            ->icon('heroicon-o-trash')
+                                            ->color('danger')
+                                            ->requiresConfirmation()
+                                            ->modalHeading('¿Eliminar beneficiario?')
+                                            ->modalDescription('Esta acción eliminará permanentemente el beneficiario y todos sus registros asociados. Esta acción no se puede deshacer.')
+                                            ->modalSubmitActionLabel('Sí, eliminar permanentemente')
+                                            ->modalCancelActionLabel('Cancelar')
+                                            ->action(function ($record) {
+                                                // Obtener el beneficiario asociado al registro
+                                                $beneficiary = $record->beneficiaries;
+
+                                                if (!$beneficiary) {
+                                                    \Filament\Notifications\Notification::make()
+                                                        ->title('Error')
+                                                        ->body('No se encontró el beneficiario asociado.')
+                                                        ->danger()
+                                                        ->send();
+                                                    return;
+                                                }
+
+                                                // Eliminar todos los registros asociados al beneficiario
+                                                \App\Models\BeneficiaryRegistry::where('beneficiaries_id', $beneficiary->id)->delete();
+
+                                                // Eliminar el beneficiario
+                                                $beneficiary->delete();
+
+                                                \Filament\Notifications\Notification::make()
+                                                    ->title('Beneficiario eliminado')
+                                                    ->body('El beneficiario y todos sus registros han sido eliminados permanentemente.')
+                                                    ->success()
+                                                    ->send();
+                                            }),
+                                    ])
+                                    ->columnSpanFull(),
+                                ])
+                                ->collapsible()
+                                ->collapsed(),
                         ])
                         ->collapsible()
                         ->collapsed(),

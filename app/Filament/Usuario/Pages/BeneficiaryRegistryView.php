@@ -348,15 +348,34 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                                 ->limit(10)
                                                 ->get()
                                                 ->mapWithKeys(function ($beneficiary) {
-                                                    $label = "{$beneficiary->first_names} {$beneficiary->last_name} ({$beneficiary->identifier})";
+                                                    $nombre = "{$beneficiary->first_names} {$beneficiary->last_name}";
+                                                    $direccion = "";
+                                                    if ($beneficiary->street && $beneficiary->ext_number && $beneficiary->neighborhood) {
+                                                        $direccion = " - {$beneficiary->street} {$beneficiary->ext_number}, {$beneficiary->neighborhood}";
+                                                    } elseif ($beneficiary->street && $beneficiary->ext_number) {
+                                                        $direccion = " - {$beneficiary->street} {$beneficiary->ext_number}";
+                                                    } elseif ($beneficiary->street) {
+                                                        $direccion = " - {$beneficiary->street}";
+                                                    }
+                                                    $label = "{$nombre} ({$beneficiary->birth_year}){$direccion}";
                                                     return [$beneficiary->id => $label];
                                                 });
                                         })
-                                        ->getOptionLabelUsing(fn ($value): ?string =>
-                                            \App\Models\Beneficiary::find($value)?->first_names . ' ' .
-                                            \App\Models\Beneficiary::find($value)?->last_name . ' (' .
-                                            \App\Models\Beneficiary::find($value)?->identifier . ')'
-                                        )
+                                        ->getOptionLabelUsing(function ($value): ?string {
+                                            $beneficiary = \App\Models\Beneficiary::find($value);
+                                            if (!$beneficiary) return null;
+
+                                            $nombre = "{$beneficiary->first_names} {$beneficiary->last_name}";
+                                            $direccion = "";
+                                            if ($beneficiary->street && $beneficiary->ext_number && $beneficiary->neighborhood) {
+                                                $direccion = " - {$beneficiary->street} {$beneficiary->ext_number}, {$beneficiary->neighborhood}";
+                                            } elseif ($beneficiary->street && $beneficiary->ext_number) {
+                                                $direccion = " - {$beneficiary->street} {$beneficiary->ext_number}";
+                                            } elseif ($beneficiary->street) {
+                                                $direccion = " - {$beneficiary->street}";
+                                            }
+                                            return "{$nombre} ({$beneficiary->birth_year}){$direccion}";
+                                        })
                                         ->live()
                                         ->afterStateUpdated(function ($state, $set) {
                                             if ($state) {
@@ -561,15 +580,34 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                                         ->limit(10)
                                                         ->get()
                                                         ->mapWithKeys(function ($beneficiary) {
-                                                            $label = "{$beneficiary->first_names} {$beneficiary->last_name} ({$beneficiary->identifier})";
+                                                            $nombre = "{$beneficiary->first_names} {$beneficiary->last_name}";
+                                                            $direccion = "";
+                                                            if ($beneficiary->street && $beneficiary->ext_number && $beneficiary->neighborhood) {
+                                                                $direccion = " - {$beneficiary->street} {$beneficiary->ext_number}, {$beneficiary->neighborhood}";
+                                                            } elseif ($beneficiary->street && $beneficiary->ext_number) {
+                                                                $direccion = " - {$beneficiary->street} {$beneficiary->ext_number}";
+                                                            } elseif ($beneficiary->street) {
+                                                                $direccion = " - {$beneficiary->street}";
+                                                            }
+                                                            $label = "{$nombre} ({$beneficiary->birth_year}){$direccion}";
                                                             return [$beneficiary->id => $label];
                                                         });
                                                 })
-                                                ->getOptionLabelUsing(fn ($value): ?string =>
-                                                    \App\Models\Beneficiary::find($value)?->first_names . ' ' .
-                                                    \App\Models\Beneficiary::find($value)?->last_name . ' (' .
-                                                    \App\Models\Beneficiary::find($value)?->identifier . ')'
-                                                )
+                                                ->getOptionLabelUsing(function ($value): ?string {
+                                                    $beneficiary = \App\Models\Beneficiary::find($value);
+                                                    if (!$beneficiary) return null;
+
+                                                    $nombre = "{$beneficiary->first_names} {$beneficiary->last_name}";
+                                                    $direccion = "";
+                                                    if ($beneficiary->street && $beneficiary->ext_number && $beneficiary->neighborhood) {
+                                                        $direccion = " - {$beneficiary->street} {$beneficiary->ext_number}, {$beneficiary->neighborhood}";
+                                                    } elseif ($beneficiary->street && $beneficiary->ext_number) {
+                                                        $direccion = " - {$beneficiary->street} {$beneficiary->ext_number}";
+                                                    } elseif ($beneficiary->street) {
+                                                        $direccion = " - {$beneficiary->street}";
+                                                    }
+                                                    return "{$nombre} ({$beneficiary->birth_year}){$direccion}";
+                                                })
                                                 ->live()
                                                 ->afterStateUpdated(function ($state, $set) {
                                                     if ($state) {

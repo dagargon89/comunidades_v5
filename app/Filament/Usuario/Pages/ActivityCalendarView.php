@@ -88,7 +88,9 @@ class ActivityCalendarView extends Page implements Forms\Contracts\HasForms
                                     ->label('Responsable')
                                     ->options(User::pluck('name', 'id'))
                                     ->searchable()
-                                    ->required(),
+                                    ->required()
+                                    ->default(Auth::id())
+                                    ->disabled(fn ($get) => $get('activity_id') === null),
                             ]),
                         Section::make()
                             ->columns(2)

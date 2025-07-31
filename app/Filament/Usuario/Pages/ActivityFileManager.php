@@ -23,6 +23,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\HeaderActionsPosition;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ActivityFileManager extends Page implements Tables\Contracts\HasTable
@@ -40,7 +41,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
 
     public function mount(): void
     {
-        $userId = auth()->id();
+        $userId = Auth::id();
         $firstActivityId = ActivityCalendar::where('assigned_person', $userId)
             ->pluck('activity_id')
             ->unique()
@@ -68,7 +69,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                         ->label('Actividad')
                         ->options(function () {
                             // Obtener el usuario logueado
-                            $userId = auth()->id();
+                            $userId = Auth::id();
 
                             // Obtener las actividades donde el usuario es responsable
                             $activityIds = ActivityCalendar::where('assigned_person', $userId)
@@ -87,7 +88,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                         ->required()
                         ->live()
                         ->default(function () {
-                            $userId = auth()->id();
+                            $userId = Auth::id();
                             $firstActivityId = ActivityCalendar::where('assigned_person', $userId)
                                 ->pluck('activity_id')
                                 ->unique()
@@ -98,7 +99,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                         ->label('Fecha y hora de la actividad')
                         ->options(function () {
                             $activityId = $this->activity_id;
-                            $userId = auth()->id();
+                            $userId = Auth::id();
 
                             if (!$activityId) {
                                 return [];
@@ -127,7 +128,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                         ->live()
                         ->default(function () {
                             $activityId = $this->activity_id;
-                            $userId = auth()->id();
+                            $userId = Auth::id();
 
                             if (!$activityId) {
                                 return null;
@@ -148,7 +149,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                         })
                         ->helperText(function () {
                             $activityId = $this->activity_id;
-                            $userId = auth()->id();
+                            $userId = Auth::id();
 
                             if (!$activityId) {
                                 return 'Selecciona una actividad primero';
@@ -170,7 +171,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
     public function updatedActivityId($value): void
     {
         $this->activity_id = $value ? (int) $value : null;
-        $userId = auth()->id();
+        $userId = Auth::id();
         $firstCalendar = null;
         if ($this->activity_id) {
             $firstCalendar = ActivityCalendar::where('activity_id', $this->activity_id)
@@ -301,8 +302,19 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                                                     ->required()
                                                     ->directory('activity-files')
                                                     ->preserveFilenames()
-                                                    ->acceptedFileTypes(['application/pdf', 'image/*', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
-                                                    ->helperText('Formatos permitidos: PDF, imágenes, Word, Excel')
+                                                                                        ->maxSize(100 * 1024 * 1024) // 100MB máximo
+                                    ->acceptedFileTypes([
+                                        'application/pdf',
+                                        'image/*',
+                                        'application/msword',
+                                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                                        'application/vnd.ms-excel',
+                                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                        'application/zip',
+                                        'application/x-zip-compressed',
+                                        'application/octet-stream'
+                                    ])
+                                    ->helperText('Formatos permitidos: PDF, imágenes, Word, Excel, ZIP. Tamaño máximo: 100MB')
                                                     ->columnSpanFull(),
                                             ])
                                             ->collapsible()

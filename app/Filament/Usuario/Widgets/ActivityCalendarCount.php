@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth as AuthFacade;
 
 class ActivityCalendarCount extends BaseWidget
 {
-    use HasWidgetShield;
+   // use HasWidgetShield;
 
     protected static ?string $pollingInterval = null;
 

@@ -50,7 +50,13 @@ class UsuarioPanelProvider extends PanelProvider
                 \App\Filament\Usuario\Pages\Dashboard::class,
             ])
             ->widgets([
-                // Los widgets se descubren automáticamente
+                \App\Filament\Usuario\Widgets\ActivityCalendarCount::class,
+                \App\Filament\Usuario\Widgets\ActivityFileStats::class,
+                \App\Filament\Usuario\Widgets\BeneficiaryStats::class,
+                \App\Filament\Usuario\Widgets\ProjectActivitySummary::class,
+                \App\Filament\Usuario\Widgets\ActivityCalendarTable::class,
+                \App\Filament\Usuario\Widgets\ActivityFileTable::class,
+                \App\Filament\Usuario\Widgets\BeneficiaryRegistryTable::class,
             ])
             ->middleware([
                 EncryptCookies::class,

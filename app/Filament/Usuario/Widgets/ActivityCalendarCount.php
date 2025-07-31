@@ -9,13 +9,9 @@ use Carbon\Carbon;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Auth as AuthFacade;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
-use Illuminate\Database\Eloquent\Builder;
-
 class ActivityCalendarCount extends BaseWidget
 {
    // use HasWidgetShield;
-    use InteractsWithPageFilters;
 
     protected static ?string $pollingInterval = null;
 
@@ -28,28 +24,8 @@ class ActivityCalendarCount extends BaseWidget
         try {
             $userId = \Illuminate\Support\Facades\Auth::id();
 
-            // Obtener filtros del dashboard
-            $startDate = $this->filters['startDate'] ?? null;
-            $endDate = $this->filters['endDate'] ?? null;
-            $projectId = $this->filters['project_id'] ?? null;
-
-            // Query base
+            // Query base sin filtros
             $query = ActivityCalendar::where('assigned_person', $userId);
-
-            // Aplicar filtros de fecha
-            if ($startDate) {
-                $query->where('start_date', '>=', $startDate);
-            }
-            if ($endDate) {
-                $query->where('end_date', '<=', $endDate);
-            }
-
-            // Aplicar filtro de proyecto
-            if ($projectId) {
-                $query->whereHas('activity.goal', function (Builder $q) use ($projectId) {
-                    $q->where('project_id', $projectId);
-                });
-            }
 
             $totalActivities = $query->count();
             $cancelledActivities = (clone $query)->where('cancelled', 1)->count();

@@ -9,13 +9,9 @@ use App\Models\ActivityCalendar;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
-use Illuminate\Database\Eloquent\Builder;
-
 class ActivityFileStats extends BaseWidget
 {
     // use HasWidgetShield;
-    use InteractsWithPageFilters;
 
     protected static ?string $pollingInterval = null;
 
@@ -28,28 +24,8 @@ class ActivityFileStats extends BaseWidget
         try {
             $userId = Auth::id();
 
-            // Obtener filtros del dashboard
-            $startDate = $this->filters['startDate'] ?? null;
-            $endDate = $this->filters['endDate'] ?? null;
-            $projectId = $this->filters['project_id'] ?? null;
-
-            // Obtener las actividades calendarizadas del usuario con filtros
+            // Obtener las actividades calendarizadas del usuario sin filtros
             $activityQuery = ActivityCalendar::where('assigned_person', $userId);
-
-            // Aplicar filtros de fecha
-            if ($startDate) {
-                $activityQuery->where('start_date', '>=', $startDate);
-            }
-            if ($endDate) {
-                $activityQuery->where('end_date', '<=', $endDate);
-            }
-
-            // Aplicar filtro de proyecto
-            if ($projectId) {
-                $activityQuery->whereHas('activity.goal', function (Builder $q) use ($projectId) {
-                    $q->where('project_id', $projectId);
-                });
-            }
 
             $userActivityIds = $activityQuery->pluck('id')->toArray();
 

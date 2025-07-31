@@ -10,14 +10,17 @@
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
         <!-- Styles -->
-        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-            @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @else
-            <script src="https://cdn.tailwindcss.com"></script>
-        @endif
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <!-- Alpine.js -->
         <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+        <!-- Fallback para Tailwind si Vite no está disponible -->
+        <script>
+            if (typeof window !== 'undefined' && !window.Vite) {
+                document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
+            }
+        </script>
     </head>
     <body class="bg-gray-50">
         <!-- Header con navbar -->

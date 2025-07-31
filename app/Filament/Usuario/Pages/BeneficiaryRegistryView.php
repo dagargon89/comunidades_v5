@@ -206,13 +206,13 @@ class BeneficiaryRegistryView extends Page implements HasTable
             return null;
         }
         $calendar = ActivityCalendar::where('id', $this->activity_calendar_id)
-            ->with(['asignedPerson', 'activity'])
+            ->with(['assignedPerson', 'activity'])
             ->first();
         if (!$calendar) {
             return null;
         }
         $activity = $calendar->activity;
-        $responsible = $calendar->asignedPerson?->name ?? '-';
+        $responsible = $calendar->assignedPerson?->name ?? '-';
         return [
             'actividad' => $activity?->name ?? '-',
             'descripcion' => $activity?->description ?? '-',

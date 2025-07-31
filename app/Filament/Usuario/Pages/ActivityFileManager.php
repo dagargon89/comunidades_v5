@@ -200,7 +200,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
         if (!$activity || !$calendar) {
             return null;
         }
-        $responsable = User::find($calendar->asigned_person);
+        $responsable = User::find($calendar->assigned_person);
         return [
             'actividad' => $activity->name,
             'fecha' => $calendar->start_date,

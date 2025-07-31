@@ -137,7 +137,7 @@ class ActivityCalendarResource extends Resource
                     ->label('Creado por')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('asignedPerson.name')
+                Tables\Columns\TextColumn::make('assignedPerson.name')
                     ->label('Persona asignada')
                     ->searchable()
                     ->sortable(),

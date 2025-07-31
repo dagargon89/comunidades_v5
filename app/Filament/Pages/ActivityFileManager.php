@@ -200,8 +200,8 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                 TableAction::make('download')
                     ->label('Descargar')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->url(fn(ActivityFile $record) => Storage::url($record->file_path))
-                    ->openUrlInNewTab(),
+                    ->url(fn(ActivityFile $record) => route('download.activity.file', $record->id))
+                    ->openUrlInNewTab(false),
                 DeleteAction::make()
                     ->label('Eliminar')
                     ->requiresConfirmation()
@@ -245,7 +245,20 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                                     ->label('Archivo')
                                     ->required()
                                     ->directory('activity-files')
-                                    ->preserveFilenames(),
+                                    ->preserveFilenames()
+                                    ->maxSize(100 * 1024 * 1024) // 100MB máximo
+                                    ->acceptedFileTypes([
+                                        'application/pdf',
+                                        'image/*',
+                                        'application/msword',
+                                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                                        'application/vnd.ms-excel',
+                                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                        'application/zip',
+                                        'application/x-zip-compressed',
+                                        'application/octet-stream'
+                                    ])
+                                    ->helperText('Formatos permitidos: PDF, imágenes, Word, Excel, ZIP. Tamaño máximo: 100MB'),
                                 TextInput::make('month')
                                     ->label('Mes')
                                     ->placeholder('Ej: Enero, Febrero'),
@@ -299,7 +312,6 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                                     'type' => $fileData['type'] ?? null,
                                     'upload_date' => now(),
                                     'activity_log_id' => $activityLog->id,
-                                    'activity_progress_log_id' => $plannedMetric->activity_progress_log_id ?? 1, // Valor por defecto
                                     'activity_calendar_id' => $calendarId,
                                 ]);
                             }

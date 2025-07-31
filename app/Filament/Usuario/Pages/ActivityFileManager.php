@@ -247,8 +247,8 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                 TableAction::make('download')
                     ->label('Descargar')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->url(fn(ActivityFile $record) => Storage::url($record->file_path))
-                    ->openUrlInNewTab(),
+                    ->url(fn(ActivityFile $record) => route('download.activity.file', $record->id))
+                    ->openUrlInNewTab(false),
                 DeleteAction::make()
                     ->label('Eliminar')
                     ->requiresConfirmation()

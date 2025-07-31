@@ -34,6 +34,7 @@ class UsuarioPanelProvider extends PanelProvider
             ->passwordReset()
             ->emailVerification()
             ->profile()
+            ->defaultAvatarProvider(\Filament\AvatarProviders\UiAvatarsProvider::class)
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Perfil')
@@ -44,10 +45,12 @@ class UsuarioPanelProvider extends PanelProvider
             ])
             ->discoverResources(in: app_path('Filament/Usuario/Resources'), for: 'App\\Filament\\Usuario\\Resources')
             ->discoverPages(in: app_path('Filament/Usuario/Pages'), for: 'App\\Filament\\Usuario\\Pages')
+            ->discoverWidgets(in: app_path('Filament/Usuario/Widgets'), for: 'App\\Filament\\Usuario\\Widgets')
             ->pages([
+                \App\Filament\Usuario\Pages\Dashboard::class,
             ])
             ->widgets([
-
+                // Los widgets se descubren automáticamente
             ])
             ->middleware([
                 EncryptCookies::class,

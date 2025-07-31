@@ -9,10 +9,13 @@ use Carbon\Carbon;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Auth as AuthFacade;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use Illuminate\Database\Eloquent\Builder;
 
 class ActivityCalendarCount extends BaseWidget
 {
    // use HasWidgetShield;
+    use InteractsWithPageFilters;
 
     protected static ?string $pollingInterval = null;
 
@@ -24,11 +27,35 @@ class ActivityCalendarCount extends BaseWidget
     {
         try {
             $userId = \Illuminate\Support\Facades\Auth::id();
-            $totalActivities = ActivityCalendar::where('assigned_person', $userId)->count();
-            $cancelledActivities = ActivityCalendar::where('assigned_person', $userId)->where('cancelled', 1)->count();
-            $activeActivities = ActivityCalendar::where('assigned_person', $userId)->where('cancelled', 0)->count();
-            $todayActivities = ActivityCalendar::where('assigned_person', $userId)->whereDate('start_date', Carbon::today())->count();
-            $thisWeekActivities = ActivityCalendar::where('assigned_person', $userId)->whereBetween('start_date', [
+
+            // Obtener filtros del dashboard
+            $startDate = $this->filters['startDate'] ?? null;
+            $endDate = $this->filters['endDate'] ?? null;
+            $projectId = $this->filters['project_id'] ?? null;
+
+            // Query base
+            $query = ActivityCalendar::where('assigned_person', $userId);
+
+            // Aplicar filtros de fecha
+            if ($startDate) {
+                $query->where('start_date', '>=', $startDate);
+            }
+            if ($endDate) {
+                $query->where('end_date', '<=', $endDate);
+            }
+
+            // Aplicar filtro de proyecto
+            if ($projectId) {
+                $query->whereHas('activity.goal', function (Builder $q) use ($projectId) {
+                    $q->where('project_id', $projectId);
+                });
+            }
+
+            $totalActivities = $query->count();
+            $cancelledActivities = (clone $query)->where('cancelled', 1)->count();
+            $activeActivities = (clone $query)->where('cancelled', 0)->count();
+            $todayActivities = (clone $query)->whereDate('start_date', Carbon::today())->count();
+            $thisWeekActivities = (clone $query)->whereBetween('start_date', [
                 Carbon::now()->startOfWeek(),
                 Carbon::now()->endOfWeek()
             ])->count();

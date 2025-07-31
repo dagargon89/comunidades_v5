@@ -63,4 +63,9 @@ class Activity extends Model
     {
         return $this->hasMany(PlannedMetric::class, 'activity_id');
     }
+
+    public function activityCalendars(): HasMany
+    {
+        return $this->hasMany(ActivityCalendar::class, 'activity_id');
+    }
 }

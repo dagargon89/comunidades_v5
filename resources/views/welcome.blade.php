@@ -21,6 +21,9 @@
                 document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
             }
         </script>
+
+        <!-- Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
     <body class="bg-gray-50">
         <!-- Header con navbar -->
@@ -75,6 +78,100 @@
                     del Plan Estratégico de Juárez. Gestiona actividades, métricas y
                     reportes de manera eficiente.
                 </p>
+            </div>
+
+            <!-- Estadísticas rápidas -->
+            <div class="grid grid-cols-1 gap-6 mb-12 md:grid-cols-4">
+                <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <div class="flex items-center">
+                        <div class="flex justify-center items-center w-12 h-12 bg-blue-100 rounded-lg">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Proyectos Activos</p>
+                            <p class="text-2xl font-bold text-gray-900">24</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <div class="flex items-center">
+                        <div class="flex justify-center items-center w-12 h-12 bg-green-100 rounded-lg">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Actividades Completadas</p>
+                            <p class="text-2xl font-bold text-gray-900">156</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <div class="flex items-center">
+                        <div class="flex justify-center items-center w-12 h-12 bg-purple-100 rounded-lg">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Beneficiarios</p>
+                            <p class="text-2xl font-bold text-gray-900">2,847</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <div class="flex items-center">
+                        <div class="flex justify-center items-center w-12 h-12 bg-amber-100 rounded-lg">
+                            <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-600">Presupuesto Ejecutado</p>
+                            <p class="text-2xl font-bold text-gray-900">78%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficas de muestra -->
+            <div class="grid grid-cols-1 gap-8 mb-16 lg:grid-cols-2">
+                <!-- Gráfico de barras - Progreso por Eje Estratégico -->
+                <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="mb-4 text-lg font-semibold text-gray-900">Progreso por Eje Estratégico</h3>
+                    <div class="h-64">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico de líneas - Actividades por Mes -->
+                <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="mb-4 text-lg font-semibold text-gray-900">Actividades Completadas por Mes</h3>
+                    <div class="h-64">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico de dona - Distribución de Recursos -->
+                <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="mb-4 text-lg font-semibold text-gray-900">Distribución de Recursos</h3>
+                    <div class="h-64">
+                        <canvas id="doughnutChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico de área - Indicadores de Impacto -->
+                <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="mb-4 text-lg font-semibold text-gray-900">Indicadores de Impacto</h3>
+                    <div class="h-64">
+                        <canvas id="areaChart"></canvas>
+                    </div>
+                </div>
             </div>
 
             <!-- Características principales -->
@@ -159,5 +256,161 @@
                 </div>
             </div>
         </footer>
+
+        <!-- Scripts para las gráficas -->
+        <script>
+            // Configuración de colores
+            const colors = {
+                primary: '#d97706',
+                secondary: '#059669',
+                accent: '#7c3aed',
+                warning: '#dc2626',
+                info: '#2563eb'
+            };
+
+            // Gráfico de barras - Progreso por Eje Estratégico
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Desarrollo Social', 'Infraestructura', 'Economía', 'Medio Ambiente', 'Gobernanza'],
+                    datasets: [{
+                        label: 'Progreso (%)',
+                        data: [85, 72, 68, 91, 78],
+                        backgroundColor: [
+                            colors.primary,
+                            colors.secondary,
+                            colors.accent,
+                            colors.info,
+                            colors.warning
+                        ],
+                        borderRadius: 4,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de líneas - Actividades por Mes
+            const lineCtx = document.getElementById('lineChart').getContext('2d');
+            new Chart(lineCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Actividades Completadas',
+                        data: [12, 19, 15, 25, 22, 30],
+                        borderColor: colors.primary,
+                        backgroundColor: colors.primary + '20',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de dona - Distribución de Recursos
+            const doughnutCtx = document.getElementById('doughnutChart').getContext('2d');
+            new Chart(doughnutCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Personal', 'Equipamiento', 'Materiales', 'Servicios', 'Otros'],
+                    datasets: [{
+                        data: [35, 25, 20, 15, 5],
+                        backgroundColor: [
+                            colors.primary,
+                            colors.secondary,
+                            colors.accent,
+                            colors.info,
+                            colors.warning
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de área - Indicadores de Impacto
+            const areaCtx = document.getElementById('areaChart').getContext('2d');
+            new Chart(areaCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    datasets: [{
+                        label: 'Beneficiarios Directos',
+                        data: [450, 520, 680, 720],
+                        borderColor: colors.secondary,
+                        backgroundColor: colors.secondary + '20',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Beneficiarios Indirectos',
+                        data: [1200, 1350, 1580, 1820],
+                        borderColor: colors.accent,
+                        backgroundColor: colors.accent + '20',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
     </body>
 </html>

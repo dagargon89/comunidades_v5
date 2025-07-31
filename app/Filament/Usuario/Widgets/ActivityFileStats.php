@@ -75,7 +75,10 @@ class ActivityFileStats extends BaseWidget
             $imageFiles = ActivityFile::whereIn('activity_calendar_id', $userActivityIds)
                 ->where(function ($query) {
                     $query->where('type', 'like', '%imagen%')
-                          ->orWhere('type', 'like', '%image%');
+                          ->orWhere('type', 'like', '%image%')
+                          ->orWhere('type', 'like', '%jpg%')
+                          ->orWhere('type', 'like', '%jpeg%')
+                          ->orWhere('type', 'like', '%png%');
                 })
                 ->count();
 

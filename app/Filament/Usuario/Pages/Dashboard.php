@@ -43,11 +43,9 @@ class Dashboard extends BaseDashboard
                     ->searchable()
                     ->allowHtml(),
                 DatePicker::make('startDate')
-                    ->label('Fecha de inicio')
-                    ->placeholder('Seleccionar fecha de inicio'),
+                    ->label('Fecha de inicio'),
                 DatePicker::make('endDate')
-                    ->label('Fecha de fin')
-                    ->placeholder('Seleccionar fecha de fin'),
+                    ->label('Fecha de fin'),
             ])
             ->columns(3);
     }

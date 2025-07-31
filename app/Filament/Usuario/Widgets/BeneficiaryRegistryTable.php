@@ -62,30 +62,30 @@ class BeneficiaryRegistryTable extends BaseWidget
 
         return $table
             ->query(BeneficiaryRegistry::query()
-                ->with(['beneficiaries', 'activityCalendar', 'activityCalendar.activity'])
+                ->with(['beneficiary', 'activityCalendar', 'activityCalendar.activity'])
                 ->whereIn('activity_calendar_id', $userActivityIds)
             )
             ->columns([
-                Tables\Columns\TextColumn::make('beneficiaries.identifier')
+                Tables\Columns\TextColumn::make('beneficiary.identifier')
                     ->label('Identificador')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('beneficiaries.last_name')
+                Tables\Columns\TextColumn::make('beneficiary.last_name')
                     ->label('Apellido Paterno')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('beneficiaries.mother_last_name')
+                Tables\Columns\TextColumn::make('beneficiary.mother_last_name')
                     ->label('Apellido Materno')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('beneficiaries.first_names')
+                Tables\Columns\TextColumn::make('beneficiary.first_names')
                     ->label('Nombres')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('beneficiaries.birth_year')
+                Tables\Columns\TextColumn::make('beneficiary.birth_year')
                     ->label('Año Nacimiento')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('beneficiaries.gender')
+                Tables\Columns\TextColumn::make('beneficiary.gender')
                     ->label('Género')
                     ->formatStateUsing(fn ($state) => match ($state) {
                         'M' => 'Masculino',
@@ -129,7 +129,7 @@ class BeneficiaryRegistryTable extends BaseWidget
                     ])
                     ->query(function ($query, array $data) {
                         if (!empty($data['gender'])) {
-                            $query->whereHas('beneficiaries', function ($q) use ($data) {
+                            $query->whereHas('beneficiary', function ($q) use ($data) {
                                 $q->where('gender', $data['gender']);
                             });
                         }
@@ -150,13 +150,13 @@ class BeneficiaryRegistryTable extends BaseWidget
                         return $query
                             ->when(
                                 $data['start_year'],
-                                fn ($query, $year) => $query->whereHas('beneficiaries', function ($q) use ($year) {
+                                fn ($query, $year) => $query->whereHas('beneficiary', function ($q) use ($year) {
                                     $q->where('birth_year', '>=', $year);
                                 })
                             )
                             ->when(
                                 $data['end_year'],
-                                fn ($query, $year) => $query->whereHas('beneficiaries', function ($q) use ($year) {
+                                fn ($query, $year) => $query->whereHas('beneficiary', function ($q) use ($year) {
                                     $q->where('birth_year', '<=', $year);
                                 })
                             );
@@ -190,7 +190,7 @@ class BeneficiaryRegistryTable extends BaseWidget
                     ->query(function ($query, array $data) {
                         if (!empty($data['search_term'])) {
                             $searchTerm = $data['search_term'];
-                            $query->whereHas('beneficiaries', function ($q) use ($searchTerm) {
+                            $query->whereHas('beneficiary', function ($q) use ($searchTerm) {
                                 $q->where(function ($subQuery) use ($searchTerm) {
                                     $subQuery->where('identifier', 'like', "%{$searchTerm}%")
                                              ->orWhere('first_names', 'like', "%{$searchTerm}%")

@@ -27,9 +27,7 @@ class ActivityFileFactory extends Factory
             'type' => fake()->regexify('[A-Za-z0-9]{100}'),
             'file_path' => fake()->text(),
             'upload_date' => fake()->dateTime(),
-            'activity_progress_log_id' => ActivityProgressLog::factory(),
             'activity_log_id' => ActivityLog::factory(),
-            'belongsTo' => fake()->word(),
         ];
     }
 }

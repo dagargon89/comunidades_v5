@@ -53,11 +53,7 @@ class ActivityFileResource extends Resource
                     ->description('Relaciones con otras entidades y control')
                     ->icon('heroicon-o-link')
                     ->schema([
-                        Forms\Components\Select::make('activity_progress_log_id')
-                            ->relationship('activityProgressLog', 'id')
-                            ->label('Bitácora de avance')
-                            ->required()
-                            ->placeholder('Seleccione la bitácora de avance'),
+
                         Forms\Components\Select::make('activity_log_id')
                             ->relationship('activityLog', 'id')
                             ->label('Bitácora de actividad')
@@ -82,10 +78,7 @@ class ActivityFileResource extends Resource
                     ->label('Fecha de carga')
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('activityProgressLog.id')
-                    ->label('Bitácora de avance')
-                    ->numeric()
-                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('activityLog.id')
                     ->label('Bitácora de actividad')
                     ->numeric()

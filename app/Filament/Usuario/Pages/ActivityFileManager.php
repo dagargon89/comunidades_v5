@@ -396,7 +396,6 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                                     'type' => $fileData['type'] ?? null,
                                     'upload_date' => now(),
                                     'activity_log_id' => $activityLog->id,
-                                    'activity_progress_log_id' => $plannedMetric->activity_progress_log_id ?? 1, // Valor por defecto
                                     'activity_calendar_id' => $calendarId,
                                 ]);
                             }

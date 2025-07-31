@@ -20,7 +20,6 @@ class ActivityFile extends Model
         'type',
         'file_path',
         'upload_date',
-        'activity_progress_log_id',
         'activity_log_id',
         'activity_calendar_id',
     ];
@@ -37,13 +36,7 @@ class ActivityFile extends Model
         ];
     }
 
-    /**
-     * Get the activity progress log that owns the file.
-     */
-    public function activityProgressLog(): BelongsTo
-    {
-        return $this->belongsTo(ActivityLog::class, 'activity_progress_log_id');
-    }
+
 
     /**
      * Get the activity log that owns the file.

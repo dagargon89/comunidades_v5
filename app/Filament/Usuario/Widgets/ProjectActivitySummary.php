@@ -9,13 +9,9 @@ use App\Models\ActivityCalendar;
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
-use Illuminate\Database\Eloquent\Builder;
-
 class ProjectActivitySummary extends BaseWidget
 {
     // use HasWidgetShield;
-    use InteractsWithPageFilters;
 
     protected static ?string $heading = 'Resumen por Proyecto';
 
@@ -29,36 +25,14 @@ class ProjectActivitySummary extends BaseWidget
     {
         $userId = Auth::id();
 
-        // Obtener filtros del dashboard
-        $startDate = $this->filters['startDate'] ?? null;
-        $endDate = $this->filters['endDate'] ?? null;
-        $projectId = $this->filters['project_id'] ?? null;
-
         // Query base para obtener proyectos con actividades del usuario
         $query = Project::query()
             ->withCount([
                 'goals as total_goals',
             ])
-            ->whereHas('goals.activities.activityCalendars', function (Builder $query) use ($userId) {
+            ->whereHas('goals.activities.activityCalendars', function ($query) use ($userId) {
                 $query->where('assigned_person', $userId);
             });
-
-        // Aplicar filtros de fecha
-        if ($startDate) {
-            $query->whereHas('goals.activities.activityCalendars', function (Builder $q) use ($startDate) {
-                $q->where('start_date', '>=', $startDate);
-            });
-        }
-        if ($endDate) {
-            $query->whereHas('goals.activities.activityCalendars', function (Builder $q) use ($endDate) {
-                $q->where('end_date', '<=', $endDate);
-            });
-        }
-
-        // Aplicar filtro de proyecto específico
-        if ($projectId) {
-            $query->where('id', $projectId);
-        }
 
         return $table
             ->query($query)

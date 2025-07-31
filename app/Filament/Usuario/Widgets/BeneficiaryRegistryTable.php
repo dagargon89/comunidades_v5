@@ -15,13 +15,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Auth;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
-use Illuminate\Database\Eloquent\Builder;
-
 class BeneficiaryRegistryTable extends BaseWidget
 {
     // use HasWidgetShield;
-    use InteractsWithPageFilters;
 
     protected static ?string $heading = 'Registros de Beneficiarios';
 
@@ -35,30 +31,10 @@ class BeneficiaryRegistryTable extends BaseWidget
     {
         $userId = Auth::id();
 
-        // Obtener filtros del dashboard
-        $startDate = $this->filters['startDate'] ?? null;
-        $endDate = $this->filters['endDate'] ?? null;
-        $projectId = $this->filters['project_id'] ?? null;
-
-        // Obtener las actividades calendarizadas del usuario con filtros
-        $activityQuery = ActivityCalendar::where('assigned_person', $userId);
-
-        // Aplicar filtros de fecha
-        if ($startDate) {
-            $activityQuery->where('start_date', '>=', $startDate);
-        }
-        if ($endDate) {
-            $activityQuery->where('end_date', '<=', $endDate);
-        }
-
-        // Aplicar filtro de proyecto
-        if ($projectId) {
-            $activityQuery->whereHas('activity.goal', function (Builder $q) use ($projectId) {
-                $q->where('project_id', $projectId);
-            });
-        }
-
-        $userActivityIds = $activityQuery->pluck('id')->toArray();
+        // Obtener las actividades calendarizadas del usuario
+        $userActivityIds = ActivityCalendar::where('assigned_person', $userId)
+            ->pluck('id')
+            ->toArray();
 
         return $table
             ->query(BeneficiaryRegistry::query()
@@ -104,36 +80,17 @@ class BeneficiaryRegistryTable extends BaseWidget
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('activity_id')
+                SelectFilter::make('activity')
                     ->label('Actividad')
-                    ->options(function () use ($userId) {
-                        $activityIds = ActivityCalendar::where('assigned_person', $userId)
-                            ->pluck('activity_id')
-                            ->unique();
-                        return Activity::whereIn('id', $activityIds)
-                            ->pluck('name', 'id')
-                            ->toArray();
-                    })
-                    ->query(function ($query, array $data) {
-                        if (!empty($data['activity_id'])) {
-                            $query->whereHas('activityCalendar', function ($q) use ($data) {
-                                $q->where('activity_id', $data['activity_id']);
-                            });
-                        }
-                    }),
+                    ->relationship('activityCalendar.activity', 'name')
+                    ->searchable()
+                    ->preload(),
                 SelectFilter::make('gender')
                     ->label('Género')
                     ->options([
                         'M' => 'Masculino',
                         'F' => 'Femenino',
-                    ])
-                    ->query(function ($query, array $data) {
-                        if (!empty($data['gender'])) {
-                            $query->whereHas('beneficiary', function ($q) use ($data) {
-                                $q->where('gender', $data['gender']);
-                            });
-                        }
-                    }),
+                    ]),
                 Filter::make('birth_year_range')
                     ->label('Rango de año de nacimiento')
                     ->form([
@@ -188,17 +145,17 @@ class BeneficiaryRegistryTable extends BaseWidget
                             ->placeholder('Nombre, apellido o identificador...'),
                     ])
                     ->query(function ($query, array $data) {
-                        if (!empty($data['search_term'])) {
-                            $searchTerm = $data['search_term'];
-                            $query->whereHas('beneficiary', function ($q) use ($searchTerm) {
+                        return $query->when(
+                            $data['search_term'],
+                            fn ($query, $searchTerm) => $query->whereHas('beneficiary', function ($q) use ($searchTerm) {
                                 $q->where(function ($subQuery) use ($searchTerm) {
                                     $subQuery->where('identifier', 'like', "%{$searchTerm}%")
                                              ->orWhere('first_names', 'like', "%{$searchTerm}%")
                                              ->orWhere('last_name', 'like', "%{$searchTerm}%")
                                              ->orWhere('mother_last_name', 'like', "%{$searchTerm}%");
                                 });
-                            });
-                        }
+                            })
+                        );
                     }),
             ])
             ->defaultSort('created_at', 'desc')

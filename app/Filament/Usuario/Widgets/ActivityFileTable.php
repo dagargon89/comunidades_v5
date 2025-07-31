@@ -14,13 +14,9 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Facades\Auth;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
-use Filament\Widgets\Concerns\InteractsWithPageFilters;
-use Illuminate\Database\Eloquent\Builder;
-
 class ActivityFileTable extends BaseWidget
 {
     // use HasWidgetShield;
-    use InteractsWithPageFilters;
 
     protected static ?string $heading = 'Archivos de Actividades';
 
@@ -34,30 +30,10 @@ class ActivityFileTable extends BaseWidget
     {
         $userId = Auth::id();
 
-        // Obtener filtros del dashboard
-        $startDate = $this->filters['startDate'] ?? null;
-        $endDate = $this->filters['endDate'] ?? null;
-        $projectId = $this->filters['project_id'] ?? null;
-
-        // Obtener las actividades calendarizadas del usuario con filtros
-        $activityQuery = ActivityCalendar::where('assigned_person', $userId);
-
-        // Aplicar filtros de fecha
-        if ($startDate) {
-            $activityQuery->where('start_date', '>=', $startDate);
-        }
-        if ($endDate) {
-            $activityQuery->where('end_date', '<=', $endDate);
-        }
-
-        // Aplicar filtro de proyecto
-        if ($projectId) {
-            $activityQuery->whereHas('activity.goal', function (Builder $q) use ($projectId) {
-                $q->where('project_id', $projectId);
-            });
-        }
-
-        $userActivityIds = $activityQuery->pluck('id')->toArray();
+        // Obtener las actividades calendarizadas del usuario
+        $userActivityIds = ActivityCalendar::where('assigned_person', $userId)
+            ->pluck('id')
+            ->toArray();
 
         return $table
             ->query(ActivityFile::query()
@@ -90,23 +66,11 @@ class ActivityFileTable extends BaseWidget
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('activity_id')
+                SelectFilter::make('activity')
                     ->label('Actividad')
-                    ->options(function () use ($userId) {
-                        $activityIds = ActivityCalendar::where('assigned_person', $userId)
-                            ->pluck('activity_id')
-                            ->unique();
-                        return Activity::whereIn('id', $activityIds)
-                            ->pluck('name', 'id')
-                            ->toArray();
-                    })
-                    ->query(function ($query, array $data) {
-                        if (!empty($data['activity_id'])) {
-                            $query->whereHas('activityCalendar', function ($q) use ($data) {
-                                $q->where('activity_id', $data['activity_id']);
-                            });
-                        }
-                    }),
+                    ->relationship('activityCalendar.activity', 'name')
+                    ->searchable()
+                    ->preload(),
                 SelectFilter::make('type')
                     ->label('Tipo de archivo')
                     ->options(function () use ($userActivityIds) {
@@ -143,9 +107,10 @@ class ActivityFileTable extends BaseWidget
                             ->placeholder('Buscar por nombre...'),
                     ])
                     ->query(function ($query, array $data) {
-                        if (!empty($data['file_name'])) {
-                            $query->where('file_path', 'like', '%' . $data['file_name'] . '%');
-                        }
+                        return $query->when(
+                            $data['file_name'],
+                            fn ($query, $search) => $query->where('file_path', 'like', '%' . $search . '%')
+                        );
                     }),
             ])
             ->defaultSort('upload_date', 'desc')

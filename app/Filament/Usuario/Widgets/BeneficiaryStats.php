@@ -46,12 +46,12 @@ class BeneficiaryStats extends BaseWidget
 
             // Estadísticas por género
             $maleBeneficiaries = BeneficiaryRegistry::whereIn('activity_calendar_id', $userActivityIds)
-                ->whereHas('beneficiary', function ($query) {
+                ->whereHas('beneficiaries', function ($query) {
                     $query->where('gender', 'M');
                 })
                 ->count();
             $femaleBeneficiaries = BeneficiaryRegistry::whereIn('activity_calendar_id', $userActivityIds)
-                ->whereHas('beneficiary', function ($query) {
+                ->whereHas('beneficiaries', function ($query) {
                     $query->where('gender', 'F');
                 })
                 ->count();

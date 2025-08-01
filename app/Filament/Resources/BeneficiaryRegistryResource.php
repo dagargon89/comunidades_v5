@@ -42,7 +42,7 @@ class BeneficiaryRegistryResource extends Resource
                             ->required()
                             ->placeholder('Seleccione el calendario de actividad'),
                         Forms\Components\Select::make('beneficiaries_id')
-                            ->relationship('beneficiary', 'id')
+                            ->relationship('beneficiaries', 'id')
                             ->label('Beneficiario')
                             ->searchable()
                             ->preload()
@@ -83,7 +83,7 @@ class BeneficiaryRegistryResource extends Resource
                     ->label('Calendario de actividad')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('beneficiary.id')
+                Tables\Columns\TextColumn::make('beneficiaries.id')
                     ->label('Beneficiario')
                     ->numeric()
                     ->sortable(),

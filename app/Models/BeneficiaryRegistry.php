@@ -45,7 +45,7 @@ class BeneficiaryRegistry extends Model
         return $this->belongsTo(ActivityCalendar::class);
     }
 
-    public function beneficiary(): BelongsTo
+    public function beneficiaries(): BelongsTo
     {
         return $this->belongsTo(Beneficiary::class, 'beneficiaries_id');
     }

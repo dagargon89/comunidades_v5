@@ -25,9 +25,35 @@ class ActivityFileStats extends BaseWidget
         try {
             $userId = Auth::id();
 
-            // Obtener las actividades calendarizadas del usuario sin filtros
-            $activityQuery = ActivityCalendar::where('assigned_person', $userId);
-            $userActivityIds = $activityQuery->pluck('id')->toArray();
+            // Obtener las actividades calendarizadas del usuario
+            $userActivityIds = ActivityCalendar::where('assigned_person', $userId)
+                ->pluck('id')
+                ->toArray();
+
+            // Si no hay actividades, mostrar estadísticas vacías
+            if (empty($userActivityIds)) {
+                return [
+                    Stat::make('Documentación', 0)
+                        ->description('No hay actividades asignadas')
+                        ->descriptionIcon('heroicon-m-document-text')
+                        ->color('gray'),
+
+                    Stat::make('Esta Semana', 0)
+                        ->description('Sin archivos esta semana')
+                        ->descriptionIcon('heroicon-m-calendar-days')
+                        ->color('gray'),
+
+                    Stat::make('Hoy', 0)
+                        ->description('Sin archivos hoy')
+                        ->descriptionIcon('heroicon-m-clock')
+                        ->color('gray'),
+
+                    Stat::make('Pendientes', 0)
+                        ->description('Sin actividades pendientes')
+                        ->descriptionIcon('heroicon-m-exclamation-triangle')
+                        ->color('gray'),
+                ];
+            }
 
             // Estadísticas de archivos
             $totalFiles = ActivityFile::whereIn('activity_calendar_id', $userActivityIds)->count();

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ActivityCalendar extends Model
 {
@@ -68,5 +69,21 @@ class ActivityCalendar extends Model
     public function location()
     {
         return $this->belongsTo(\App\Models\Location::class, 'location_id');
+    }
+
+    /**
+     * Get the activity files for this calendar entry.
+     */
+    public function activityFiles(): HasMany
+    {
+        return $this->hasMany(ActivityFile::class, 'activity_calendar_id');
+    }
+
+    /**
+     * Get the beneficiary registries for this calendar entry.
+     */
+    public function beneficiaryRegistries(): HasMany
+    {
+        return $this->hasMany(BeneficiaryRegistry::class, 'activity_calendar_id');
     }
 }

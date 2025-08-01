@@ -30,11 +30,21 @@ class ActivityCalendarCount extends BaseWidget
 
             $totalActivities = $query->count();
             $activeActivities = (clone $query)->where('cancelled', 0)->count();
-            $todayActivities = (clone $query)->whereDate('start_date', Carbon::today())->count();
+
+            // Actividades de hoy con detalles
+            $todayActivities = (clone $query)->whereDate('start_date', Carbon::today())->get();
+            $todayCount = $todayActivities->count();
+
+            // Actividades de esta semana con detalles
             $thisWeekActivities = (clone $query)->whereBetween('start_date', [
                 Carbon::now()->startOfWeek(),
                 Carbon::now()->endOfWeek()
-            ])->count();
+            ])->get();
+            $thisWeekCount = $thisWeekActivities->count();
+
+            // Preparar descripciones con detalles
+            $todayDescription = $this->getActivitiesDescription($todayActivities, 'hoy');
+            $thisWeekDescription = $this->getActivitiesDescription($thisWeekActivities, 'esta semana');
 
             return [
                 Stat::make('Mis Actividades', $totalActivities)
@@ -47,13 +57,13 @@ class ActivityCalendarCount extends BaseWidget
                     ->descriptionIcon('heroicon-m-check-circle')
                     ->color('success'),
 
-                Stat::make('Hoy', $todayActivities)
-                    ->description('Actividades de hoy')
+                Stat::make('Hoy (' . $todayCount . ')', $todayCount)
+                    ->description($todayDescription)
                     ->descriptionIcon('heroicon-m-calendar')
                     ->color('info'),
 
-                Stat::make('Esta Semana', $thisWeekActivities)
-                    ->description('Actividades de la semana')
+                Stat::make('Esta Semana (' . $thisWeekCount . ')', $thisWeekCount)
+                    ->description($thisWeekDescription)
                     ->descriptionIcon('heroicon-m-calendar-days')
                     ->color('warning'),
             ];
@@ -66,5 +76,39 @@ class ActivityCalendarCount extends BaseWidget
                     ->color('danger'),
             ];
         }
+    }
+
+    private function getActivitiesDescription($activities, $period): string
+    {
+        if ($activities->isEmpty()) {
+            return "No hay actividades para " . $period;
+        }
+
+        $descriptions = [];
+        foreach ($activities->take(3) as $activity) {
+            $date = Carbon::parse($activity->start_date)->format('d/m');
+            $time = $activity->start_hour ? Carbon::parse($activity->start_hour)->format('H:i') : '';
+            $name = $activity->activity->name ?? 'Sin nombre';
+
+            $description = $date;
+            if ($time) {
+                $description .= " " . $time;
+            }
+            $description .= " - " . substr($name, 0, 30);
+            if (strlen($name) > 30) {
+                $description .= "...";
+            }
+
+            $descriptions[] = $description;
+        }
+
+        $result = implode(", ", $descriptions);
+
+        if ($activities->count() > 3) {
+            $remaining = $activities->count() - 3;
+            $result .= " y " . $remaining . " más";
+        }
+
+        return $result;
     }
 }

@@ -27,7 +27,7 @@ class Dashboard extends BaseDashboard
             // ========================================
 
             // SECCIÓN 1: SEGUIMIENTO DE ACTIVIDADES
-            // \App\Filament\Usuario\Widgets\UpcomingActivitiesWidget::class,      // Próximas actividades (hoy, mañana, semana)
+            \App\Filament\Usuario\Widgets\UpcomingActivitiesWidget::class,      // Próximas actividades (hoy, mañana, semana)
             // \App\Filament\Usuario\Widgets\ProjectProgressWidget::class,         // Progreso por proyecto con barras de avance
 
             // SECCIÓN 2: GESTIÓN DE DOCUMENTACIÓN

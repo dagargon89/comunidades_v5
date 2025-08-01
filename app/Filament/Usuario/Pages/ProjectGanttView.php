@@ -30,6 +30,7 @@ class ProjectGanttView extends Page implements Tables\Contracts\HasTable
     protected static string $view = 'filament.usuario.pages.project-gantt-view';
     protected static ?string $slug = 'gestor-actividades';
     protected static ?string $navigationLabel = 'Gestor de actividades';
+    protected static ?int $sort = 3;
 
     public static function shouldRegisterNavigation(): bool
     {

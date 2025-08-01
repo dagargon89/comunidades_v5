@@ -35,7 +35,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
     protected static ?string $title = 'Gestión de Archivos de Actividades';
     protected static ?string $slug = 'activity-file-manager';
     protected static string $view = 'filament.pages.activity-file-manager';
-
+    protected static ?int $sort = 2;
     public ?int $activity_id = null;
     public ?int $activity_calendar_id = null;
 

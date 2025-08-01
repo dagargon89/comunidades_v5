@@ -38,6 +38,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
     protected static ?string $modelLabel = 'Registro de Beneficiario';
     protected static ?string $pluralModelLabel = 'Registros de Beneficiarios';
     protected static ?string $slug = 'registro-beneficiarios';
+    protected static ?int $sort = 1;
 
     public ?int $activity_id = null;
     public ?int $activity_calendar_id = null;

@@ -16,9 +16,10 @@ class Dashboard extends BaseDashboard
             // WIDGETS DE RESUMEN GENERAL (HEADER)
             // ========================================
             // Solo los widgets más importantes para el resumen general
-            \App\Filament\Usuario\Widgets\ActivityCalendarCount::class,        // Resumen de actividades (total, activas, canceladas, etc.)
-            \App\Filament\Usuario\Widgets\ActivityFileStats::class,            // Estado de documentación y archivos
-            \App\Filament\Usuario\Widgets\BeneficiaryStats::class,             // Resumen de beneficiarios registrados
+           // \App\Filament\Usuario\Widgets\ActivityCalendarCount::class,        // Resumen de actividades (total, activas, canceladas, etc.)
+           // \App\Filament\Usuario\Widgets\ActivityFileStats::class,            // Estado de documentación y archivos
+           // \App\Filament\Usuario\Widgets\BeneficiaryStats::class,             // Resumen de beneficiarios registrados
+           \App\Filament\Usuario\Widgets\Custom::class,
         ];
     }
 

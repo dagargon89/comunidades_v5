@@ -9,6 +9,7 @@ use App\Models\ActivityCalendar;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
+
 class BeneficiaryStats extends BaseWidget
 {
     // use HasWidgetShield;
@@ -17,7 +18,7 @@ class BeneficiaryStats extends BaseWidget
 
     protected static bool $isLazy = false;
 
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 3;
 
     protected function getStats(): array
     {
@@ -26,14 +27,10 @@ class BeneficiaryStats extends BaseWidget
 
             // Obtener las actividades calendarizadas del usuario sin filtros
             $activityQuery = ActivityCalendar::where('assigned_person', $userId);
-
             $userActivityIds = $activityQuery->pluck('id')->toArray();
 
             // Estadísticas de beneficiarios
             $totalBeneficiaries = BeneficiaryRegistry::whereIn('activity_calendar_id', $userActivityIds)->count();
-            $thisMonthBeneficiaries = BeneficiaryRegistry::whereIn('activity_calendar_id', $userActivityIds)
-                ->whereMonth('created_at', Carbon::now()->month)
-                ->count();
             $thisWeekBeneficiaries = BeneficiaryRegistry::whereIn('activity_calendar_id', $userActivityIds)
                 ->whereBetween('created_at', [
                     Carbon::now()->startOfWeek(),
@@ -44,62 +41,38 @@ class BeneficiaryStats extends BaseWidget
                 ->whereDate('created_at', Carbon::today())
                 ->count();
 
-            // Estadísticas por género
-            $maleBeneficiaries = BeneficiaryRegistry::whereIn('activity_calendar_id', $userActivityIds)
-                ->whereHas('beneficiaries', function ($query) {
-                    $query->where('gender', 'M');
-                })
+            // Actividades con y sin registros
+            $activitiesWithRegistries = ActivityCalendar::where('assigned_person', $userId)
+                ->whereHas('beneficiaryRegistries')
                 ->count();
-            $femaleBeneficiaries = BeneficiaryRegistry::whereIn('activity_calendar_id', $userActivityIds)
-                ->whereHas('beneficiaries', function ($query) {
-                    $query->where('gender', 'F');
-                })
-                ->count();
-
-            // Beneficiarios únicos (sin duplicados)
-            $uniqueBeneficiaries = BeneficiaryRegistry::whereIn('activity_calendar_id', $userActivityIds)
-                ->distinct('beneficiaries_id')
+            $activitiesWithoutRegistries = ActivityCalendar::where('assigned_person', $userId)
+                ->whereDoesntHave('beneficiaryRegistries')
                 ->count();
 
             return [
-                Stat::make('Total de Registros', $totalBeneficiaries)
-                    ->description('Todos los registros de beneficiarios')
+                Stat::make('Beneficiarios', $totalBeneficiaries)
+                    ->description('Total de registros')
                     ->descriptionIcon('heroicon-m-users')
                     ->color('primary'),
 
-                Stat::make('Beneficiarios Únicos', $uniqueBeneficiaries)
-                    ->description('Beneficiarios sin duplicados')
-                    ->descriptionIcon('heroicon-m-user-group')
-                    ->color('success'),
-
-                Stat::make('Registros del Mes', $thisMonthBeneficiaries)
-                    ->description('Registros este mes')
-                    ->descriptionIcon('heroicon-m-calendar')
-                    ->color('info'),
-
-                Stat::make('Registros de la Semana', $thisWeekBeneficiaries)
-                    ->description('Registros esta semana')
+                Stat::make('Esta Semana', $thisWeekBeneficiaries)
+                    ->description('Registros de esta semana')
                     ->descriptionIcon('heroicon-m-calendar-days')
                     ->color('warning'),
 
-                Stat::make('Registros de Hoy', $todayBeneficiaries)
-                    ->description('Registros hoy')
+                Stat::make('Hoy', $todayBeneficiaries)
+                    ->description('Registros de hoy')
                     ->descriptionIcon('heroicon-m-clock')
                     ->color('success'),
 
-                Stat::make('Hombres', $maleBeneficiaries)
-                    ->description('Beneficiarios masculinos')
-                    ->descriptionIcon('heroicon-m-user')
-                    ->color('blue'),
-
-                Stat::make('Mujeres', $femaleBeneficiaries)
-                    ->description('Beneficiarias femeninas')
-                    ->descriptionIcon('heroicon-m-user')
-                    ->color('pink'),
+                Stat::make('Pendientes', $activitiesWithoutRegistries)
+                    ->description('Actividades sin registros')
+                    ->descriptionIcon('heroicon-m-exclamation-triangle')
+                    ->color('danger'),
             ];
         } catch (\Exception $e) {
             return [
-                Stat::make('Total de Registros', 0)
+                Stat::make('Beneficiarios', 0)
                     ->description('Error al cargar estadísticas')
                     ->descriptionIcon('heroicon-m-exclamation-triangle')
                     ->color('danger'),

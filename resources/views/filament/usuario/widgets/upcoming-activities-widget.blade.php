@@ -161,9 +161,9 @@
                             <div>
                                 <h3 class="text-lg font-semibold text-gray-900">{{ $status }}</h3>
                                 <p class="text-sm text-gray-600">
-                                    {{ $startDate->format('l, d \d\e F Y') }}
+                                    {{ $startDate->locale('es')->isoFormat('dddd, DD [de] MMMM YYYY') }}
                                     @if($endDate && $endDate->ne($startDate))
-                                        - {{ $endDate->format('d \d\e F Y') }}
+                                        - {{ $endDate->locale('es')->isoFormat('DD [de] MMMM YYYY') }}
                                     @endif
                                 </p>
                             </div>
@@ -287,6 +287,7 @@
                 </div>
 
                 <!-- Acciones rápidas -->
+                {{--
                 <div class="bg-gray-50 rounded-lg p-4">
                     <h4 class="text-sm font-semibold text-gray-900 mb-3">Acciones rápidas</h4>
                     <div class="flex flex-wrap gap-2">
@@ -310,6 +311,7 @@
                         </button>
                     </div>
                 </div>
+                --}}
             </div>
 
             <x-slot name="footer">

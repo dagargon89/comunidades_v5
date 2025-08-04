@@ -18,7 +18,7 @@ class ActivityFileStats extends BaseWidget
 
     protected static bool $isLazy = false;
 
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 3;
 
     protected function getStats(): array
     {

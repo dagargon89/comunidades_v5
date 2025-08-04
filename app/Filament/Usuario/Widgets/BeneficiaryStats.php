@@ -18,7 +18,7 @@ class BeneficiaryStats extends BaseWidget
 
     protected static bool $isLazy = false;
 
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 5;
 
     protected function getStats(): array
     {

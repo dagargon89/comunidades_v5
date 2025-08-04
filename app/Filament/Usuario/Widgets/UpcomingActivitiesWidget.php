@@ -11,7 +11,7 @@ use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 class UpcomingActivitiesWidget extends Widget
 {
     protected static ?string $heading = 'Próximas Actividades';
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 8;
     protected static bool $isLazy = false;
     protected static string $view = 'filament.usuario.widgets.upcoming-activities-widget';
 

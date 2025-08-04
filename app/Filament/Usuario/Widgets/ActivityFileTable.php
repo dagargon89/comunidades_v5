@@ -20,7 +20,7 @@ class ActivityFileTable extends BaseWidget
 
     protected static ?string $heading = 'Archivos de Actividades';
 
-    protected static ?int $sort = 5;
+    protected static ?int $sort = 4;
 
     protected int|string|array $columnSpan = 'full';
 

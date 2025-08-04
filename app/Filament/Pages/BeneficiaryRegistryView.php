@@ -44,7 +44,13 @@ class BeneficiaryRegistryView extends Page implements HasTable
 
     public function mount(): void
     {
-        $this->activity_id = Activity::query()->min('id') ?? null;
+        // Obtener la primera actividad que tenga fechas no canceladas
+        $firstActivityId = ActivityCalendar::where('cancelled', false)
+            ->pluck('activity_id')
+            ->unique()
+            ->first();
+        $this->activity_id = $firstActivityId ?? null;
+
         $firstCalendar = null;
         if ($this->activity_id) {
             $firstCalendar = ActivityCalendar::where('activity_id', $this->activity_id)
@@ -86,10 +92,27 @@ class BeneficiaryRegistryView extends Page implements HasTable
                 ->schema([
                     Select::make('activity_id')
                         ->label('Actividad')
-                        ->options(Activity::pluck('name', 'id')->toArray())
+                        ->options(function () {
+                            // Obtener solo las actividades que tienen al menos una fecha no cancelada
+                            $activityIds = ActivityCalendar::where('cancelled', false)
+                                ->pluck('activity_id')
+                                ->unique()
+                                ->toArray();
+
+                            return Activity::whereIn('id', $activityIds)
+                                ->pluck('name', 'id')
+                                ->toArray();
+                        })
                         ->searchable()
                         ->live()
-                        ->default(Activity::query()->min('id'))
+                        ->default(function () {
+                            // Obtener la primera actividad que tenga fechas no canceladas
+                            $firstActivityId = ActivityCalendar::where('cancelled', false)
+                                ->pluck('activity_id')
+                                ->unique()
+                                ->first();
+                            return $firstActivityId;
+                        })
                         ->afterStateUpdated(function ($state, $set) {
                             $set('activity_id', $state);
                         }),

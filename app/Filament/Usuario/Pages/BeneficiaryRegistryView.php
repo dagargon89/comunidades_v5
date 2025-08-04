@@ -47,6 +47,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
     {
         $userId = auth()->id();
         $firstActivityId = ActivityCalendar::where('assigned_person', $userId)
+            ->where('cancelled', false) // Filtrar fechas canceladas
             ->pluck('activity_id')
             ->unique()
             ->first();
@@ -102,6 +103,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
 
                             // Obtener las actividades donde el usuario es responsable
                             $activityIds = ActivityCalendar::where('assigned_person', $userId)
+                                ->where('cancelled', false) // Filtrar fechas canceladas
                                 ->pluck('activity_id')
                                 ->unique()
                                 ->toArray();
@@ -118,6 +120,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
                         ->default(function () {
                             $userId = auth()->id();
                             $firstActivityId = ActivityCalendar::where('assigned_person', $userId)
+                                ->where('cancelled', false) // Filtrar fechas canceladas
                                 ->pluck('activity_id')
                                 ->unique()
                                 ->first();

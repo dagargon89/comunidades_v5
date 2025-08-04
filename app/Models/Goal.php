@@ -42,9 +42,25 @@ class Goal extends Model
         ];
     }
 
+    public function activities()
+    {
+        return $this->hasMany(\App\Models\Activity::class, 'goals_id');
+    }
+
+    /**
+     * Get the project that this goal belongs to.
+     */
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class, 'project_id');
+    }
+
+    /**
+     * Get the organization that this goal belongs to.
+     */
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class, 'organizations_id');
     }
 
     public function components(): BelongsTo
@@ -60,15 +76,5 @@ class Goal extends Model
     public function componentsActionLinesProgram(): BelongsTo
     {
         return $this->belongsTo(Program::class);
-    }
-
-    public function organizations(): BelongsTo
-    {
-        return $this->belongsTo(Organization::class);
-    }
-
-    public function activities()
-    {
-        return $this->hasMany(\App\Models\Activity::class, 'goals_id');
     }
 }

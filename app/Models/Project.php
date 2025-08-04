@@ -150,4 +150,19 @@ class Project extends Model
     {
         return $this->hasMany(\App\Models\Goal::class, 'project_id');
     }
+
+    /**
+     * Get the beneficiaries created by this project's creator.
+     */
+    public function beneficiariesCreados()
+    {
+        return $this->hasManyThrough(
+            \App\Models\Beneficiary::class,
+            \App\Models\User::class,
+            'id', // Foreign key on users table...
+            'created_by', // Foreign key on beneficiaries table...
+            'created_by', // Local key on projects table...
+            'id' // Local key on users table...
+        );
+    }
 }

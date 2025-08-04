@@ -68,4 +68,19 @@ class Activity extends Model
     {
         return $this->hasMany(ActivityCalendar::class, 'activity_id');
     }
+
+    /**
+     * Get the beneficiary registries for this activity.
+     */
+    public function beneficiaryRegistries()
+    {
+        return $this->hasManyThrough(
+            BeneficiaryRegistry::class,
+            ActivityCalendar::class,
+            'activity_id', // Foreign key on activity_calendars table...
+            'activity_calendar_id', // Foreign key on beneficiary_registries table...
+            'id', // Local key on activities table...
+            'id' // Local key on activity_calendars table...
+        );
+    }
 }

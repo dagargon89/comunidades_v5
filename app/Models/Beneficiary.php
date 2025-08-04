@@ -45,6 +45,14 @@ class Beneficiary extends Model
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the beneficiary registries for this beneficiary.
+     */
+    public function beneficiaryRegistries()
+    {
+        return $this->hasMany(BeneficiaryRegistry::class, 'beneficiaries_id');
     }
 }

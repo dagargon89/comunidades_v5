@@ -38,4 +38,12 @@ class Organization extends Model
     {
         return $this->hasMany(User::class, 'organizations_id');
     }
+
+    /**
+     * Get the goals for this organization.
+     */
+    public function goals(): HasMany
+    {
+        return $this->hasMany(Goal::class, 'organizations_id');
+    }
 }

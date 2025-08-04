@@ -21,11 +21,6 @@ class DataPublication extends Model
 
     public $timestamps = false;
 
-    public function publisher(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'published_by');
-    }
-
     public function publishedProjects(): HasMany
     {
         return $this->hasMany(PublishedProject::class, 'publication_id');
@@ -39,5 +34,13 @@ class DataPublication extends Model
     public function publishedMetrics(): HasMany
     {
         return $this->hasMany(PublishedMetric::class, 'publication_id');
+    }
+
+    /**
+     * Get the publisher for this publication.
+     */
+    public function publisher(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'published_by');
     }
 }

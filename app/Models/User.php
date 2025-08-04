@@ -88,6 +88,22 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Activity::class, 'created_by');
     }
 
+    /**
+     * Get the projects created by this user.
+     */
+    public function projectsCreados(): HasMany
+    {
+        return $this->hasMany(Project::class, 'created_by');
+    }
+
+    /**
+     * Get the beneficiaries created by this user.
+     */
+    public function beneficiariesCreados(): HasMany
+    {
+        return $this->hasMany(Beneficiary::class, 'created_by');
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         // Panel Admin - solo admin y super_admin

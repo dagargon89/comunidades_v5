@@ -33,8 +33,13 @@ class SpecificObjective extends Model
         ];
     }
 
-    public function projects(): BelongsTo
+    public function project(): BelongsTo
     {
-        return $this->belongsTo(Project::class);
+        return $this->belongsTo(Project::class, 'projects_id');
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(Activity::class, 'specific_objective_id');
     }
 }

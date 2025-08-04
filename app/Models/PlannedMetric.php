@@ -50,13 +50,16 @@ class PlannedMetric extends Model
         return $this->belongsTo(Activity::class);
     }
 
-    public function activityProgressLog(): BelongsTo
-    {
-        return $this->belongsTo(ActivityLog::class);
-    }
-
     public function publishedMetrics()
     {
         return $this->hasMany(\App\Models\PublishedMetric::class, 'original_metric_id');
+    }
+
+    /**
+     * Get the activity progress log for this metric.
+     */
+    public function activityProgressLog(): BelongsTo
+    {
+        return $this->belongsTo(ActivityLog::class, 'activity_progress_log_id');
     }
 }

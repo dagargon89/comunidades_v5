@@ -57,7 +57,15 @@ class BeneficiaryRegistry extends Model
 
     public function createdBy(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the data collector for this registry.
+     */
+    public function dataCollector(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'data_collectors_id');
     }
 
     public static function generarIdentificador($first_names, $last_name, $mother_last_name, $birth_year, $gender)

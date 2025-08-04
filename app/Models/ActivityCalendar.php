@@ -86,4 +86,19 @@ class ActivityCalendar extends Model
     {
         return $this->hasMany(BeneficiaryRegistry::class, 'activity_calendar_id');
     }
+
+    /**
+     * Get the data collectors for this calendar entry.
+     */
+    public function dataCollectors()
+    {
+        return $this->hasManyThrough(
+            User::class,
+            BeneficiaryRegistry::class,
+            'activity_calendar_id', // Foreign key on beneficiary_registries table...
+            'id', // Foreign key on users table...
+            'id', // Local key on activity_calendars table...
+            'data_collectors_id' // Local key on beneficiary_registries table...
+        );
+    }
 }

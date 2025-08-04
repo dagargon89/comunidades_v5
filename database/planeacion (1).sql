@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 27-07-2025 a las 16:46:50
--- Versión del servidor: 10.11.10-MariaDB-log
--- Versión de PHP: 7.2.34
+-- Host: localhost:3306
+-- Generation Time: Aug 04, 2025 at 06:38 PM
+-- Server version: 8.4.3
+-- PHP Version: 8.3.16
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,25 +18,25 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `u550512989_panel`
+-- Database: `planeacion`
 --
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `action_lines`
+-- Table structure for table `action_lines`
 --
 
 CREATE TABLE `action_lines` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(500) NOT NULL,
-  `program_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `program_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `action_lines`
+-- Dumping data for table `action_lines`
 --
 
 INSERT INTO `action_lines` (`id`, `name`, `program_id`, `created_at`, `updated_at`) VALUES
@@ -155,22 +155,22 @@ INSERT INTO `action_lines` (`id`, `name`, `program_id`, `created_at`, `updated_a
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `activities`
+-- Table structure for table `activities`
 --
 
 CREATE TABLE `activities` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `specific_objective_id` bigint(20) UNSIGNED NOT NULL,
-  `description` text DEFAULT NULL,
-  `goals_id` bigint(20) UNSIGNED NOT NULL,
-  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `specific_objective_id` bigint UNSIGNED NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `goals_id` bigint UNSIGNED NOT NULL,
+  `created_by` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `activities`
+-- Dumping data for table `activities`
 --
 
 INSERT INTO `activities` (`id`, `name`, `specific_objective_id`, `description`, `goals_id`, `created_by`, `created_at`, `updated_at`) VALUES
@@ -196,40 +196,41 @@ INSERT INTO `activities` (`id`, `name`, `specific_objective_id`, `description`, 
 (66, 'Actividades comunitarias de intercambio de plantas y productos del huerto', 9, 'Realizar actividades comunitarias de intercambio de plantas y productos del huerto', 66, 3, '2025-07-25 18:39:40', '2025-07-25 18:39:40'),
 (67, 'Actividades de rendimiento y preparación invernal del suelo de huertos urbanos', 9, 'Realizar actividades de rendimiento y preparación invernal del suelo de huertos urbanos', 67, 3, '2025-07-25 18:39:40', '2025-07-25 18:39:40'),
 (68, 'Talleres de cuidados invernales de huertos urbanos y plantas caseras', 9, 'Desarrollar talleres de cuidados invernales de huertos urbanos y plantas caseras', 68, 3, '2025-07-25 18:39:40', '2025-07-25 18:39:40'),
-(69, 'Huertos urbanos en Riberas del Bravo', 9, 'Participación en huertos urbanos en Riberas del Bravo', 69, 3, '2025-07-25 18:39:40', '2025-07-25 18:39:40');
+(69, 'Huertos urbanos en Riberas del Bravo', 9, 'Participación en huertos urbanos en Riberas del Bravo', 69, 3, '2025-07-25 18:39:40', '2025-07-25 18:39:40'),
+(70, 'fagfds', 13, '', 70, 1, '2025-08-01 22:28:21', '2025-08-01 22:28:21');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `activity_calendars`
+-- Table structure for table `activity_calendars`
 --
 
 CREATE TABLE `activity_calendars` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `activity_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `activity_id` bigint UNSIGNED NOT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `start_hour` time DEFAULT NULL,
   `end_hour` time DEFAULT NULL,
-  `address_backup` text DEFAULT NULL,
+  `address_backup` text COLLATE utf8mb4_unicode_ci,
   `last_modified` timestamp NULL DEFAULT NULL,
-  `cancelled` tinyint(1) NOT NULL DEFAULT 0,
-  `change_reason` text DEFAULT NULL,
-  `created_by` bigint(20) UNSIGNED NOT NULL,
-  `assigned_person` bigint(20) UNSIGNED NOT NULL,
-  `location_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `cancelled` tinyint(1) NOT NULL DEFAULT '0',
+  `change_reason` text COLLATE utf8mb4_unicode_ci,
+  `created_by` bigint UNSIGNED NOT NULL,
+  `assigned_person` bigint UNSIGNED NOT NULL,
+  `location_id` bigint UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `activity_calendars`
+-- Dumping data for table `activity_calendars`
 --
 
 INSERT INTO `activity_calendars` (`id`, `activity_id`, `start_date`, `end_date`, `start_hour`, `end_hour`, `address_backup`, `last_modified`, `cancelled`, `change_reason`, `created_by`, `assigned_person`, `location_id`, `created_at`, `updated_at`) VALUES
 (1, 47, '2025-02-21', '2025-02-21', '17:00:00', '18:00:00', NULL, NULL, 1, 'No se realizó actividad', 4, 5, 5, '2025-07-25 15:24:22', '2025-07-25 21:47:02'),
 (2, 56, '2025-02-21', '2025-02-21', '18:00:00', '19:00:00', NULL, NULL, 1, 'No se realizó actividad', 4, 5, 5, '2025-07-25 15:34:09', '2025-07-25 21:47:41'),
-(3, 47, '2025-03-11', '2025-03-11', '10:00:00', '11:00:00', NULL, NULL, 0, NULL, 4, 5, 2, '2025-07-25 15:40:39', '2025-07-25 21:48:26'),
+(3, 47, '2025-08-01', '2025-11-11', '10:00:00', '11:00:00', NULL, NULL, 0, NULL, 4, 2, 2, '2025-07-25 15:40:39', '2025-08-01 22:51:28'),
 (4, 47, '2025-03-11', '2025-03-11', '11:00:00', '12:00:00', NULL, NULL, 0, NULL, 4, 5, 3, '2025-07-25 15:43:33', '2025-07-25 21:48:53'),
 (5, 47, '2025-03-13', '2025-03-13', '10:00:00', '11:00:00', NULL, NULL, 0, NULL, 4, 5, 3, '2025-07-25 15:45:19', '2025-07-25 21:49:23'),
 (6, 47, '2025-03-13', '2025-03-13', '11:00:00', '12:00:00', NULL, NULL, 0, NULL, 4, 5, 1, '2025-07-25 15:49:11', '2025-07-25 21:50:12'),
@@ -305,55 +306,74 @@ INSERT INTO `activity_calendars` (`id`, `activity_id`, `start_date`, `end_date`,
 (76, 49, '2025-08-05', '2025-08-05', '19:00:00', '20:00:00', NULL, NULL, 0, NULL, 3, 5, 1, '2025-07-25 18:20:01', '2025-07-25 22:54:16'),
 (77, 49, '2025-08-04', '2025-08-04', '19:30:00', '20:00:00', NULL, NULL, 0, NULL, 3, 5, 8, '2025-07-25 18:21:12', '2025-07-25 22:54:35'),
 (78, 49, '2025-08-05', '2025-07-05', '18:00:00', '19:00:00', NULL, NULL, 0, NULL, 3, 5, 2, '2025-07-25 18:22:26', '2025-07-25 22:53:42'),
-(79, 49, '2025-08-06', '2025-08-06', '18:00:00', '19:00:00', NULL, NULL, 0, NULL, 3, 5, 2, '2025-07-25 18:23:49', '2025-07-25 22:51:43');
+(79, 49, '2025-08-06', '2025-08-06', '18:00:00', '19:00:00', NULL, NULL, 0, NULL, 3, 5, 2, '2025-07-25 18:23:49', '2025-07-25 22:51:43'),
+(80, 69, '2025-08-01', '2025-12-31', '15:55:12', '16:55:17', NULL, NULL, 0, NULL, 2, 2, 2, '2025-07-30 03:55:25', '2025-08-01 22:50:46'),
+(81, 47, '2025-08-04', '2025-08-04', '10:00:00', '22:00:00', NULL, NULL, 0, NULL, 1, 1, 2, '2025-08-04 22:11:16', '2025-08-04 22:13:20');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `activity_files`
+-- Table structure for table `activity_files`
 --
 
 CREATE TABLE `activity_files` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `month` varchar(20) DEFAULT NULL,
-  `type` varchar(100) DEFAULT NULL,
-  `file_path` text DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `month` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `file_path` text COLLATE utf8mb4_unicode_ci,
   `upload_date` timestamp NULL DEFAULT NULL,
-  `activity_calendar_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `activity_log_id` bigint(20) UNSIGNED NOT NULL,
+  `activity_calendar_id` bigint UNSIGNED DEFAULT NULL,
+  `activity_log_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `activity_files`
+--
+
+INSERT INTO `activity_files` (`id`, `month`, `type`, `file_path`, `upload_date`, `activity_calendar_id`, `activity_log_id`, `created_at`, `updated_at`) VALUES
+(1, NULL, NULL, 'activity-files/beneficiarios - copia (2).zip', '2025-08-01 00:04:30', 3, 1, '2025-08-01 00:04:30', '2025-08-01 00:04:30'),
+(2, NULL, NULL, 'activity-files/beneficiarios - copia (4).png', '2025-08-01 00:04:30', 3, 1, '2025-08-01 00:04:30', '2025-08-01 00:04:30'),
+(3, NULL, NULL, 'activity-files/AKKY_448972_PEJ010517TT6.pdf', '2025-08-01 00:04:30', 3, 1, '2025-08-01 00:04:30', '2025-08-01 00:04:30'),
+(4, NULL, NULL, 'activity-files/archivos_seleccionados_1753985312.zip', '2025-08-01 00:15:38', 1, 1, '2025-08-01 00:15:38', '2025-08-01 00:15:38');
+
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `activity_logs`
+-- Table structure for table `activity_logs`
 --
 
 CREATE TABLE `activity_logs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `planned_metrics_id` bigint(20) UNSIGNED NOT NULL,
-  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `planned_metrics_id` bigint UNSIGNED NOT NULL,
+  `created_by` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `activity_logs`
+--
+
+INSERT INTO `activity_logs` (`id`, `planned_metrics_id`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, '2025-07-31 23:52:49', '2025-07-31 23:52:49');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `axes`
+-- Table structure for table `axes`
 --
 
 CREATE TABLE `axes` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(500) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `axes`
+-- Dumping data for table `axes`
 --
 
 INSERT INTO `axes` (`id`, `name`, `created_at`, `updated_at`) VALUES
@@ -366,103 +386,124 @@ INSERT INTO `axes` (`id`, `name`, `created_at`, `updated_at`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `beneficiaries`
+-- Table structure for table `beneficiaries`
 --
 
 CREATE TABLE `beneficiaries` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `last_name` varchar(100) DEFAULT NULL,
-  `mother_last_name` varchar(100) DEFAULT NULL,
-  `first_names` varchar(100) DEFAULT NULL,
-  `birth_year` varchar(4) DEFAULT NULL,
-  `gender` enum('M','F','Male','Female') DEFAULT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `address_backup` text DEFAULT NULL,
-  `identifier` varchar(255) DEFAULT NULL,
-  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `last_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mother_last_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `first_names` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `birth_year` varchar(4) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `gender` enum('M','F','Male','Female') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `street` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ext_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `neighborhood` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address_backup` text COLLATE utf8mb4_unicode_ci,
+  `identifier` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_by` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `beneficiaries`
+--
+
+INSERT INTO `beneficiaries` (`id`, `last_name`, `mother_last_name`, `first_names`, `birth_year`, `gender`, `phone`, `street`, `ext_number`, `neighborhood`, `address_backup`, `identifier`, `created_by`, `created_at`, `updated_at`) VALUES
+(2, 'Garcia', 'Lopez', 'Myrna Yamileth', '2014', 'F', '6561234567', 'Nopales nte', '512', 'Colinas del norte', NULL, 'GLMY2014FAOY', 1, '2025-07-29 02:27:08', '2025-07-29 02:27:08'),
+(3, 'Altamirano', 'Ruiz', 'PEdro', '1857', 'M', NULL, NULL, NULL, NULL, NULL, 'ARPX1857MLUE', 2, '2025-07-30 00:46:49', '2025-07-30 00:46:49'),
+(4, 'Garcia', 'Gonzalez', 'David', '1989', 'M', '0001234567', 'nopales nte', '512', 'colinas del norte', NULL, 'GGDX1989MAOA', 2, '2025-07-30 03:23:53', '2025-07-30 04:03:45'),
+(5, 'Garcia', 'Lopez', 'Ana Victoria', '2016', 'F', '6569874561', 'Calle Cebada', '7970', 'El granjero', 'Calle Cebada 7970\nColonia el granjero', 'GLAV2016FAON', 2, '2025-07-30 03:23:53', '2025-07-30 04:04:48'),
+(6, 'Paterno 1', 'Materno 1', 'Nombre 1', '2000', 'M', NULL, NULL, NULL, NULL, NULL, 'PMN12000MAAO', 1, '2025-07-31 21:53:54', '2025-07-31 21:53:54'),
+(7, 'Paterno 2', 'Materno 2', 'Nombre 2', '2000', 'F', NULL, NULL, NULL, NULL, NULL, 'PMN22000FAAO', 1, '2025-07-31 21:53:54', '2025-07-31 21:53:54'),
+(8, 'Paterno 3', 'Materno 3', 'Nombre 3', '2000', 'F', NULL, NULL, NULL, NULL, NULL, 'PMN32000FAAO', 1, '2025-07-31 21:53:54', '2025-07-31 21:53:54'),
+(9, 'Paterno 4', 'Materno 4', 'Nombre 4', '2000', 'F', NULL, NULL, NULL, NULL, NULL, 'PMN42000FAAO', 1, '2025-07-31 21:53:54', '2025-07-31 21:53:54'),
+(10, 'Paterno 5', 'Maternnnnn 5', 'Nombre 5', '2000', 'M', NULL, NULL, NULL, NULL, NULL, 'PMN52000MAAO', 1, '2025-07-31 21:53:54', '2025-07-31 21:53:54');
+
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `beneficiary_registries`
+-- Table structure for table `beneficiary_registries`
 --
 
 CREATE TABLE `beneficiary_registries` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `activity_calendar_id` bigint(20) UNSIGNED NOT NULL,
-  `beneficiaries_id` bigint(20) UNSIGNED NOT NULL,
-  `data_collectors_id` bigint(20) UNSIGNED NOT NULL,
-  `signature` text DEFAULT NULL,
-  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `activity_calendar_id` bigint UNSIGNED NOT NULL,
+  `beneficiaries_id` bigint UNSIGNED NOT NULL,
+  `data_collectors_id` bigint UNSIGNED NOT NULL,
+  `signature` text COLLATE utf8mb4_unicode_ci,
+  `created_by` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `beneficiary_registries`
+--
+
+INSERT INTO `beneficiary_registries` (`id`, `activity_calendar_id`, `beneficiaries_id`, `data_collectors_id`, `signature`, `created_by`, `created_at`, `updated_at`) VALUES
+(2, 1, 2, 1, 'data:image/png;base64,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', 1, '2025-07-29 02:27:08', '2025-07-29 02:27:08'),
+(3, 22, 2, 1, 'data:image/png;base64,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', 1, '2025-07-29 02:28:12', '2025-07-29 02:28:12'),
+(5, 3, 3, 2, 'data:image/png;base64,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', 2, '2025-07-30 00:46:49', '2025-07-30 00:46:49'),
+(6, 3, 4, 2, 'data:image/png;base64,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', 2, '2025-07-30 03:23:53', '2025-08-02 02:29:27'),
+(7, 3, 2, 2, NULL, 2, '2025-07-30 03:23:53', '2025-07-30 03:23:53'),
+(8, 3, 5, 2, NULL, 2, '2025-07-30 03:23:53', '2025-07-30 03:23:53'),
+(9, 3, 6, 1, NULL, 1, '2025-07-31 21:53:54', '2025-07-31 21:53:54'),
+(10, 3, 7, 1, NULL, 1, '2025-07-31 21:53:54', '2025-07-31 21:53:54'),
+(11, 3, 8, 1, NULL, 1, '2025-07-31 21:53:54', '2025-07-31 21:53:54'),
+(12, 3, 9, 1, NULL, 1, '2025-07-31 21:53:54', '2025-07-31 21:53:54'),
+(13, 3, 10, 1, NULL, 1, '2025-07-31 21:53:54', '2025-07-31 21:53:54');
+
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `cache`
+-- Table structure for table `cache`
 --
 
 CREATE TABLE `cache` (
-  `key` varchar(255) NOT NULL,
-  `value` mediumtext NOT NULL,
-  `expiration` int(11) NOT NULL
+  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiration` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `cache`
+-- Dumping data for table `cache`
 --
 
 INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('comunidades-v5-cache-livewire-rate-limiter:70ad878e7e6659901e3a630cae45dfda8686b50d', 'i:1;', 1753208980),
-('comunidades-v5-cache-livewire-rate-limiter:70ad878e7e6659901e3a630cae45dfda8686b50d:timer', 'i:1753208980;', 1753208980),
-('comunidades-v5-cache-livewire-rate-limiter:a17961fa74e9275d529f489537f179c05d50c2f3', 'i:1;', 1753114381),
-('comunidades-v5-cache-livewire-rate-limiter:a17961fa74e9275d529f489537f179c05d50c2f3:timer', 'i:1753114380;', 1753114381),
-('comunidades-v5-cache-livewire-rate-limiter:efce1fb966eb6f174ab5329ea292d8eac8303759', 'i:1;', 1753125811),
-('comunidades-v5-cache-livewire-rate-limiter:efce1fb966eb6f174ab5329ea292d8eac8303759:timer', 'i:1753125811;', 1753125811),
-('comunidades-v5-cache-livewire-rate-limiter:f29930f7c05f188cc05566a6af979b3f15a1d343', 'i:2;', 1752888237),
-('comunidades-v5-cache-livewire-rate-limiter:f29930f7c05f188cc05566a6af979b3f15a1d343:timer', 'i:1752888237;', 1752888237),
-('comunidades-v5-cache-spatie.permission.cache', 'a:3:{s:5:\"alias\";a:4:{s:1:\"a\";s:2:\"id\";s:1:\"b\";s:4:\"name\";s:1:\"c\";s:10:\"guard_name\";s:1:\"r\";s:5:\"roles\";}s:11:\"permissions\";a:285:{i:0;a:4:{s:1:\"a\";i:1;s:1:\"b\";s:17:\"view_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:1;a:4:{s:1:\"a\";i:2;s:1:\"b\";s:21:\"view_any_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:2;a:4:{s:1:\"a\";i:3;s:1:\"b\";s:19:\"create_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:3;a:4:{s:1:\"a\";i:4;s:1:\"b\";s:19:\"update_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:4;a:4:{s:1:\"a\";i:5;s:1:\"b\";s:20:\"restore_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:5;a:4:{s:1:\"a\";i:6;s:1:\"b\";s:24:\"restore_any_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:6;a:4:{s:1:\"a\";i:7;s:1:\"b\";s:22:\"replicate_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:7;a:4:{s:1:\"a\";i:8;s:1:\"b\";s:20:\"reorder_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:8;a:4:{s:1:\"a\";i:9;s:1:\"b\";s:19:\"delete_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:9;a:4:{s:1:\"a\";i:10;s:1:\"b\";s:23:\"delete_any_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:10;a:4:{s:1:\"a\";i:11;s:1:\"b\";s:25:\"force_delete_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:11;a:4:{s:1:\"a\";i:12;s:1:\"b\";s:29:\"force_delete_any_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:12;a:4:{s:1:\"a\";i:13;s:1:\"b\";s:13:\"view_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:13;a:4:{s:1:\"a\";i:14;s:1:\"b\";s:17:\"view_any_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:14;a:4:{s:1:\"a\";i:15;s:1:\"b\";s:15:\"create_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:15;a:4:{s:1:\"a\";i:16;s:1:\"b\";s:15:\"update_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:16;a:4:{s:1:\"a\";i:17;s:1:\"b\";s:16:\"restore_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:17;a:4:{s:1:\"a\";i:18;s:1:\"b\";s:20:\"restore_any_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:18;a:4:{s:1:\"a\";i:19;s:1:\"b\";s:18:\"replicate_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:19;a:4:{s:1:\"a\";i:20;s:1:\"b\";s:16:\"reorder_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:20;a:4:{s:1:\"a\";i:21;s:1:\"b\";s:15:\"delete_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:21;a:4:{s:1:\"a\";i:22;s:1:\"b\";s:19:\"delete_any_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:22;a:4:{s:1:\"a\";i:23;s:1:\"b\";s:21:\"force_delete_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:23;a:4:{s:1:\"a\";i:24;s:1:\"b\";s:25:\"force_delete_any_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:24;a:4:{s:1:\"a\";i:25;s:1:\"b\";s:23:\"view_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:25;a:4:{s:1:\"a\";i:26;s:1:\"b\";s:27:\"view_any_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:26;a:4:{s:1:\"a\";i:27;s:1:\"b\";s:25:\"create_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:27;a:4:{s:1:\"a\";i:28;s:1:\"b\";s:25:\"update_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:28;a:4:{s:1:\"a\";i:29;s:1:\"b\";s:26:\"restore_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:29;a:4:{s:1:\"a\";i:30;s:1:\"b\";s:30:\"restore_any_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:30;a:4:{s:1:\"a\";i:31;s:1:\"b\";s:28:\"replicate_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:31;a:4:{s:1:\"a\";i:32;s:1:\"b\";s:26:\"reorder_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:32;a:4:{s:1:\"a\";i:33;s:1:\"b\";s:25:\"delete_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:33;a:4:{s:1:\"a\";i:34;s:1:\"b\";s:29:\"delete_any_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:34;a:4:{s:1:\"a\";i:35;s:1:\"b\";s:31:\"force_delete_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:35;a:4:{s:1:\"a\";i:36;s:1:\"b\";s:35:\"force_delete_any_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:36;a:4:{s:1:\"a\";i:37;s:1:\"b\";s:19:\"view_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:37;a:4:{s:1:\"a\";i:38;s:1:\"b\";s:23:\"view_any_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:38;a:4:{s:1:\"a\";i:39;s:1:\"b\";s:21:\"create_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:39;a:4:{s:1:\"a\";i:40;s:1:\"b\";s:21:\"update_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:40;a:4:{s:1:\"a\";i:41;s:1:\"b\";s:22:\"restore_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:41;a:4:{s:1:\"a\";i:42;s:1:\"b\";s:26:\"restore_any_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:42;a:4:{s:1:\"a\";i:43;s:1:\"b\";s:24:\"replicate_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:43;a:4:{s:1:\"a\";i:44;s:1:\"b\";s:22:\"reorder_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:44;a:4:{s:1:\"a\";i:45;s:1:\"b\";s:21:\"delete_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:45;a:4:{s:1:\"a\";i:46;s:1:\"b\";s:25:\"delete_any_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:46;a:4:{s:1:\"a\";i:47;s:1:\"b\";s:27:\"force_delete_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:47;a:4:{s:1:\"a\";i:48;s:1:\"b\";s:31:\"force_delete_any_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:48;a:4:{s:1:\"a\";i:49;s:1:\"b\";s:18:\"view_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:49;a:4:{s:1:\"a\";i:50;s:1:\"b\";s:22:\"view_any_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:50;a:4:{s:1:\"a\";i:51;s:1:\"b\";s:20:\"create_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:51;a:4:{s:1:\"a\";i:52;s:1:\"b\";s:20:\"update_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:52;a:4:{s:1:\"a\";i:53;s:1:\"b\";s:21:\"restore_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:53;a:4:{s:1:\"a\";i:54;s:1:\"b\";s:25:\"restore_any_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:54;a:4:{s:1:\"a\";i:55;s:1:\"b\";s:23:\"replicate_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:55;a:4:{s:1:\"a\";i:56;s:1:\"b\";s:21:\"reorder_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:56;a:4:{s:1:\"a\";i:57;s:1:\"b\";s:20:\"delete_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:57;a:4:{s:1:\"a\";i:58;s:1:\"b\";s:24:\"delete_any_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:58;a:4:{s:1:\"a\";i:59;s:1:\"b\";s:26:\"force_delete_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:59;a:4:{s:1:\"a\";i:60;s:1:\"b\";s:30:\"force_delete_any_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:60;a:4:{s:1:\"a\";i:61;s:1:\"b\";s:8:\"view_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:61;a:4:{s:1:\"a\";i:62;s:1:\"b\";s:12:\"view_any_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:62;a:4:{s:1:\"a\";i:63;s:1:\"b\";s:10:\"create_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:63;a:4:{s:1:\"a\";i:64;s:1:\"b\";s:10:\"update_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:64;a:4:{s:1:\"a\";i:65;s:1:\"b\";s:11:\"restore_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:65;a:4:{s:1:\"a\";i:66;s:1:\"b\";s:15:\"restore_any_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:66;a:4:{s:1:\"a\";i:67;s:1:\"b\";s:13:\"replicate_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:67;a:4:{s:1:\"a\";i:68;s:1:\"b\";s:11:\"reorder_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:68;a:4:{s:1:\"a\";i:69;s:1:\"b\";s:10:\"delete_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:69;a:4:{s:1:\"a\";i:70;s:1:\"b\";s:14:\"delete_any_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:70;a:4:{s:1:\"a\";i:71;s:1:\"b\";s:16:\"force_delete_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:71;a:4:{s:1:\"a\";i:72;s:1:\"b\";s:20:\"force_delete_any_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:72;a:4:{s:1:\"a\";i:73;s:1:\"b\";s:16:\"view_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:73;a:4:{s:1:\"a\";i:74;s:1:\"b\";s:20:\"view_any_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:74;a:4:{s:1:\"a\";i:75;s:1:\"b\";s:18:\"create_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:75;a:4:{s:1:\"a\";i:76;s:1:\"b\";s:18:\"update_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:76;a:4:{s:1:\"a\";i:77;s:1:\"b\";s:19:\"restore_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:77;a:4:{s:1:\"a\";i:78;s:1:\"b\";s:23:\"restore_any_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:78;a:4:{s:1:\"a\";i:79;s:1:\"b\";s:21:\"replicate_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:79;a:4:{s:1:\"a\";i:80;s:1:\"b\";s:19:\"reorder_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:80;a:4:{s:1:\"a\";i:81;s:1:\"b\";s:18:\"delete_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:81;a:4:{s:1:\"a\";i:82;s:1:\"b\";s:22:\"delete_any_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:82;a:4:{s:1:\"a\";i:83;s:1:\"b\";s:24:\"force_delete_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:83;a:4:{s:1:\"a\";i:84;s:1:\"b\";s:28:\"force_delete_any_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:84;a:4:{s:1:\"a\";i:85;s:1:\"b\";s:26:\"view_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:85;a:4:{s:1:\"a\";i:86;s:1:\"b\";s:30:\"view_any_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:86;a:4:{s:1:\"a\";i:87;s:1:\"b\";s:28:\"create_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:87;a:4:{s:1:\"a\";i:88;s:1:\"b\";s:28:\"update_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:88;a:4:{s:1:\"a\";i:89;s:1:\"b\";s:29:\"restore_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:89;a:4:{s:1:\"a\";i:90;s:1:\"b\";s:33:\"restore_any_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:90;a:4:{s:1:\"a\";i:91;s:1:\"b\";s:31:\"replicate_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:91;a:4:{s:1:\"a\";i:92;s:1:\"b\";s:29:\"reorder_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:92;a:4:{s:1:\"a\";i:93;s:1:\"b\";s:28:\"delete_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:93;a:4:{s:1:\"a\";i:94;s:1:\"b\";s:32:\"delete_any_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:94;a:4:{s:1:\"a\";i:95;s:1:\"b\";s:34:\"force_delete_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:95;a:4:{s:1:\"a\";i:96;s:1:\"b\";s:38:\"force_delete_any_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:96;a:4:{s:1:\"a\";i:97;s:1:\"b\";s:14:\"view_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:97;a:4:{s:1:\"a\";i:98;s:1:\"b\";s:18:\"view_any_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:98;a:4:{s:1:\"a\";i:99;s:1:\"b\";s:16:\"create_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:99;a:4:{s:1:\"a\";i:100;s:1:\"b\";s:16:\"update_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:100;a:4:{s:1:\"a\";i:101;s:1:\"b\";s:17:\"restore_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:101;a:4:{s:1:\"a\";i:102;s:1:\"b\";s:21:\"restore_any_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:102;a:4:{s:1:\"a\";i:103;s:1:\"b\";s:19:\"replicate_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:103;a:4:{s:1:\"a\";i:104;s:1:\"b\";s:17:\"reorder_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:104;a:4:{s:1:\"a\";i:105;s:1:\"b\";s:16:\"delete_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:105;a:4:{s:1:\"a\";i:106;s:1:\"b\";s:20:\"delete_any_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:106;a:4:{s:1:\"a\";i:107;s:1:\"b\";s:22:\"force_delete_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:107;a:4:{s:1:\"a\";i:108;s:1:\"b\";s:26:\"force_delete_any_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:108;a:4:{s:1:\"a\";i:109;s:1:\"b\";s:14:\"view_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:109;a:4:{s:1:\"a\";i:110;s:1:\"b\";s:18:\"view_any_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:110;a:4:{s:1:\"a\";i:111;s:1:\"b\";s:16:\"create_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:111;a:4:{s:1:\"a\";i:112;s:1:\"b\";s:16:\"update_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:112;a:4:{s:1:\"a\";i:113;s:1:\"b\";s:17:\"restore_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:113;a:4:{s:1:\"a\";i:114;s:1:\"b\";s:21:\"restore_any_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:114;a:4:{s:1:\"a\";i:115;s:1:\"b\";s:19:\"replicate_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:115;a:4:{s:1:\"a\";i:116;s:1:\"b\";s:17:\"reorder_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:116;a:4:{s:1:\"a\";i:117;s:1:\"b\";s:16:\"delete_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:117;a:4:{s:1:\"a\";i:118;s:1:\"b\";s:20:\"delete_any_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:118;a:4:{s:1:\"a\";i:119;s:1:\"b\";s:22:\"force_delete_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:119;a:4:{s:1:\"a\";i:120;s:1:\"b\";s:26:\"force_delete_any_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:120;a:4:{s:1:\"a\";i:121;s:1:\"b\";s:9:\"view_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:121;a:4:{s:1:\"a\";i:122;s:1:\"b\";s:13:\"view_any_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:122;a:4:{s:1:\"a\";i:123;s:1:\"b\";s:11:\"create_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:123;a:4:{s:1:\"a\";i:124;s:1:\"b\";s:11:\"update_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:124;a:4:{s:1:\"a\";i:125;s:1:\"b\";s:12:\"restore_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:125;a:4:{s:1:\"a\";i:126;s:1:\"b\";s:16:\"restore_any_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:126;a:4:{s:1:\"a\";i:127;s:1:\"b\";s:14:\"replicate_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:127;a:4:{s:1:\"a\";i:128;s:1:\"b\";s:12:\"reorder_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:128;a:4:{s:1:\"a\";i:129;s:1:\"b\";s:11:\"delete_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:129;a:4:{s:1:\"a\";i:130;s:1:\"b\";s:15:\"delete_any_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:130;a:4:{s:1:\"a\";i:131;s:1:\"b\";s:17:\"force_delete_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:131;a:4:{s:1:\"a\";i:132;s:1:\"b\";s:21:\"force_delete_any_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:132;a:4:{s:1:\"a\";i:133;s:1:\"b\";s:8:\"view_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:133;a:4:{s:1:\"a\";i:134;s:1:\"b\";s:12:\"view_any_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:134;a:4:{s:1:\"a\";i:135;s:1:\"b\";s:10:\"create_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:135;a:4:{s:1:\"a\";i:136;s:1:\"b\";s:10:\"update_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:136;a:4:{s:1:\"a\";i:137;s:1:\"b\";s:11:\"restore_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:137;a:4:{s:1:\"a\";i:138;s:1:\"b\";s:15:\"restore_any_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:138;a:4:{s:1:\"a\";i:139;s:1:\"b\";s:13:\"replicate_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:139;a:4:{s:1:\"a\";i:140;s:1:\"b\";s:11:\"reorder_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:140;a:4:{s:1:\"a\";i:141;s:1:\"b\";s:10:\"delete_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:141;a:4:{s:1:\"a\";i:142;s:1:\"b\";s:14:\"delete_any_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:142;a:4:{s:1:\"a\";i:143;s:1:\"b\";s:16:\"force_delete_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:143;a:4:{s:1:\"a\";i:144;s:1:\"b\";s:20:\"force_delete_any_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:144;a:4:{s:1:\"a\";i:145;s:1:\"b\";s:13:\"view_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:145;a:4:{s:1:\"a\";i:146;s:1:\"b\";s:17:\"view_any_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:146;a:4:{s:1:\"a\";i:147;s:1:\"b\";s:15:\"create_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:147;a:4:{s:1:\"a\";i:148;s:1:\"b\";s:15:\"update_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:148;a:4:{s:1:\"a\";i:149;s:1:\"b\";s:16:\"restore_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:149;a:4:{s:1:\"a\";i:150;s:1:\"b\";s:20:\"restore_any_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:150;a:4:{s:1:\"a\";i:151;s:1:\"b\";s:18:\"replicate_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:151;a:4:{s:1:\"a\";i:152;s:1:\"b\";s:16:\"reorder_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:152;a:4:{s:1:\"a\";i:153;s:1:\"b\";s:15:\"delete_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:153;a:4:{s:1:\"a\";i:154;s:1:\"b\";s:19:\"delete_any_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:154;a:4:{s:1:\"a\";i:155;s:1:\"b\";s:21:\"force_delete_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:155;a:4:{s:1:\"a\";i:156;s:1:\"b\";s:25:\"force_delete_any_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:156;a:4:{s:1:\"a\";i:157;s:1:\"b\";s:17:\"view_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:157;a:4:{s:1:\"a\";i:158;s:1:\"b\";s:21:\"view_any_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:158;a:4:{s:1:\"a\";i:159;s:1:\"b\";s:19:\"create_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:159;a:4:{s:1:\"a\";i:160;s:1:\"b\";s:19:\"update_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:160;a:4:{s:1:\"a\";i:161;s:1:\"b\";s:20:\"restore_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:161;a:4:{s:1:\"a\";i:162;s:1:\"b\";s:24:\"restore_any_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:162;a:4:{s:1:\"a\";i:163;s:1:\"b\";s:22:\"replicate_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:163;a:4:{s:1:\"a\";i:164;s:1:\"b\";s:20:\"reorder_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:164;a:4:{s:1:\"a\";i:165;s:1:\"b\";s:19:\"delete_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:165;a:4:{s:1:\"a\";i:166;s:1:\"b\";s:23:\"delete_any_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:166;a:4:{s:1:\"a\";i:167;s:1:\"b\";s:25:\"force_delete_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:167;a:4:{s:1:\"a\";i:168;s:1:\"b\";s:29:\"force_delete_any_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:168;a:4:{s:1:\"a\";i:169;s:1:\"b\";s:20:\"view_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:169;a:4:{s:1:\"a\";i:170;s:1:\"b\";s:24:\"view_any_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:170;a:4:{s:1:\"a\";i:171;s:1:\"b\";s:22:\"create_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:171;a:4:{s:1:\"a\";i:172;s:1:\"b\";s:22:\"update_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:172;a:4:{s:1:\"a\";i:173;s:1:\"b\";s:23:\"restore_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:173;a:4:{s:1:\"a\";i:174;s:1:\"b\";s:27:\"restore_any_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:174;a:4:{s:1:\"a\";i:175;s:1:\"b\";s:25:\"replicate_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:175;a:4:{s:1:\"a\";i:176;s:1:\"b\";s:23:\"reorder_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:176;a:4:{s:1:\"a\";i:177;s:1:\"b\";s:22:\"delete_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:177;a:4:{s:1:\"a\";i:178;s:1:\"b\";s:26:\"delete_any_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:178;a:4:{s:1:\"a\";i:179;s:1:\"b\";s:28:\"force_delete_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:179;a:4:{s:1:\"a\";i:180;s:1:\"b\";s:32:\"force_delete_any_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:180;a:4:{s:1:\"a\";i:181;s:1:\"b\";s:12:\"view_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:181;a:4:{s:1:\"a\";i:182;s:1:\"b\";s:16:\"view_any_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:182;a:4:{s:1:\"a\";i:183;s:1:\"b\";s:14:\"create_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:183;a:4:{s:1:\"a\";i:184;s:1:\"b\";s:14:\"update_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:184;a:4:{s:1:\"a\";i:185;s:1:\"b\";s:15:\"restore_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:185;a:4:{s:1:\"a\";i:186;s:1:\"b\";s:19:\"restore_any_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:186;a:4:{s:1:\"a\";i:187;s:1:\"b\";s:17:\"replicate_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:187;a:4:{s:1:\"a\";i:188;s:1:\"b\";s:15:\"reorder_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:188;a:4:{s:1:\"a\";i:189;s:1:\"b\";s:14:\"delete_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:189;a:4:{s:1:\"a\";i:190;s:1:\"b\";s:18:\"delete_any_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:190;a:4:{s:1:\"a\";i:191;s:1:\"b\";s:20:\"force_delete_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:191;a:4:{s:1:\"a\";i:192;s:1:\"b\";s:24:\"force_delete_any_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:192;a:4:{s:1:\"a\";i:193;s:1:\"b\";s:12:\"view_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:193;a:4:{s:1:\"a\";i:194;s:1:\"b\";s:16:\"view_any_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:194;a:4:{s:1:\"a\";i:195;s:1:\"b\";s:14:\"create_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:195;a:4:{s:1:\"a\";i:196;s:1:\"b\";s:14:\"update_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:196;a:4:{s:1:\"a\";i:197;s:1:\"b\";s:15:\"restore_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:197;a:4:{s:1:\"a\";i:198;s:1:\"b\";s:19:\"restore_any_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:198;a:4:{s:1:\"a\";i:199;s:1:\"b\";s:17:\"replicate_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:199;a:4:{s:1:\"a\";i:200;s:1:\"b\";s:15:\"reorder_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:200;a:4:{s:1:\"a\";i:201;s:1:\"b\";s:14:\"delete_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:201;a:4:{s:1:\"a\";i:202;s:1:\"b\";s:18:\"delete_any_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:202;a:4:{s:1:\"a\";i:203;s:1:\"b\";s:20:\"force_delete_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:203;a:4:{s:1:\"a\";i:204;s:1:\"b\";s:24:\"force_delete_any_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:204;a:4:{s:1:\"a\";i:205;s:1:\"b\";s:23:\"view_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:205;a:4:{s:1:\"a\";i:206;s:1:\"b\";s:27:\"view_any_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:206;a:4:{s:1:\"a\";i:207;s:1:\"b\";s:25:\"create_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:207;a:4:{s:1:\"a\";i:208;s:1:\"b\";s:25:\"update_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:208;a:4:{s:1:\"a\";i:209;s:1:\"b\";s:26:\"restore_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:209;a:4:{s:1:\"a\";i:210;s:1:\"b\";s:30:\"restore_any_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:210;a:4:{s:1:\"a\";i:211;s:1:\"b\";s:28:\"replicate_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:211;a:4:{s:1:\"a\";i:212;s:1:\"b\";s:26:\"reorder_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:212;a:4:{s:1:\"a\";i:213;s:1:\"b\";s:25:\"delete_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:213;a:4:{s:1:\"a\";i:214;s:1:\"b\";s:29:\"delete_any_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:214;a:4:{s:1:\"a\";i:215;s:1:\"b\";s:31:\"force_delete_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:215;a:4:{s:1:\"a\";i:216;s:1:\"b\";s:35:\"force_delete_any_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:216;a:4:{s:1:\"a\";i:217;s:1:\"b\";s:12:\"view_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:217;a:4:{s:1:\"a\";i:218;s:1:\"b\";s:16:\"view_any_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:218;a:4:{s:1:\"a\";i:219;s:1:\"b\";s:14:\"create_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:219;a:4:{s:1:\"a\";i:220;s:1:\"b\";s:14:\"update_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:220;a:4:{s:1:\"a\";i:221;s:1:\"b\";s:15:\"restore_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:221;a:4:{s:1:\"a\";i:222;s:1:\"b\";s:19:\"restore_any_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:222;a:4:{s:1:\"a\";i:223;s:1:\"b\";s:17:\"replicate_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:223;a:4:{s:1:\"a\";i:224;s:1:\"b\";s:15:\"reorder_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:224;a:4:{s:1:\"a\";i:225;s:1:\"b\";s:14:\"delete_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:225;a:4:{s:1:\"a\";i:226;s:1:\"b\";s:18:\"delete_any_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:226;a:4:{s:1:\"a\";i:227;s:1:\"b\";s:20:\"force_delete_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:227;a:4:{s:1:\"a\";i:228;s:1:\"b\";s:24:\"force_delete_any_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:228;a:4:{s:1:\"a\";i:229;s:1:\"b\";s:26:\"view_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:229;a:4:{s:1:\"a\";i:230;s:1:\"b\";s:30:\"view_any_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:230;a:4:{s:1:\"a\";i:231;s:1:\"b\";s:28:\"create_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:231;a:4:{s:1:\"a\";i:232;s:1:\"b\";s:28:\"update_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:232;a:4:{s:1:\"a\";i:233;s:1:\"b\";s:29:\"restore_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:233;a:4:{s:1:\"a\";i:234;s:1:\"b\";s:33:\"restore_any_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:234;a:4:{s:1:\"a\";i:235;s:1:\"b\";s:31:\"replicate_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:235;a:4:{s:1:\"a\";i:236;s:1:\"b\";s:29:\"reorder_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:236;a:4:{s:1:\"a\";i:237;s:1:\"b\";s:28:\"delete_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:237;a:4:{s:1:\"a\";i:238;s:1:\"b\";s:32:\"delete_any_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:238;a:4:{s:1:\"a\";i:239;s:1:\"b\";s:34:\"force_delete_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:239;a:4:{s:1:\"a\";i:240;s:1:\"b\";s:38:\"force_delete_any_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:240;a:4:{s:1:\"a\";i:241;s:1:\"b\";s:20:\"view_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:241;a:4:{s:1:\"a\";i:242;s:1:\"b\";s:24:\"view_any_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:242;a:4:{s:1:\"a\";i:243;s:1:\"b\";s:22:\"create_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:243;a:4:{s:1:\"a\";i:244;s:1:\"b\";s:22:\"update_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:244;a:4:{s:1:\"a\";i:245;s:1:\"b\";s:23:\"restore_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:245;a:4:{s:1:\"a\";i:246;s:1:\"b\";s:27:\"restore_any_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:246;a:4:{s:1:\"a\";i:247;s:1:\"b\";s:25:\"replicate_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:247;a:4:{s:1:\"a\";i:248;s:1:\"b\";s:23:\"reorder_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:248;a:4:{s:1:\"a\";i:249;s:1:\"b\";s:22:\"delete_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:249;a:4:{s:1:\"a\";i:250;s:1:\"b\";s:26:\"delete_any_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:250;a:4:{s:1:\"a\";i:251;s:1:\"b\";s:28:\"force_delete_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:251;a:4:{s:1:\"a\";i:252;s:1:\"b\";s:32:\"force_delete_any_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:252;a:4:{s:1:\"a\";i:253;s:1:\"b\";s:9:\"view_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:253;a:4:{s:1:\"a\";i:254;s:1:\"b\";s:13:\"view_any_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:254;a:4:{s:1:\"a\";i:255;s:1:\"b\";s:11:\"create_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:255;a:4:{s:1:\"a\";i:256;s:1:\"b\";s:11:\"update_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:256;a:4:{s:1:\"a\";i:257;s:1:\"b\";s:11:\"delete_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:257;a:4:{s:1:\"a\";i:258;s:1:\"b\";s:15:\"delete_any_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:258;a:4:{s:1:\"a\";i:259;s:1:\"b\";s:24:\"view_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:259;a:4:{s:1:\"a\";i:260;s:1:\"b\";s:28:\"view_any_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:260;a:4:{s:1:\"a\";i:261;s:1:\"b\";s:26:\"create_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:261;a:4:{s:1:\"a\";i:262;s:1:\"b\";s:26:\"update_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:262;a:4:{s:1:\"a\";i:263;s:1:\"b\";s:27:\"restore_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:263;a:4:{s:1:\"a\";i:264;s:1:\"b\";s:31:\"restore_any_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:264;a:4:{s:1:\"a\";i:265;s:1:\"b\";s:29:\"replicate_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:265;a:4:{s:1:\"a\";i:266;s:1:\"b\";s:27:\"reorder_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:266;a:4:{s:1:\"a\";i:267;s:1:\"b\";s:26:\"delete_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:267;a:4:{s:1:\"a\";i:268;s:1:\"b\";s:30:\"delete_any_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:268;a:4:{s:1:\"a\";i:269;s:1:\"b\";s:32:\"force_delete_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:269;a:4:{s:1:\"a\";i:270;s:1:\"b\";s:36:\"force_delete_any_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:270;a:4:{s:1:\"a\";i:271;s:1:\"b\";s:9:\"view_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:271;a:4:{s:1:\"a\";i:272;s:1:\"b\";s:13:\"view_any_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:272;a:4:{s:1:\"a\";i:273;s:1:\"b\";s:11:\"create_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:273;a:4:{s:1:\"a\";i:274;s:1:\"b\";s:11:\"update_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:274;a:4:{s:1:\"a\";i:275;s:1:\"b\";s:12:\"restore_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:275;a:4:{s:1:\"a\";i:276;s:1:\"b\";s:16:\"restore_any_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:276;a:4:{s:1:\"a\";i:277;s:1:\"b\";s:14:\"replicate_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:277;a:4:{s:1:\"a\";i:278;s:1:\"b\";s:12:\"reorder_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:278;a:4:{s:1:\"a\";i:279;s:1:\"b\";s:11:\"delete_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:279;a:4:{s:1:\"a\";i:280;s:1:\"b\";s:15:\"delete_any_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:280;a:4:{s:1:\"a\";i:281;s:1:\"b\";s:17:\"force_delete_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:281;a:4:{s:1:\"a\";i:282;s:1:\"b\";s:21:\"force_delete_any_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:282;a:4:{s:1:\"a\";i:283;s:1:\"b\";s:24:\"page_ActivityFileManager\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:283;a:4:{s:1:\"a\";i:284;s:1:\"b\";s:28:\"page_BeneficiaryRegistryView\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:284;a:4:{s:1:\"a\";i:285;s:1:\"b\";s:25:\"page_ProjectCreationGuide\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}}s:5:\"roles\";a:1:{i:0;a:3:{s:1:\"a\";i:1;s:1:\"b\";s:11:\"super_admin\";s:1:\"c\";s:3:\"web\";}}}', 1753295104),
-('planeacion-estrategica-cache-livewire-rate-limiter:589105e1347c8137879db3df0a0938335d025ef1', 'i:1;', 1753240008),
-('planeacion-estrategica-cache-livewire-rate-limiter:589105e1347c8137879db3df0a0938335d025ef1:timer', 'i:1753240008;', 1753240008),
-('planeacion-estrategica-cache-livewire-rate-limiter:70ad878e7e6659901e3a630cae45dfda8686b50d', 'i:1;', 1753483047),
-('planeacion-estrategica-cache-livewire-rate-limiter:70ad878e7e6659901e3a630cae45dfda8686b50d:timer', 'i:1753483047;', 1753483047);
-INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('planeacion-estrategica-cache-spatie.permission.cache', 'a:3:{s:5:\"alias\";a:4:{s:1:\"a\";s:2:\"id\";s:1:\"b\";s:4:\"name\";s:1:\"c\";s:10:\"guard_name\";s:1:\"r\";s:5:\"roles\";}s:11:\"permissions\";a:288:{i:0;a:4:{s:1:\"a\";i:1;s:1:\"b\";s:17:\"view_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:1;a:4:{s:1:\"a\";i:2;s:1:\"b\";s:21:\"view_any_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:2;a:4:{s:1:\"a\";i:3;s:1:\"b\";s:19:\"create_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:3;a:4:{s:1:\"a\";i:4;s:1:\"b\";s:19:\"update_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:4;a:4:{s:1:\"a\";i:5;s:1:\"b\";s:20:\"restore_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:5;a:4:{s:1:\"a\";i:6;s:1:\"b\";s:24:\"restore_any_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:6;a:4:{s:1:\"a\";i:7;s:1:\"b\";s:22:\"replicate_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:7;a:4:{s:1:\"a\";i:8;s:1:\"b\";s:20:\"reorder_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:8;a:4:{s:1:\"a\";i:9;s:1:\"b\";s:19:\"delete_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:9;a:4:{s:1:\"a\";i:10;s:1:\"b\";s:23:\"delete_any_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:10;a:4:{s:1:\"a\";i:11;s:1:\"b\";s:25:\"force_delete_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:11;a:4:{s:1:\"a\";i:12;s:1:\"b\";s:29:\"force_delete_any_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:12;a:4:{s:1:\"a\";i:13;s:1:\"b\";s:13:\"view_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:13;a:4:{s:1:\"a\";i:14;s:1:\"b\";s:17:\"view_any_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:14;a:4:{s:1:\"a\";i:15;s:1:\"b\";s:15:\"create_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:15;a:4:{s:1:\"a\";i:16;s:1:\"b\";s:15:\"update_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:16;a:4:{s:1:\"a\";i:17;s:1:\"b\";s:16:\"restore_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:17;a:4:{s:1:\"a\";i:18;s:1:\"b\";s:20:\"restore_any_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:18;a:4:{s:1:\"a\";i:19;s:1:\"b\";s:18:\"replicate_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:19;a:4:{s:1:\"a\";i:20;s:1:\"b\";s:16:\"reorder_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:20;a:4:{s:1:\"a\";i:21;s:1:\"b\";s:15:\"delete_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:21;a:4:{s:1:\"a\";i:22;s:1:\"b\";s:19:\"delete_any_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:22;a:4:{s:1:\"a\";i:23;s:1:\"b\";s:21:\"force_delete_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:23;a:4:{s:1:\"a\";i:24;s:1:\"b\";s:25:\"force_delete_any_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:24;a:4:{s:1:\"a\";i:25;s:1:\"b\";s:23:\"view_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:25;a:4:{s:1:\"a\";i:26;s:1:\"b\";s:27:\"view_any_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:26;a:4:{s:1:\"a\";i:27;s:1:\"b\";s:25:\"create_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:27;a:4:{s:1:\"a\";i:28;s:1:\"b\";s:25:\"update_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:28;a:4:{s:1:\"a\";i:29;s:1:\"b\";s:26:\"restore_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:29;a:4:{s:1:\"a\";i:30;s:1:\"b\";s:30:\"restore_any_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:30;a:4:{s:1:\"a\";i:31;s:1:\"b\";s:28:\"replicate_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:31;a:4:{s:1:\"a\";i:32;s:1:\"b\";s:26:\"reorder_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:32;a:4:{s:1:\"a\";i:33;s:1:\"b\";s:25:\"delete_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:33;a:4:{s:1:\"a\";i:34;s:1:\"b\";s:29:\"delete_any_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:34;a:4:{s:1:\"a\";i:35;s:1:\"b\";s:31:\"force_delete_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:35;a:4:{s:1:\"a\";i:36;s:1:\"b\";s:35:\"force_delete_any_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:36;a:4:{s:1:\"a\";i:37;s:1:\"b\";s:19:\"view_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:37;a:4:{s:1:\"a\";i:38;s:1:\"b\";s:23:\"view_any_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:38;a:4:{s:1:\"a\";i:39;s:1:\"b\";s:21:\"create_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:39;a:4:{s:1:\"a\";i:40;s:1:\"b\";s:21:\"update_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:40;a:4:{s:1:\"a\";i:41;s:1:\"b\";s:22:\"restore_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:41;a:4:{s:1:\"a\";i:42;s:1:\"b\";s:26:\"restore_any_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:42;a:4:{s:1:\"a\";i:43;s:1:\"b\";s:24:\"replicate_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:43;a:4:{s:1:\"a\";i:44;s:1:\"b\";s:22:\"reorder_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:44;a:4:{s:1:\"a\";i:45;s:1:\"b\";s:21:\"delete_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:45;a:4:{s:1:\"a\";i:46;s:1:\"b\";s:25:\"delete_any_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:46;a:4:{s:1:\"a\";i:47;s:1:\"b\";s:27:\"force_delete_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:47;a:4:{s:1:\"a\";i:48;s:1:\"b\";s:31:\"force_delete_any_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:48;a:4:{s:1:\"a\";i:49;s:1:\"b\";s:18:\"view_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:49;a:4:{s:1:\"a\";i:50;s:1:\"b\";s:22:\"view_any_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:50;a:4:{s:1:\"a\";i:51;s:1:\"b\";s:20:\"create_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:51;a:4:{s:1:\"a\";i:52;s:1:\"b\";s:20:\"update_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:52;a:4:{s:1:\"a\";i:53;s:1:\"b\";s:21:\"restore_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:53;a:4:{s:1:\"a\";i:54;s:1:\"b\";s:25:\"restore_any_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:54;a:4:{s:1:\"a\";i:55;s:1:\"b\";s:23:\"replicate_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:55;a:4:{s:1:\"a\";i:56;s:1:\"b\";s:21:\"reorder_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:56;a:4:{s:1:\"a\";i:57;s:1:\"b\";s:20:\"delete_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:57;a:4:{s:1:\"a\";i:58;s:1:\"b\";s:24:\"delete_any_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:58;a:4:{s:1:\"a\";i:59;s:1:\"b\";s:26:\"force_delete_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:59;a:4:{s:1:\"a\";i:60;s:1:\"b\";s:30:\"force_delete_any_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:60;a:4:{s:1:\"a\";i:61;s:1:\"b\";s:8:\"view_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:61;a:4:{s:1:\"a\";i:62;s:1:\"b\";s:12:\"view_any_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:62;a:4:{s:1:\"a\";i:63;s:1:\"b\";s:10:\"create_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:63;a:4:{s:1:\"a\";i:64;s:1:\"b\";s:10:\"update_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:64;a:4:{s:1:\"a\";i:65;s:1:\"b\";s:11:\"restore_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:65;a:4:{s:1:\"a\";i:66;s:1:\"b\";s:15:\"restore_any_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:66;a:4:{s:1:\"a\";i:67;s:1:\"b\";s:13:\"replicate_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:67;a:4:{s:1:\"a\";i:68;s:1:\"b\";s:11:\"reorder_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:68;a:4:{s:1:\"a\";i:69;s:1:\"b\";s:10:\"delete_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:69;a:4:{s:1:\"a\";i:70;s:1:\"b\";s:14:\"delete_any_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:70;a:4:{s:1:\"a\";i:71;s:1:\"b\";s:16:\"force_delete_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:71;a:4:{s:1:\"a\";i:72;s:1:\"b\";s:20:\"force_delete_any_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:72;a:4:{s:1:\"a\";i:73;s:1:\"b\";s:16:\"view_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:73;a:4:{s:1:\"a\";i:74;s:1:\"b\";s:20:\"view_any_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:74;a:4:{s:1:\"a\";i:75;s:1:\"b\";s:18:\"create_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:75;a:4:{s:1:\"a\";i:76;s:1:\"b\";s:18:\"update_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:76;a:4:{s:1:\"a\";i:77;s:1:\"b\";s:19:\"restore_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:77;a:4:{s:1:\"a\";i:78;s:1:\"b\";s:23:\"restore_any_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:78;a:4:{s:1:\"a\";i:79;s:1:\"b\";s:21:\"replicate_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:79;a:4:{s:1:\"a\";i:80;s:1:\"b\";s:19:\"reorder_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:80;a:4:{s:1:\"a\";i:81;s:1:\"b\";s:18:\"delete_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:81;a:4:{s:1:\"a\";i:82;s:1:\"b\";s:22:\"delete_any_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:82;a:4:{s:1:\"a\";i:83;s:1:\"b\";s:24:\"force_delete_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:83;a:4:{s:1:\"a\";i:84;s:1:\"b\";s:28:\"force_delete_any_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:84;a:4:{s:1:\"a\";i:85;s:1:\"b\";s:26:\"view_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:85;a:4:{s:1:\"a\";i:86;s:1:\"b\";s:30:\"view_any_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:86;a:4:{s:1:\"a\";i:87;s:1:\"b\";s:28:\"create_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:87;a:4:{s:1:\"a\";i:88;s:1:\"b\";s:28:\"update_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:88;a:4:{s:1:\"a\";i:89;s:1:\"b\";s:29:\"restore_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:89;a:4:{s:1:\"a\";i:90;s:1:\"b\";s:33:\"restore_any_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:90;a:4:{s:1:\"a\";i:91;s:1:\"b\";s:31:\"replicate_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:91;a:4:{s:1:\"a\";i:92;s:1:\"b\";s:29:\"reorder_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:92;a:4:{s:1:\"a\";i:93;s:1:\"b\";s:28:\"delete_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:93;a:4:{s:1:\"a\";i:94;s:1:\"b\";s:32:\"delete_any_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:94;a:4:{s:1:\"a\";i:95;s:1:\"b\";s:34:\"force_delete_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:95;a:4:{s:1:\"a\";i:96;s:1:\"b\";s:38:\"force_delete_any_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:96;a:4:{s:1:\"a\";i:97;s:1:\"b\";s:14:\"view_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:97;a:4:{s:1:\"a\";i:98;s:1:\"b\";s:18:\"view_any_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:98;a:4:{s:1:\"a\";i:99;s:1:\"b\";s:16:\"create_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:99;a:4:{s:1:\"a\";i:100;s:1:\"b\";s:16:\"update_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:100;a:4:{s:1:\"a\";i:101;s:1:\"b\";s:17:\"restore_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:101;a:4:{s:1:\"a\";i:102;s:1:\"b\";s:21:\"restore_any_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:102;a:4:{s:1:\"a\";i:103;s:1:\"b\";s:19:\"replicate_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:103;a:4:{s:1:\"a\";i:104;s:1:\"b\";s:17:\"reorder_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:104;a:4:{s:1:\"a\";i:105;s:1:\"b\";s:16:\"delete_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:105;a:4:{s:1:\"a\";i:106;s:1:\"b\";s:20:\"delete_any_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:106;a:4:{s:1:\"a\";i:107;s:1:\"b\";s:22:\"force_delete_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:107;a:4:{s:1:\"a\";i:108;s:1:\"b\";s:26:\"force_delete_any_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:108;a:4:{s:1:\"a\";i:109;s:1:\"b\";s:14:\"view_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:109;a:4:{s:1:\"a\";i:110;s:1:\"b\";s:18:\"view_any_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:110;a:4:{s:1:\"a\";i:111;s:1:\"b\";s:16:\"create_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:111;a:4:{s:1:\"a\";i:112;s:1:\"b\";s:16:\"update_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:112;a:4:{s:1:\"a\";i:113;s:1:\"b\";s:17:\"restore_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:113;a:4:{s:1:\"a\";i:114;s:1:\"b\";s:21:\"restore_any_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:114;a:4:{s:1:\"a\";i:115;s:1:\"b\";s:19:\"replicate_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:115;a:4:{s:1:\"a\";i:116;s:1:\"b\";s:17:\"reorder_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:116;a:4:{s:1:\"a\";i:117;s:1:\"b\";s:16:\"delete_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:117;a:4:{s:1:\"a\";i:118;s:1:\"b\";s:20:\"delete_any_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:118;a:4:{s:1:\"a\";i:119;s:1:\"b\";s:22:\"force_delete_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:119;a:4:{s:1:\"a\";i:120;s:1:\"b\";s:26:\"force_delete_any_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:120;a:4:{s:1:\"a\";i:121;s:1:\"b\";s:9:\"view_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:121;a:4:{s:1:\"a\";i:122;s:1:\"b\";s:13:\"view_any_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:122;a:4:{s:1:\"a\";i:123;s:1:\"b\";s:11:\"create_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:123;a:4:{s:1:\"a\";i:124;s:1:\"b\";s:11:\"update_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:124;a:4:{s:1:\"a\";i:125;s:1:\"b\";s:12:\"restore_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:125;a:4:{s:1:\"a\";i:126;s:1:\"b\";s:16:\"restore_any_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:126;a:4:{s:1:\"a\";i:127;s:1:\"b\";s:14:\"replicate_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:127;a:4:{s:1:\"a\";i:128;s:1:\"b\";s:12:\"reorder_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:128;a:4:{s:1:\"a\";i:129;s:1:\"b\";s:11:\"delete_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:129;a:4:{s:1:\"a\";i:130;s:1:\"b\";s:15:\"delete_any_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:130;a:4:{s:1:\"a\";i:131;s:1:\"b\";s:17:\"force_delete_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:131;a:4:{s:1:\"a\";i:132;s:1:\"b\";s:21:\"force_delete_any_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:132;a:4:{s:1:\"a\";i:133;s:1:\"b\";s:8:\"view_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:133;a:4:{s:1:\"a\";i:134;s:1:\"b\";s:12:\"view_any_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:134;a:4:{s:1:\"a\";i:135;s:1:\"b\";s:10:\"create_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:135;a:4:{s:1:\"a\";i:136;s:1:\"b\";s:10:\"update_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:136;a:4:{s:1:\"a\";i:137;s:1:\"b\";s:11:\"restore_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:137;a:4:{s:1:\"a\";i:138;s:1:\"b\";s:15:\"restore_any_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:138;a:4:{s:1:\"a\";i:139;s:1:\"b\";s:13:\"replicate_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:139;a:4:{s:1:\"a\";i:140;s:1:\"b\";s:11:\"reorder_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:140;a:4:{s:1:\"a\";i:141;s:1:\"b\";s:10:\"delete_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:141;a:4:{s:1:\"a\";i:142;s:1:\"b\";s:14:\"delete_any_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:142;a:4:{s:1:\"a\";i:143;s:1:\"b\";s:16:\"force_delete_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:143;a:4:{s:1:\"a\";i:144;s:1:\"b\";s:20:\"force_delete_any_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:144;a:4:{s:1:\"a\";i:145;s:1:\"b\";s:13:\"view_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:145;a:4:{s:1:\"a\";i:146;s:1:\"b\";s:17:\"view_any_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:146;a:4:{s:1:\"a\";i:147;s:1:\"b\";s:15:\"create_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:147;a:4:{s:1:\"a\";i:148;s:1:\"b\";s:15:\"update_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:148;a:4:{s:1:\"a\";i:149;s:1:\"b\";s:16:\"restore_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:149;a:4:{s:1:\"a\";i:150;s:1:\"b\";s:20:\"restore_any_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:150;a:4:{s:1:\"a\";i:151;s:1:\"b\";s:18:\"replicate_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:151;a:4:{s:1:\"a\";i:152;s:1:\"b\";s:16:\"reorder_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:152;a:4:{s:1:\"a\";i:153;s:1:\"b\";s:15:\"delete_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:153;a:4:{s:1:\"a\";i:154;s:1:\"b\";s:19:\"delete_any_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:154;a:4:{s:1:\"a\";i:155;s:1:\"b\";s:21:\"force_delete_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:155;a:4:{s:1:\"a\";i:156;s:1:\"b\";s:25:\"force_delete_any_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:156;a:4:{s:1:\"a\";i:157;s:1:\"b\";s:17:\"view_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:157;a:4:{s:1:\"a\";i:158;s:1:\"b\";s:21:\"view_any_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:158;a:4:{s:1:\"a\";i:159;s:1:\"b\";s:19:\"create_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:159;a:4:{s:1:\"a\";i:160;s:1:\"b\";s:19:\"update_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:160;a:4:{s:1:\"a\";i:161;s:1:\"b\";s:20:\"restore_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:161;a:4:{s:1:\"a\";i:162;s:1:\"b\";s:24:\"restore_any_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:162;a:4:{s:1:\"a\";i:163;s:1:\"b\";s:22:\"replicate_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:163;a:4:{s:1:\"a\";i:164;s:1:\"b\";s:20:\"reorder_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:164;a:4:{s:1:\"a\";i:165;s:1:\"b\";s:19:\"delete_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:165;a:4:{s:1:\"a\";i:166;s:1:\"b\";s:23:\"delete_any_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:166;a:4:{s:1:\"a\";i:167;s:1:\"b\";s:25:\"force_delete_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:167;a:4:{s:1:\"a\";i:168;s:1:\"b\";s:29:\"force_delete_any_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:168;a:4:{s:1:\"a\";i:169;s:1:\"b\";s:20:\"view_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:169;a:4:{s:1:\"a\";i:170;s:1:\"b\";s:24:\"view_any_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:170;a:4:{s:1:\"a\";i:171;s:1:\"b\";s:22:\"create_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:171;a:4:{s:1:\"a\";i:172;s:1:\"b\";s:22:\"update_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:172;a:4:{s:1:\"a\";i:173;s:1:\"b\";s:23:\"restore_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:173;a:4:{s:1:\"a\";i:174;s:1:\"b\";s:27:\"restore_any_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:174;a:4:{s:1:\"a\";i:175;s:1:\"b\";s:25:\"replicate_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:175;a:4:{s:1:\"a\";i:176;s:1:\"b\";s:23:\"reorder_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:176;a:4:{s:1:\"a\";i:177;s:1:\"b\";s:22:\"delete_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:177;a:4:{s:1:\"a\";i:178;s:1:\"b\";s:26:\"delete_any_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:178;a:4:{s:1:\"a\";i:179;s:1:\"b\";s:28:\"force_delete_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:179;a:4:{s:1:\"a\";i:180;s:1:\"b\";s:32:\"force_delete_any_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:180;a:4:{s:1:\"a\";i:181;s:1:\"b\";s:12:\"view_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:181;a:4:{s:1:\"a\";i:182;s:1:\"b\";s:16:\"view_any_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:182;a:4:{s:1:\"a\";i:183;s:1:\"b\";s:14:\"create_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:183;a:4:{s:1:\"a\";i:184;s:1:\"b\";s:14:\"update_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:184;a:4:{s:1:\"a\";i:185;s:1:\"b\";s:15:\"restore_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:185;a:4:{s:1:\"a\";i:186;s:1:\"b\";s:19:\"restore_any_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:186;a:4:{s:1:\"a\";i:187;s:1:\"b\";s:17:\"replicate_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:187;a:4:{s:1:\"a\";i:188;s:1:\"b\";s:15:\"reorder_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:188;a:4:{s:1:\"a\";i:189;s:1:\"b\";s:14:\"delete_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:189;a:4:{s:1:\"a\";i:190;s:1:\"b\";s:18:\"delete_any_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:190;a:4:{s:1:\"a\";i:191;s:1:\"b\";s:20:\"force_delete_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:191;a:4:{s:1:\"a\";i:192;s:1:\"b\";s:24:\"force_delete_any_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:192;a:4:{s:1:\"a\";i:193;s:1:\"b\";s:12:\"view_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:193;a:4:{s:1:\"a\";i:194;s:1:\"b\";s:16:\"view_any_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:194;a:4:{s:1:\"a\";i:195;s:1:\"b\";s:14:\"create_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:195;a:4:{s:1:\"a\";i:196;s:1:\"b\";s:14:\"update_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:196;a:4:{s:1:\"a\";i:197;s:1:\"b\";s:15:\"restore_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:197;a:4:{s:1:\"a\";i:198;s:1:\"b\";s:19:\"restore_any_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:198;a:4:{s:1:\"a\";i:199;s:1:\"b\";s:17:\"replicate_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:199;a:4:{s:1:\"a\";i:200;s:1:\"b\";s:15:\"reorder_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:200;a:4:{s:1:\"a\";i:201;s:1:\"b\";s:14:\"delete_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:201;a:4:{s:1:\"a\";i:202;s:1:\"b\";s:18:\"delete_any_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:202;a:4:{s:1:\"a\";i:203;s:1:\"b\";s:20:\"force_delete_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:203;a:4:{s:1:\"a\";i:204;s:1:\"b\";s:24:\"force_delete_any_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:204;a:4:{s:1:\"a\";i:205;s:1:\"b\";s:23:\"view_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:205;a:4:{s:1:\"a\";i:206;s:1:\"b\";s:27:\"view_any_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:206;a:4:{s:1:\"a\";i:207;s:1:\"b\";s:25:\"create_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:207;a:4:{s:1:\"a\";i:208;s:1:\"b\";s:25:\"update_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:208;a:4:{s:1:\"a\";i:209;s:1:\"b\";s:26:\"restore_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:209;a:4:{s:1:\"a\";i:210;s:1:\"b\";s:30:\"restore_any_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:210;a:4:{s:1:\"a\";i:211;s:1:\"b\";s:28:\"replicate_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:211;a:4:{s:1:\"a\";i:212;s:1:\"b\";s:26:\"reorder_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:212;a:4:{s:1:\"a\";i:213;s:1:\"b\";s:25:\"delete_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:213;a:4:{s:1:\"a\";i:214;s:1:\"b\";s:29:\"delete_any_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:214;a:4:{s:1:\"a\";i:215;s:1:\"b\";s:31:\"force_delete_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:215;a:4:{s:1:\"a\";i:216;s:1:\"b\";s:35:\"force_delete_any_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:216;a:4:{s:1:\"a\";i:217;s:1:\"b\";s:12:\"view_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:217;a:4:{s:1:\"a\";i:218;s:1:\"b\";s:16:\"view_any_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:218;a:4:{s:1:\"a\";i:219;s:1:\"b\";s:14:\"create_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:219;a:4:{s:1:\"a\";i:220;s:1:\"b\";s:14:\"update_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:220;a:4:{s:1:\"a\";i:221;s:1:\"b\";s:15:\"restore_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:221;a:4:{s:1:\"a\";i:222;s:1:\"b\";s:19:\"restore_any_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:222;a:4:{s:1:\"a\";i:223;s:1:\"b\";s:17:\"replicate_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:223;a:4:{s:1:\"a\";i:224;s:1:\"b\";s:15:\"reorder_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:224;a:4:{s:1:\"a\";i:225;s:1:\"b\";s:14:\"delete_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:225;a:4:{s:1:\"a\";i:226;s:1:\"b\";s:18:\"delete_any_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:226;a:4:{s:1:\"a\";i:227;s:1:\"b\";s:20:\"force_delete_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:227;a:4:{s:1:\"a\";i:228;s:1:\"b\";s:24:\"force_delete_any_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:228;a:4:{s:1:\"a\";i:229;s:1:\"b\";s:26:\"view_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:229;a:4:{s:1:\"a\";i:230;s:1:\"b\";s:30:\"view_any_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:230;a:4:{s:1:\"a\";i:231;s:1:\"b\";s:28:\"create_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:231;a:4:{s:1:\"a\";i:232;s:1:\"b\";s:28:\"update_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:232;a:4:{s:1:\"a\";i:233;s:1:\"b\";s:29:\"restore_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:233;a:4:{s:1:\"a\";i:234;s:1:\"b\";s:33:\"restore_any_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:234;a:4:{s:1:\"a\";i:235;s:1:\"b\";s:31:\"replicate_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:235;a:4:{s:1:\"a\";i:236;s:1:\"b\";s:29:\"reorder_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:236;a:4:{s:1:\"a\";i:237;s:1:\"b\";s:28:\"delete_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:237;a:4:{s:1:\"a\";i:238;s:1:\"b\";s:32:\"delete_any_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:238;a:4:{s:1:\"a\";i:239;s:1:\"b\";s:34:\"force_delete_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:239;a:4:{s:1:\"a\";i:240;s:1:\"b\";s:38:\"force_delete_any_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:240;a:4:{s:1:\"a\";i:241;s:1:\"b\";s:20:\"view_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:241;a:4:{s:1:\"a\";i:242;s:1:\"b\";s:24:\"view_any_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:242;a:4:{s:1:\"a\";i:243;s:1:\"b\";s:22:\"create_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:243;a:4:{s:1:\"a\";i:244;s:1:\"b\";s:22:\"update_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:244;a:4:{s:1:\"a\";i:245;s:1:\"b\";s:23:\"restore_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:245;a:4:{s:1:\"a\";i:246;s:1:\"b\";s:27:\"restore_any_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:246;a:4:{s:1:\"a\";i:247;s:1:\"b\";s:25:\"replicate_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:247;a:4:{s:1:\"a\";i:248;s:1:\"b\";s:23:\"reorder_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:248;a:4:{s:1:\"a\";i:249;s:1:\"b\";s:22:\"delete_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:249;a:4:{s:1:\"a\";i:250;s:1:\"b\";s:26:\"delete_any_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:250;a:4:{s:1:\"a\";i:251;s:1:\"b\";s:28:\"force_delete_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:251;a:4:{s:1:\"a\";i:252;s:1:\"b\";s:32:\"force_delete_any_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:252;a:4:{s:1:\"a\";i:253;s:1:\"b\";s:9:\"view_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:253;a:4:{s:1:\"a\";i:254;s:1:\"b\";s:13:\"view_any_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:254;a:4:{s:1:\"a\";i:255;s:1:\"b\";s:11:\"create_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:255;a:4:{s:1:\"a\";i:256;s:1:\"b\";s:11:\"update_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:256;a:4:{s:1:\"a\";i:257;s:1:\"b\";s:11:\"delete_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:257;a:4:{s:1:\"a\";i:258;s:1:\"b\";s:15:\"delete_any_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:258;a:4:{s:1:\"a\";i:259;s:1:\"b\";s:24:\"view_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:259;a:4:{s:1:\"a\";i:260;s:1:\"b\";s:28:\"view_any_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:260;a:4:{s:1:\"a\";i:261;s:1:\"b\";s:26:\"create_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:261;a:4:{s:1:\"a\";i:262;s:1:\"b\";s:26:\"update_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:262;a:4:{s:1:\"a\";i:263;s:1:\"b\";s:27:\"restore_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:263;a:4:{s:1:\"a\";i:264;s:1:\"b\";s:31:\"restore_any_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:264;a:4:{s:1:\"a\";i:265;s:1:\"b\";s:29:\"replicate_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:265;a:4:{s:1:\"a\";i:266;s:1:\"b\";s:27:\"reorder_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:266;a:4:{s:1:\"a\";i:267;s:1:\"b\";s:26:\"delete_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:267;a:4:{s:1:\"a\";i:268;s:1:\"b\";s:30:\"delete_any_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:268;a:4:{s:1:\"a\";i:269;s:1:\"b\";s:32:\"force_delete_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:269;a:4:{s:1:\"a\";i:270;s:1:\"b\";s:36:\"force_delete_any_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:270;a:4:{s:1:\"a\";i:271;s:1:\"b\";s:9:\"view_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:271;a:4:{s:1:\"a\";i:272;s:1:\"b\";s:13:\"view_any_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:272;a:4:{s:1:\"a\";i:273;s:1:\"b\";s:11:\"create_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:273;a:4:{s:1:\"a\";i:274;s:1:\"b\";s:11:\"update_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:274;a:4:{s:1:\"a\";i:275;s:1:\"b\";s:12:\"restore_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:275;a:4:{s:1:\"a\";i:276;s:1:\"b\";s:16:\"restore_any_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:276;a:4:{s:1:\"a\";i:277;s:1:\"b\";s:14:\"replicate_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:277;a:4:{s:1:\"a\";i:278;s:1:\"b\";s:12:\"reorder_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:278;a:4:{s:1:\"a\";i:279;s:1:\"b\";s:11:\"delete_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:279;a:4:{s:1:\"a\";i:280;s:1:\"b\";s:15:\"delete_any_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:280;a:4:{s:1:\"a\";i:281;s:1:\"b\";s:17:\"force_delete_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:281;a:4:{s:1:\"a\";i:282;s:1:\"b\";s:21:\"force_delete_any_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:282;a:4:{s:1:\"a\";i:283;s:1:\"b\";s:24:\"page_ActivityFileManager\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:283;a:4:{s:1:\"a\";i:284;s:1:\"b\";s:28:\"page_BeneficiaryRegistryView\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:284;a:3:{s:1:\"a\";i:285;s:1:\"b\";s:25:\"page_ProjectCreationGuide\";s:1:\"c\";s:3:\"web\";}i:285;a:4:{s:1:\"a\";i:286;s:1:\"b\";s:22:\"page_ProjectManagement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:286;a:4:{s:1:\"a\";i:287;s:1:\"b\";s:18:\"page_ProjectWizard\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:287;a:4:{s:1:\"a\";i:288;s:1:\"b\";s:28:\"page_DataPublicationApproval\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}}s:5:\"roles\";a:1:{i:0;a:3:{s:1:\"a\";i:1;s:1:\"b\";s:11:\"super_admin\";s:1:\"c\";s:3:\"web\";}}}', 1753720900);
+('planeacion-estrategica-cache-spatie.permission.cache', 'a:3:{s:5:\"alias\";a:4:{s:1:\"a\";s:2:\"id\";s:1:\"b\";s:4:\"name\";s:1:\"c\";s:10:\"guard_name\";s:1:\"r\";s:5:\"roles\";}s:11:\"permissions\";a:295:{i:0;a:4:{s:1:\"a\";i:1;s:1:\"b\";s:17:\"view_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:1;a:4:{s:1:\"a\";i:2;s:1:\"b\";s:21:\"view_any_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:2;a:4:{s:1:\"a\";i:3;s:1:\"b\";s:19:\"create_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:3;a:4:{s:1:\"a\";i:4;s:1:\"b\";s:19:\"update_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:4;a:4:{s:1:\"a\";i:5;s:1:\"b\";s:20:\"restore_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:5;a:4:{s:1:\"a\";i:6;s:1:\"b\";s:24:\"restore_any_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:6;a:4:{s:1:\"a\";i:7;s:1:\"b\";s:22:\"replicate_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:7;a:4:{s:1:\"a\";i:8;s:1:\"b\";s:20:\"reorder_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:8;a:4:{s:1:\"a\";i:9;s:1:\"b\";s:19:\"delete_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:9;a:4:{s:1:\"a\";i:10;s:1:\"b\";s:23:\"delete_any_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:10;a:4:{s:1:\"a\";i:11;s:1:\"b\";s:25:\"force_delete_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:11;a:4:{s:1:\"a\";i:12;s:1:\"b\";s:29:\"force_delete_any_action::line\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:12;a:4:{s:1:\"a\";i:13;s:1:\"b\";s:13:\"view_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:13;a:4:{s:1:\"a\";i:14;s:1:\"b\";s:17:\"view_any_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:14;a:4:{s:1:\"a\";i:15;s:1:\"b\";s:15:\"create_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:15;a:4:{s:1:\"a\";i:16;s:1:\"b\";s:15:\"update_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:16;a:4:{s:1:\"a\";i:17;s:1:\"b\";s:16:\"restore_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:17;a:4:{s:1:\"a\";i:18;s:1:\"b\";s:20:\"restore_any_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:18;a:4:{s:1:\"a\";i:19;s:1:\"b\";s:18:\"replicate_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:19;a:4:{s:1:\"a\";i:20;s:1:\"b\";s:16:\"reorder_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:20;a:4:{s:1:\"a\";i:21;s:1:\"b\";s:15:\"delete_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:21;a:4:{s:1:\"a\";i:22;s:1:\"b\";s:19:\"delete_any_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:22;a:4:{s:1:\"a\";i:23;s:1:\"b\";s:21:\"force_delete_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:23;a:4:{s:1:\"a\";i:24;s:1:\"b\";s:25:\"force_delete_any_activity\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:24;a:4:{s:1:\"a\";i:25;s:1:\"b\";s:23:\"view_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:25;a:4:{s:1:\"a\";i:26;s:1:\"b\";s:27:\"view_any_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:26;a:4:{s:1:\"a\";i:27;s:1:\"b\";s:25:\"create_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:27;a:4:{s:1:\"a\";i:28;s:1:\"b\";s:25:\"update_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:28;a:4:{s:1:\"a\";i:29;s:1:\"b\";s:26:\"restore_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:29;a:4:{s:1:\"a\";i:30;s:1:\"b\";s:30:\"restore_any_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:30;a:4:{s:1:\"a\";i:31;s:1:\"b\";s:28:\"replicate_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:31;a:4:{s:1:\"a\";i:32;s:1:\"b\";s:26:\"reorder_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:32;a:4:{s:1:\"a\";i:33;s:1:\"b\";s:25:\"delete_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:33;a:4:{s:1:\"a\";i:34;s:1:\"b\";s:29:\"delete_any_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:34;a:4:{s:1:\"a\";i:35;s:1:\"b\";s:31:\"force_delete_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:35;a:4:{s:1:\"a\";i:36;s:1:\"b\";s:35:\"force_delete_any_activity::calendar\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:36;a:4:{s:1:\"a\";i:37;s:1:\"b\";s:19:\"view_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:37;a:4:{s:1:\"a\";i:38;s:1:\"b\";s:23:\"view_any_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:38;a:4:{s:1:\"a\";i:39;s:1:\"b\";s:21:\"create_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:39;a:4:{s:1:\"a\";i:40;s:1:\"b\";s:21:\"update_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:40;a:4:{s:1:\"a\";i:41;s:1:\"b\";s:22:\"restore_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:41;a:4:{s:1:\"a\";i:42;s:1:\"b\";s:26:\"restore_any_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:42;a:4:{s:1:\"a\";i:43;s:1:\"b\";s:24:\"replicate_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:43;a:4:{s:1:\"a\";i:44;s:1:\"b\";s:22:\"reorder_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:44;a:4:{s:1:\"a\";i:45;s:1:\"b\";s:21:\"delete_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:45;a:4:{s:1:\"a\";i:46;s:1:\"b\";s:25:\"delete_any_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:46;a:4:{s:1:\"a\";i:47;s:1:\"b\";s:27:\"force_delete_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:47;a:4:{s:1:\"a\";i:48;s:1:\"b\";s:31:\"force_delete_any_activity::file\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:48;a:4:{s:1:\"a\";i:49;s:1:\"b\";s:18:\"view_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:49;a:4:{s:1:\"a\";i:50;s:1:\"b\";s:22:\"view_any_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:50;a:4:{s:1:\"a\";i:51;s:1:\"b\";s:20:\"create_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:51;a:4:{s:1:\"a\";i:52;s:1:\"b\";s:20:\"update_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:52;a:4:{s:1:\"a\";i:53;s:1:\"b\";s:21:\"restore_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:53;a:4:{s:1:\"a\";i:54;s:1:\"b\";s:25:\"restore_any_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:54;a:4:{s:1:\"a\";i:55;s:1:\"b\";s:23:\"replicate_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:55;a:4:{s:1:\"a\";i:56;s:1:\"b\";s:21:\"reorder_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:56;a:4:{s:1:\"a\";i:57;s:1:\"b\";s:20:\"delete_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:57;a:4:{s:1:\"a\";i:58;s:1:\"b\";s:24:\"delete_any_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:58;a:4:{s:1:\"a\";i:59;s:1:\"b\";s:26:\"force_delete_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:59;a:4:{s:1:\"a\";i:60;s:1:\"b\";s:30:\"force_delete_any_activity::log\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:60;a:4:{s:1:\"a\";i:61;s:1:\"b\";s:8:\"view_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:61;a:4:{s:1:\"a\";i:62;s:1:\"b\";s:12:\"view_any_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:62;a:4:{s:1:\"a\";i:63;s:1:\"b\";s:10:\"create_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:63;a:4:{s:1:\"a\";i:64;s:1:\"b\";s:10:\"update_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:64;a:4:{s:1:\"a\";i:65;s:1:\"b\";s:11:\"restore_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:65;a:4:{s:1:\"a\";i:66;s:1:\"b\";s:15:\"restore_any_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:66;a:4:{s:1:\"a\";i:67;s:1:\"b\";s:13:\"replicate_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:67;a:4:{s:1:\"a\";i:68;s:1:\"b\";s:11:\"reorder_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:68;a:4:{s:1:\"a\";i:69;s:1:\"b\";s:10:\"delete_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:69;a:4:{s:1:\"a\";i:70;s:1:\"b\";s:14:\"delete_any_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:70;a:4:{s:1:\"a\";i:71;s:1:\"b\";s:16:\"force_delete_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:71;a:4:{s:1:\"a\";i:72;s:1:\"b\";s:20:\"force_delete_any_axe\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:72;a:4:{s:1:\"a\";i:73;s:1:\"b\";s:16:\"view_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:73;a:4:{s:1:\"a\";i:74;s:1:\"b\";s:20:\"view_any_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:74;a:4:{s:1:\"a\";i:75;s:1:\"b\";s:18:\"create_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:75;a:4:{s:1:\"a\";i:76;s:1:\"b\";s:18:\"update_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:76;a:4:{s:1:\"a\";i:77;s:1:\"b\";s:19:\"restore_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:77;a:4:{s:1:\"a\";i:78;s:1:\"b\";s:23:\"restore_any_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:78;a:4:{s:1:\"a\";i:79;s:1:\"b\";s:21:\"replicate_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:79;a:4:{s:1:\"a\";i:80;s:1:\"b\";s:19:\"reorder_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:80;a:4:{s:1:\"a\";i:81;s:1:\"b\";s:18:\"delete_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:81;a:4:{s:1:\"a\";i:82;s:1:\"b\";s:22:\"delete_any_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:82;a:4:{s:1:\"a\";i:83;s:1:\"b\";s:24:\"force_delete_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:83;a:4:{s:1:\"a\";i:84;s:1:\"b\";s:28:\"force_delete_any_beneficiary\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:84;a:4:{s:1:\"a\";i:85;s:1:\"b\";s:26:\"view_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:85;a:4:{s:1:\"a\";i:86;s:1:\"b\";s:30:\"view_any_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:86;a:4:{s:1:\"a\";i:87;s:1:\"b\";s:28:\"create_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:87;a:4:{s:1:\"a\";i:88;s:1:\"b\";s:28:\"update_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:88;a:4:{s:1:\"a\";i:89;s:1:\"b\";s:29:\"restore_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:89;a:4:{s:1:\"a\";i:90;s:1:\"b\";s:33:\"restore_any_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:90;a:4:{s:1:\"a\";i:91;s:1:\"b\";s:31:\"replicate_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:91;a:4:{s:1:\"a\";i:92;s:1:\"b\";s:29:\"reorder_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:92;a:4:{s:1:\"a\";i:93;s:1:\"b\";s:28:\"delete_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:93;a:4:{s:1:\"a\";i:94;s:1:\"b\";s:32:\"delete_any_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:94;a:4:{s:1:\"a\";i:95;s:1:\"b\";s:34:\"force_delete_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:95;a:4:{s:1:\"a\";i:96;s:1:\"b\";s:38:\"force_delete_any_beneficiary::registry\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:96;a:4:{s:1:\"a\";i:97;s:1:\"b\";s:14:\"view_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:97;a:4:{s:1:\"a\";i:98;s:1:\"b\";s:18:\"view_any_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:98;a:4:{s:1:\"a\";i:99;s:1:\"b\";s:16:\"create_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:99;a:4:{s:1:\"a\";i:100;s:1:\"b\";s:16:\"update_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:100;a:4:{s:1:\"a\";i:101;s:1:\"b\";s:17:\"restore_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:101;a:4:{s:1:\"a\";i:102;s:1:\"b\";s:21:\"restore_any_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:102;a:4:{s:1:\"a\";i:103;s:1:\"b\";s:19:\"replicate_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:103;a:4:{s:1:\"a\";i:104;s:1:\"b\";s:17:\"reorder_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:104;a:4:{s:1:\"a\";i:105;s:1:\"b\";s:16:\"delete_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:105;a:4:{s:1:\"a\";i:106;s:1:\"b\";s:20:\"delete_any_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:106;a:4:{s:1:\"a\";i:107;s:1:\"b\";s:22:\"force_delete_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:107;a:4:{s:1:\"a\";i:108;s:1:\"b\";s:26:\"force_delete_any_component\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:108;a:4:{s:1:\"a\";i:109;s:1:\"b\";s:14:\"view_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:109;a:4:{s:1:\"a\";i:110;s:1:\"b\";s:18:\"view_any_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:110;a:4:{s:1:\"a\";i:111;s:1:\"b\";s:16:\"create_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:111;a:4:{s:1:\"a\";i:112;s:1:\"b\";s:16:\"update_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:112;a:4:{s:1:\"a\";i:113;s:1:\"b\";s:17:\"restore_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:113;a:4:{s:1:\"a\";i:114;s:1:\"b\";s:21:\"restore_any_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:114;a:4:{s:1:\"a\";i:115;s:1:\"b\";s:19:\"replicate_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:115;a:4:{s:1:\"a\";i:116;s:1:\"b\";s:17:\"reorder_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:116;a:4:{s:1:\"a\";i:117;s:1:\"b\";s:16:\"delete_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:117;a:4:{s:1:\"a\";i:118;s:1:\"b\";s:20:\"delete_any_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:118;a:4:{s:1:\"a\";i:119;s:1:\"b\";s:22:\"force_delete_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:119;a:4:{s:1:\"a\";i:120;s:1:\"b\";s:26:\"force_delete_any_financier\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:120;a:4:{s:1:\"a\";i:121;s:1:\"b\";s:9:\"view_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:121;a:4:{s:1:\"a\";i:122;s:1:\"b\";s:13:\"view_any_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:122;a:4:{s:1:\"a\";i:123;s:1:\"b\";s:11:\"create_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:123;a:4:{s:1:\"a\";i:124;s:1:\"b\";s:11:\"update_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:124;a:4:{s:1:\"a\";i:125;s:1:\"b\";s:12:\"restore_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:125;a:4:{s:1:\"a\";i:126;s:1:\"b\";s:16:\"restore_any_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:126;a:4:{s:1:\"a\";i:127;s:1:\"b\";s:14:\"replicate_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:127;a:4:{s:1:\"a\";i:128;s:1:\"b\";s:12:\"reorder_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:128;a:4:{s:1:\"a\";i:129;s:1:\"b\";s:11:\"delete_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:129;a:4:{s:1:\"a\";i:130;s:1:\"b\";s:15:\"delete_any_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:130;a:4:{s:1:\"a\";i:131;s:1:\"b\";s:17:\"force_delete_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:131;a:4:{s:1:\"a\";i:132;s:1:\"b\";s:21:\"force_delete_any_goal\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:132;a:4:{s:1:\"a\";i:133;s:1:\"b\";s:8:\"view_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:133;a:4:{s:1:\"a\";i:134;s:1:\"b\";s:12:\"view_any_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:134;a:4:{s:1:\"a\";i:135;s:1:\"b\";s:10:\"create_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:135;a:4:{s:1:\"a\";i:136;s:1:\"b\";s:10:\"update_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:136;a:4:{s:1:\"a\";i:137;s:1:\"b\";s:11:\"restore_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:137;a:4:{s:1:\"a\";i:138;s:1:\"b\";s:15:\"restore_any_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:138;a:4:{s:1:\"a\";i:139;s:1:\"b\";s:13:\"replicate_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:139;a:4:{s:1:\"a\";i:140;s:1:\"b\";s:11:\"reorder_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:140;a:4:{s:1:\"a\";i:141;s:1:\"b\";s:10:\"delete_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:141;a:4:{s:1:\"a\";i:142;s:1:\"b\";s:14:\"delete_any_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:142;a:4:{s:1:\"a\";i:143;s:1:\"b\";s:16:\"force_delete_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:143;a:4:{s:1:\"a\";i:144;s:1:\"b\";s:20:\"force_delete_any_kpi\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:144;a:4:{s:1:\"a\";i:145;s:1:\"b\";s:13:\"view_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:145;a:4:{s:1:\"a\";i:146;s:1:\"b\";s:17:\"view_any_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:146;a:4:{s:1:\"a\";i:147;s:1:\"b\";s:15:\"create_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:147;a:4:{s:1:\"a\";i:148;s:1:\"b\";s:15:\"update_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:148;a:4:{s:1:\"a\";i:149;s:1:\"b\";s:16:\"restore_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:149;a:4:{s:1:\"a\";i:150;s:1:\"b\";s:20:\"restore_any_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:150;a:4:{s:1:\"a\";i:151;s:1:\"b\";s:18:\"replicate_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:151;a:4:{s:1:\"a\";i:152;s:1:\"b\";s:16:\"reorder_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:152;a:4:{s:1:\"a\";i:153;s:1:\"b\";s:15:\"delete_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:153;a:4:{s:1:\"a\";i:154;s:1:\"b\";s:19:\"delete_any_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:154;a:4:{s:1:\"a\";i:155;s:1:\"b\";s:21:\"force_delete_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:155;a:4:{s:1:\"a\";i:156;s:1:\"b\";s:25:\"force_delete_any_location\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:156;a:4:{s:1:\"a\";i:157;s:1:\"b\";s:17:\"view_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:157;a:4:{s:1:\"a\";i:158;s:1:\"b\";s:21:\"view_any_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:158;a:4:{s:1:\"a\";i:159;s:1:\"b\";s:19:\"create_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:159;a:4:{s:1:\"a\";i:160;s:1:\"b\";s:19:\"update_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:160;a:4:{s:1:\"a\";i:161;s:1:\"b\";s:20:\"restore_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:161;a:4:{s:1:\"a\";i:162;s:1:\"b\";s:24:\"restore_any_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:162;a:4:{s:1:\"a\";i:163;s:1:\"b\";s:22:\"replicate_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:163;a:4:{s:1:\"a\";i:164;s:1:\"b\";s:20:\"reorder_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:164;a:4:{s:1:\"a\";i:165;s:1:\"b\";s:19:\"delete_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:165;a:4:{s:1:\"a\";i:166;s:1:\"b\";s:23:\"delete_any_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:166;a:4:{s:1:\"a\";i:167;s:1:\"b\";s:25:\"force_delete_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:167;a:4:{s:1:\"a\";i:168;s:1:\"b\";s:29:\"force_delete_any_organization\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:168;a:4:{s:1:\"a\";i:169;s:1:\"b\";s:20:\"view_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:169;a:4:{s:1:\"a\";i:170;s:1:\"b\";s:24:\"view_any_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:170;a:4:{s:1:\"a\";i:171;s:1:\"b\";s:22:\"create_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:171;a:4:{s:1:\"a\";i:172;s:1:\"b\";s:22:\"update_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:172;a:4:{s:1:\"a\";i:173;s:1:\"b\";s:23:\"restore_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:173;a:4:{s:1:\"a\";i:174;s:1:\"b\";s:27:\"restore_any_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:174;a:4:{s:1:\"a\";i:175;s:1:\"b\";s:25:\"replicate_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:175;a:4:{s:1:\"a\";i:176;s:1:\"b\";s:23:\"reorder_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:176;a:4:{s:1:\"a\";i:177;s:1:\"b\";s:22:\"delete_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:177;a:4:{s:1:\"a\";i:178;s:1:\"b\";s:26:\"delete_any_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:178;a:4:{s:1:\"a\";i:179;s:1:\"b\";s:28:\"force_delete_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:179;a:4:{s:1:\"a\";i:180;s:1:\"b\";s:32:\"force_delete_any_planned::metric\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:180;a:4:{s:1:\"a\";i:181;s:1:\"b\";s:12:\"view_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:181;a:4:{s:1:\"a\";i:182;s:1:\"b\";s:16:\"view_any_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:182;a:4:{s:1:\"a\";i:183;s:1:\"b\";s:14:\"create_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:183;a:4:{s:1:\"a\";i:184;s:1:\"b\";s:14:\"update_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:184;a:4:{s:1:\"a\";i:185;s:1:\"b\";s:15:\"restore_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:185;a:4:{s:1:\"a\";i:186;s:1:\"b\";s:19:\"restore_any_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:186;a:4:{s:1:\"a\";i:187;s:1:\"b\";s:17:\"replicate_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:187;a:4:{s:1:\"a\";i:188;s:1:\"b\";s:15:\"reorder_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:188;a:4:{s:1:\"a\";i:189;s:1:\"b\";s:14:\"delete_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:189;a:4:{s:1:\"a\";i:190;s:1:\"b\";s:18:\"delete_any_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:190;a:4:{s:1:\"a\";i:191;s:1:\"b\";s:20:\"force_delete_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:191;a:4:{s:1:\"a\";i:192;s:1:\"b\";s:24:\"force_delete_any_polygon\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:192;a:4:{s:1:\"a\";i:193;s:1:\"b\";s:12:\"view_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:193;a:4:{s:1:\"a\";i:194;s:1:\"b\";s:16:\"view_any_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:194;a:4:{s:1:\"a\";i:195;s:1:\"b\";s:14:\"create_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:195;a:4:{s:1:\"a\";i:196;s:1:\"b\";s:14:\"update_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:196;a:4:{s:1:\"a\";i:197;s:1:\"b\";s:15:\"restore_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:197;a:4:{s:1:\"a\";i:198;s:1:\"b\";s:19:\"restore_any_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:198;a:4:{s:1:\"a\";i:199;s:1:\"b\";s:17:\"replicate_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:199;a:4:{s:1:\"a\";i:200;s:1:\"b\";s:15:\"reorder_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:200;a:4:{s:1:\"a\";i:201;s:1:\"b\";s:14:\"delete_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:201;a:4:{s:1:\"a\";i:202;s:1:\"b\";s:18:\"delete_any_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:202;a:4:{s:1:\"a\";i:203;s:1:\"b\";s:20:\"force_delete_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:203;a:4:{s:1:\"a\";i:204;s:1:\"b\";s:24:\"force_delete_any_program\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:204;a:4:{s:1:\"a\";i:205;s:1:\"b\";s:23:\"view_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:205;a:4:{s:1:\"a\";i:206;s:1:\"b\";s:27:\"view_any_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:206;a:4:{s:1:\"a\";i:207;s:1:\"b\";s:25:\"create_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:207;a:4:{s:1:\"a\";i:208;s:1:\"b\";s:25:\"update_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:208;a:4:{s:1:\"a\";i:209;s:1:\"b\";s:26:\"restore_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:209;a:4:{s:1:\"a\";i:210;s:1:\"b\";s:30:\"restore_any_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:210;a:4:{s:1:\"a\";i:211;s:1:\"b\";s:28:\"replicate_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:211;a:4:{s:1:\"a\";i:212;s:1:\"b\";s:26:\"reorder_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:212;a:4:{s:1:\"a\";i:213;s:1:\"b\";s:25:\"delete_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:213;a:4:{s:1:\"a\";i:214;s:1:\"b\";s:29:\"delete_any_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:214;a:4:{s:1:\"a\";i:215;s:1:\"b\";s:31:\"force_delete_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:215;a:4:{s:1:\"a\";i:216;s:1:\"b\";s:35:\"force_delete_any_program::indicator\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:216;a:4:{s:1:\"a\";i:217;s:1:\"b\";s:12:\"view_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:217;a:4:{s:1:\"a\";i:218;s:1:\"b\";s:16:\"view_any_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:218;a:4:{s:1:\"a\";i:219;s:1:\"b\";s:14:\"create_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:219;a:4:{s:1:\"a\";i:220;s:1:\"b\";s:14:\"update_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:220;a:4:{s:1:\"a\";i:221;s:1:\"b\";s:15:\"restore_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:221;a:4:{s:1:\"a\";i:222;s:1:\"b\";s:19:\"restore_any_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:222;a:4:{s:1:\"a\";i:223;s:1:\"b\";s:17:\"replicate_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:223;a:4:{s:1:\"a\";i:224;s:1:\"b\";s:15:\"reorder_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:224;a:4:{s:1:\"a\";i:225;s:1:\"b\";s:14:\"delete_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:225;a:4:{s:1:\"a\";i:226;s:1:\"b\";s:18:\"delete_any_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:226;a:4:{s:1:\"a\";i:227;s:1:\"b\";s:20:\"force_delete_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:227;a:4:{s:1:\"a\";i:228;s:1:\"b\";s:24:\"force_delete_any_project\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:228;a:4:{s:1:\"a\";i:229;s:1:\"b\";s:26:\"view_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:229;a:4:{s:1:\"a\";i:230;s:1:\"b\";s:30:\"view_any_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:230;a:4:{s:1:\"a\";i:231;s:1:\"b\";s:28:\"create_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:231;a:4:{s:1:\"a\";i:232;s:1:\"b\";s:28:\"update_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:232;a:4:{s:1:\"a\";i:233;s:1:\"b\";s:29:\"restore_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:233;a:4:{s:1:\"a\";i:234;s:1:\"b\";s:33:\"restore_any_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:234;a:4:{s:1:\"a\";i:235;s:1:\"b\";s:31:\"replicate_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:235;a:4:{s:1:\"a\";i:236;s:1:\"b\";s:29:\"reorder_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:236;a:4:{s:1:\"a\";i:237;s:1:\"b\";s:28:\"delete_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:237;a:4:{s:1:\"a\";i:238;s:1:\"b\";s:32:\"delete_any_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:238;a:4:{s:1:\"a\";i:239;s:1:\"b\";s:34:\"force_delete_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:239;a:4:{s:1:\"a\";i:240;s:1:\"b\";s:38:\"force_delete_any_project::disbursement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:240;a:4:{s:1:\"a\";i:241;s:1:\"b\";s:20:\"view_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:241;a:4:{s:1:\"a\";i:242;s:1:\"b\";s:24:\"view_any_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:242;a:4:{s:1:\"a\";i:243;s:1:\"b\";s:22:\"create_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:243;a:4:{s:1:\"a\";i:244;s:1:\"b\";s:22:\"update_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:244;a:4:{s:1:\"a\";i:245;s:1:\"b\";s:23:\"restore_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:245;a:4:{s:1:\"a\";i:246;s:1:\"b\";s:27:\"restore_any_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:246;a:4:{s:1:\"a\";i:247;s:1:\"b\";s:25:\"replicate_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:247;a:4:{s:1:\"a\";i:248;s:1:\"b\";s:23:\"reorder_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:248;a:4:{s:1:\"a\";i:249;s:1:\"b\";s:22:\"delete_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:249;a:4:{s:1:\"a\";i:250;s:1:\"b\";s:26:\"delete_any_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:250;a:4:{s:1:\"a\";i:251;s:1:\"b\";s:28:\"force_delete_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:251;a:4:{s:1:\"a\";i:252;s:1:\"b\";s:32:\"force_delete_any_project::report\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:252;a:4:{s:1:\"a\";i:253;s:1:\"b\";s:9:\"view_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:253;a:4:{s:1:\"a\";i:254;s:1:\"b\";s:13:\"view_any_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:254;a:4:{s:1:\"a\";i:255;s:1:\"b\";s:11:\"create_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:255;a:4:{s:1:\"a\";i:256;s:1:\"b\";s:11:\"update_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:256;a:4:{s:1:\"a\";i:257;s:1:\"b\";s:11:\"delete_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:257;a:4:{s:1:\"a\";i:258;s:1:\"b\";s:15:\"delete_any_role\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:258;a:4:{s:1:\"a\";i:259;s:1:\"b\";s:24:\"view_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:259;a:4:{s:1:\"a\";i:260;s:1:\"b\";s:28:\"view_any_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:260;a:4:{s:1:\"a\";i:261;s:1:\"b\";s:26:\"create_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:261;a:4:{s:1:\"a\";i:262;s:1:\"b\";s:26:\"update_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:262;a:4:{s:1:\"a\";i:263;s:1:\"b\";s:27:\"restore_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:263;a:4:{s:1:\"a\";i:264;s:1:\"b\";s:31:\"restore_any_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:264;a:4:{s:1:\"a\";i:265;s:1:\"b\";s:29:\"replicate_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:265;a:4:{s:1:\"a\";i:266;s:1:\"b\";s:27:\"reorder_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:266;a:4:{s:1:\"a\";i:267;s:1:\"b\";s:26:\"delete_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:267;a:4:{s:1:\"a\";i:268;s:1:\"b\";s:30:\"delete_any_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:268;a:4:{s:1:\"a\";i:269;s:1:\"b\";s:32:\"force_delete_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:269;a:4:{s:1:\"a\";i:270;s:1:\"b\";s:36:\"force_delete_any_specific::objective\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:270;a:4:{s:1:\"a\";i:271;s:1:\"b\";s:9:\"view_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:271;a:4:{s:1:\"a\";i:272;s:1:\"b\";s:13:\"view_any_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:272;a:4:{s:1:\"a\";i:273;s:1:\"b\";s:11:\"create_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:273;a:4:{s:1:\"a\";i:274;s:1:\"b\";s:11:\"update_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:274;a:4:{s:1:\"a\";i:275;s:1:\"b\";s:12:\"restore_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:275;a:4:{s:1:\"a\";i:276;s:1:\"b\";s:16:\"restore_any_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:276;a:4:{s:1:\"a\";i:277;s:1:\"b\";s:14:\"replicate_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:277;a:4:{s:1:\"a\";i:278;s:1:\"b\";s:12:\"reorder_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:278;a:4:{s:1:\"a\";i:279;s:1:\"b\";s:11:\"delete_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:279;a:4:{s:1:\"a\";i:280;s:1:\"b\";s:15:\"delete_any_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:280;a:4:{s:1:\"a\";i:281;s:1:\"b\";s:17:\"force_delete_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:281;a:4:{s:1:\"a\";i:282;s:1:\"b\";s:21:\"force_delete_any_user\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:282;a:4:{s:1:\"a\";i:283;s:1:\"b\";s:24:\"page_ActivityFileManager\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:283;a:4:{s:1:\"a\";i:284;s:1:\"b\";s:28:\"page_BeneficiaryRegistryView\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:284;a:3:{s:1:\"a\";i:285;s:1:\"b\";s:25:\"page_ProjectCreationGuide\";s:1:\"c\";s:3:\"web\";}i:285;a:4:{s:1:\"a\";i:286;s:1:\"b\";s:22:\"page_ProjectManagement\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:286;a:4:{s:1:\"a\";i:287;s:1:\"b\";s:18:\"page_ProjectWizard\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:287;a:4:{s:1:\"a\";i:288;s:1:\"b\";s:28:\"page_DataPublicationApproval\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:288;a:4:{s:1:\"a\";i:289;s:1:\"b\";s:25:\"page_ActivityCalendarView\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:289;a:4:{s:1:\"a\";i:290;s:1:\"b\";s:21:\"page_ProjectGanttView\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:2:{i:0;i:1;i:1;i:2;}}i:290;a:4:{s:1:\"a\";i:291;s:1:\"b\";s:28:\"widget_ActivityCalendarCount\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:291;a:4:{s:1:\"a\";i:292;s:1:\"b\";s:21:\"widget_DashboardStats\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:292;a:4:{s:1:\"a\";i:293;s:1:\"b\";s:19:\"widget_ProjectCount\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:293;a:4:{s:1:\"a\";i:294;s:1:\"b\";s:21:\"widget_RecentProjects\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}i:294;a:4:{s:1:\"a\";i:295;s:1:\"b\";s:23:\"widget_ActivityOverview\";s:1:\"c\";s:3:\"web\";s:1:\"r\";a:1:{i:0;i:1;}}}s:5:\"roles\";a:2:{i:0;a:3:{s:1:\"a\";i:1;s:1:\"b\";s:11:\"super_admin\";s:1:\"c\";s:3:\"web\";}i:1;a:3:{s:1:\"a\";i:2;s:1:\"b\";s:10:\"capturista\";s:1:\"c\";s:3:\"web\";}}}', 1754419023);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `cache_locks`
+-- Table structure for table `cache_locks`
 --
 
 CREATE TABLE `cache_locks` (
-  `key` varchar(255) NOT NULL,
-  `owner` varchar(255) NOT NULL,
-  `expiration` int(11) NOT NULL
+  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `owner` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiration` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `components`
+-- Table structure for table `components`
 --
 
 CREATE TABLE `components` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `action_lines_id` bigint(20) UNSIGNED NOT NULL,
-  `action_lines_program_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `action_lines_id` bigint UNSIGNED NOT NULL,
+  `action_lines_program_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `components`
+-- Dumping data for table `components`
 --
 
 INSERT INTO `components` (`id`, `name`, `action_lines_id`, `action_lines_program_id`, `created_at`, `updated_at`) VALUES
@@ -589,17 +630,17 @@ INSERT INTO `components` (`id`, `name`, `action_lines_id`, `action_lines_program
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `data_publications`
+-- Table structure for table `data_publications`
 --
 
 CREATE TABLE `data_publications` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `publication_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `published_by` bigint(20) UNSIGNED NOT NULL,
-  `publication_notes` text DEFAULT NULL,
-  `metrics_count` int(11) NOT NULL DEFAULT 0,
-  `projects_count` int(11) NOT NULL DEFAULT 0,
-  `activities_count` int(11) NOT NULL DEFAULT 0,
+  `id` bigint UNSIGNED NOT NULL,
+  `publication_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `published_by` bigint UNSIGNED NOT NULL,
+  `publication_notes` text COLLATE utf8mb4_unicode_ci,
+  `metrics_count` int NOT NULL DEFAULT '0',
+  `projects_count` int NOT NULL DEFAULT '0',
+  `activities_count` int NOT NULL DEFAULT '0',
   `period_from` date DEFAULT NULL,
   `period_to` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -607,34 +648,34 @@ CREATE TABLE `data_publications` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `failed_jobs`
+-- Table structure for table `failed_jobs`
 --
 
 CREATE TABLE `failed_jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `uuid` varchar(255) NOT NULL,
-  `connection` text NOT NULL,
-  `queue` text NOT NULL,
-  `payload` longtext NOT NULL,
-  `exception` longtext NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` bigint UNSIGNED NOT NULL,
+  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `financiers`
+-- Table structure for table `financiers`
 --
 
 CREATE TABLE `financiers` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(500) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `financiers`
+-- Dumping data for table `financiers`
 --
 
 INSERT INTO `financiers` (`id`, `name`, `created_at`, `updated_at`) VALUES
@@ -644,24 +685,24 @@ INSERT INTO `financiers` (`id`, `name`, `created_at`, `updated_at`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `goals`
+-- Table structure for table `goals`
 --
 
 CREATE TABLE `goals` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `project_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `description` text DEFAULT NULL,
-  `number` int(11) DEFAULT NULL,
-  `components_id` bigint(20) UNSIGNED NOT NULL,
-  `components_action_lines_id` bigint(20) UNSIGNED NOT NULL,
-  `components_action_lines_program_id` bigint(20) UNSIGNED NOT NULL,
-  `organizations_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `project_id` bigint UNSIGNED DEFAULT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `number` int DEFAULT NULL,
+  `components_id` bigint UNSIGNED NOT NULL,
+  `components_action_lines_id` bigint UNSIGNED NOT NULL,
+  `components_action_lines_program_id` bigint UNSIGNED NOT NULL,
+  `organizations_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `goals`
+-- Dumping data for table `goals`
 --
 
 INSERT INTO `goals` (`id`, `project_id`, `description`, `number`, `components_id`, `components_action_lines_id`, `components_action_lines_program_id`, `organizations_id`, `created_at`, `updated_at`) VALUES
@@ -687,58 +728,70 @@ INSERT INTO `goals` (`id`, `project_id`, `description`, `number`, `components_id
 (66, 1, '3.1.10 Llevar a cabo 3 actividades comunitarias de intercambio de plantas y productos del huerto en Riberas del Bravo en 10/2025.', NULL, 35, 32, 12, 1, '2025-07-25 18:39:40', '2025-07-25 18:39:40'),
 (67, 1, '3.1.11 Llevar a cabo 3 actividades de rendimiento y preparación invernal del suelo de huertos urbanos, en Riberas del Bravo en 11/2025.', NULL, 35, 32, 12, 1, '2025-07-25 18:39:40', '2025-07-25 18:39:40'),
 (68, 1, '3.1.12 Llevar a cabo 2 talleres de cuidados invernales de huertos urbanos y plantas caseras en Riberas del Bravo en 12/2025.', NULL, 35, 32, 12, 1, '2025-07-25 18:39:40', '2025-07-25 18:39:40'),
-(69, 1, '3.2 Lograr la participación de al menos 220 personas en actividades relacionadas con los huertos urbanos entre enero y diciembre de 2025.', NULL, 35, 32, 12, 1, '2025-07-25 18:39:40', '2025-07-25 18:39:40');
+(69, 1, '3.2 Lograr la participación de al menos 220 personas en actividades relacionadas con los huertos urbanos entre enero y diciembre de 2025.', NULL, 35, 32, 12, 1, '2025-07-25 18:39:40', '2025-07-25 18:39:40'),
+(70, 3, 'afddsfdsfsd', NULL, 1, 1, 1, 5, '2025-08-01 22:28:21', '2025-08-01 22:28:21');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `jobs`
+-- Table structure for table `jobs`
 --
 
 CREATE TABLE `jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `queue` varchar(255) NOT NULL,
-  `payload` longtext NOT NULL,
-  `attempts` tinyint(3) UNSIGNED NOT NULL,
-  `reserved_at` int(10) UNSIGNED DEFAULT NULL,
-  `available_at` int(10) UNSIGNED NOT NULL,
-  `created_at` int(10) UNSIGNED NOT NULL
+  `id` bigint UNSIGNED NOT NULL,
+  `queue` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `attempts` tinyint UNSIGNED NOT NULL,
+  `reserved_at` int UNSIGNED DEFAULT NULL,
+  `available_at` int UNSIGNED NOT NULL,
+  `created_at` int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `jobs`
+--
+
+INSERT INTO `jobs` (`id`, `queue`, `payload`, `attempts`, `reserved_at`, `available_at`, `created_at`) VALUES
+(1, 'default', '{\"uuid\":\"481c9048-a371-4f5d-ae83-286e3d5e1d23\",\"displayName\":\"Filament\\\\Notifications\\\\Auth\\\\ResetPassword\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Notifications\\\\SendQueuedNotifications\",\"command\":\"O:48:\\\"Illuminate\\\\Notifications\\\\SendQueuedNotifications\\\":3:{s:11:\\\"notifiables\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";a:1:{i:0;i:7;}s:9:\\\"relations\\\";a:1:{i:0;s:5:\\\"roles\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:12:\\\"notification\\\";O:41:\\\"Filament\\\\Notifications\\\\Auth\\\\ResetPassword\\\":3:{s:3:\\\"url\\\";s:225:\\\"http:\\/\\/127.0.0.1:8000\\/usuario\\/password-reset\\/reset?email=dagargon89%40gmail.com&token=7bb35d0815ea6cad7a5bde6fe7ebcb0655538333123a8054b88d9a3ead133d42&signature=35a8ba0b51b3bf0eef97d6b2ef6226481afe0c8a74b73807104f952a7160f40c\\\";s:5:\\\"token\\\";s:64:\\\"7bb35d0815ea6cad7a5bde6fe7ebcb0655538333123a8054b88d9a3ead133d42\\\";s:2:\\\"id\\\";s:36:\\\"658caaa4-f3c5-435c-a88d-1166d8010436\\\";}s:8:\\\"channels\\\";a:1:{i:0;s:4:\\\"mail\\\";}}\"},\"createdAt\":1753809145,\"delay\":null}', 0, NULL, 1753809145, 1753809145),
+(2, 'default', '{\"uuid\":\"d005285c-8acb-4514-91ee-826be893c4b2\",\"displayName\":\"Filament\\\\Notifications\\\\Auth\\\\ResetPassword\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Notifications\\\\SendQueuedNotifications\",\"command\":\"O:48:\\\"Illuminate\\\\Notifications\\\\SendQueuedNotifications\\\":3:{s:11:\\\"notifiables\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";a:1:{i:0;i:7;}s:9:\\\"relations\\\";a:1:{i:0;s:5:\\\"roles\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:12:\\\"notification\\\";O:41:\\\"Filament\\\\Notifications\\\\Auth\\\\ResetPassword\\\":3:{s:3:\\\"url\\\";s:225:\\\"http:\\/\\/127.0.0.1:8000\\/usuario\\/password-reset\\/reset?email=dagargon89%40gmail.com&token=380e61fbb06d83d30c30be6a47c5176b59dc64bc8b62172cb59ffb738020fe6b&signature=2de3ce744e2a536fd32ffae0d87af56f337515b6c02e342ff3ad17841ec80439\\\";s:5:\\\"token\\\";s:64:\\\"380e61fbb06d83d30c30be6a47c5176b59dc64bc8b62172cb59ffb738020fe6b\\\";s:2:\\\"id\\\";s:36:\\\"66b54150-4c67-4d9c-8410-d9cbb1211044\\\";}s:8:\\\"channels\\\";a:1:{i:0;s:4:\\\"mail\\\";}}\"},\"createdAt\":1753810138,\"delay\":null}', 0, NULL, 1753810138, 1753810138),
+(3, 'default', '{\"uuid\":\"94eb9888-9a25-4b03-934e-e3127321d3fd\",\"displayName\":\"Filament\\\\Notifications\\\\Auth\\\\ResetPassword\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Notifications\\\\SendQueuedNotifications\",\"command\":\"O:48:\\\"Illuminate\\\\Notifications\\\\SendQueuedNotifications\\\":3:{s:11:\\\"notifiables\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";a:1:{i:0;i:7;}s:9:\\\"relations\\\";a:1:{i:0;s:5:\\\"roles\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:12:\\\"notification\\\";O:41:\\\"Filament\\\\Notifications\\\\Auth\\\\ResetPassword\\\":3:{s:3:\\\"url\\\";s:225:\\\"http:\\/\\/127.0.0.1:8000\\/usuario\\/password-reset\\/reset?email=dagargon89%40gmail.com&token=286c80d827a448b15aa11c8214439a310a9bf22e6bee086d681ccf58c5929308&signature=1af2e596a61d11ec3b1b40389859ab349312ff2da431279f03a26d8a5672cd0f\\\";s:5:\\\"token\\\";s:64:\\\"286c80d827a448b15aa11c8214439a310a9bf22e6bee086d681ccf58c5929308\\\";s:2:\\\"id\\\";s:36:\\\"8fb37858-3100-471e-b83e-d9d7fcfb6a5d\\\";}s:8:\\\"channels\\\";a:1:{i:0;s:4:\\\"mail\\\";}}\"},\"createdAt\":1753810771,\"delay\":null}', 0, NULL, 1753810771, 1753810771),
+(4, 'default', '{\"uuid\":\"09bcc106-4c74-4896-a435-02ccf2139c72\",\"displayName\":\"Filament\\\\Notifications\\\\Auth\\\\ResetPassword\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Notifications\\\\SendQueuedNotifications\",\"command\":\"O:48:\\\"Illuminate\\\\Notifications\\\\SendQueuedNotifications\\\":3:{s:11:\\\"notifiables\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";a:1:{i:0;i:7;}s:9:\\\"relations\\\";a:1:{i:0;s:5:\\\"roles\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:12:\\\"notification\\\";O:41:\\\"Filament\\\\Notifications\\\\Auth\\\\ResetPassword\\\":3:{s:3:\\\"url\\\";s:225:\\\"http:\\/\\/127.0.0.1:8000\\/usuario\\/password-reset\\/reset?email=dagargon89%40gmail.com&token=791bb8810e5660437acde129ca6a72da0cb3272ee1d38d0ac0bb88e52a063b5f&signature=0591824e64d39593452af46065ff1b6dec9a1d4b2e747cf7afa85b35b25408d2\\\";s:5:\\\"token\\\";s:64:\\\"791bb8810e5660437acde129ca6a72da0cb3272ee1d38d0ac0bb88e52a063b5f\\\";s:2:\\\"id\\\";s:36:\\\"72660f10-4182-4213-afa0-7fd143d60f20\\\";}s:8:\\\"channels\\\";a:1:{i:0;s:4:\\\"mail\\\";}}\"},\"createdAt\":1753811829,\"delay\":null}', 0, NULL, 1753811829, 1753811829),
+(5, 'default', '{\"uuid\":\"626dea65-71e2-431c-be62-f63b4b3a1484\",\"displayName\":\"Filament\\\\Notifications\\\\Auth\\\\ResetPassword\",\"job\":\"Illuminate\\\\Queue\\\\CallQueuedHandler@call\",\"maxTries\":null,\"maxExceptions\":null,\"failOnTimeout\":false,\"backoff\":null,\"timeout\":null,\"retryUntil\":null,\"data\":{\"commandName\":\"Illuminate\\\\Notifications\\\\SendQueuedNotifications\",\"command\":\"O:48:\\\"Illuminate\\\\Notifications\\\\SendQueuedNotifications\\\":3:{s:11:\\\"notifiables\\\";O:45:\\\"Illuminate\\\\Contracts\\\\Database\\\\ModelIdentifier\\\":5:{s:5:\\\"class\\\";s:15:\\\"App\\\\Models\\\\User\\\";s:2:\\\"id\\\";a:1:{i:0;i:7;}s:9:\\\"relations\\\";a:1:{i:0;s:5:\\\"roles\\\";}s:10:\\\"connection\\\";s:5:\\\"mysql\\\";s:15:\\\"collectionClass\\\";N;}s:12:\\\"notification\\\";O:41:\\\"Filament\\\\Notifications\\\\Auth\\\\ResetPassword\\\":3:{s:3:\\\"url\\\";s:225:\\\"http:\\/\\/127.0.0.1:8000\\/usuario\\/password-reset\\/reset?email=dagargon89%40gmail.com&token=024f089e5e827aacb64bc67a6c658bcaefb7f42d7b58702870b8c0f958170d8e&signature=7c280154c8c385a76c3ac176d0779d10544908d7b21d492f3cbc7622e58cf801\\\";s:5:\\\"token\\\";s:64:\\\"024f089e5e827aacb64bc67a6c658bcaefb7f42d7b58702870b8c0f958170d8e\\\";s:2:\\\"id\\\";s:36:\\\"97cba4e2-d482-45b9-b51f-14d305fedbce\\\";}s:8:\\\"channels\\\";a:1:{i:0;s:4:\\\"mail\\\";}}\"},\"createdAt\":1753812896,\"delay\":null}', 0, NULL, 1753812896, 1753812896);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `job_batches`
+-- Table structure for table `job_batches`
 --
 
 CREATE TABLE `job_batches` (
-  `id` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `total_jobs` int(11) NOT NULL,
-  `pending_jobs` int(11) NOT NULL,
-  `failed_jobs` int(11) NOT NULL,
-  `failed_job_ids` longtext NOT NULL,
-  `options` mediumtext DEFAULT NULL,
-  `cancelled_at` int(11) DEFAULT NULL,
-  `created_at` int(11) NOT NULL,
-  `finished_at` int(11) DEFAULT NULL
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `total_jobs` int NOT NULL,
+  `pending_jobs` int NOT NULL,
+  `failed_jobs` int NOT NULL,
+  `failed_job_ids` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `options` mediumtext COLLATE utf8mb4_unicode_ci,
+  `cancelled_at` int DEFAULT NULL,
+  `created_at` int NOT NULL,
+  `finished_at` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `kpis`
+-- Table structure for table `kpis`
 --
 
 CREATE TABLE `kpis` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(50) DEFAULT NULL,
-  `description` text DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
   `initial_value` decimal(10,2) DEFAULT NULL,
   `final_value` decimal(10,2) DEFAULT NULL,
-  `projects_id` bigint(20) UNSIGNED NOT NULL,
+  `projects_id` bigint UNSIGNED NOT NULL,
   `is_percentage` tinyint(1) DEFAULT NULL,
-  `org_area` varchar(100) DEFAULT NULL,
+  `org_area` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -746,26 +799,26 @@ CREATE TABLE `kpis` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `locations`
+-- Table structure for table `locations`
 --
 
 CREATE TABLE `locations` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(150) NOT NULL,
-  `category` varchar(50) DEFAULT NULL,
-  `street` text DEFAULT NULL,
-  `neighborhood` varchar(100) DEFAULT NULL,
-  `ext_number` varchar(50) DEFAULT NULL,
-  `int_number` varchar(50) DEFAULT NULL,
-  `google_place_id` varchar(500) DEFAULT NULL,
-  `polygons_id` bigint(20) UNSIGNED NOT NULL,
-  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `category` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `street` text COLLATE utf8mb4_unicode_ci,
+  `neighborhood` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ext_number` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `int_number` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `google_place_id` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `polygons_id` bigint UNSIGNED NOT NULL,
+  `created_by` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `locations`
+-- Dumping data for table `locations`
 --
 
 INSERT INTO `locations` (`id`, `name`, `category`, `street`, `neighborhood`, `ext_number`, `int_number`, `google_place_id`, `polygons_id`, `created_by`, `created_at`, `updated_at`) VALUES
@@ -781,17 +834,17 @@ INSERT INTO `locations` (`id`, `name`, `category`, `street`, `neighborhood`, `ex
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `migrations`
+-- Table structure for table `migrations`
 --
 
 CREATE TABLE `migrations` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `migration` varchar(255) NOT NULL,
-  `batch` int(11) NOT NULL
+  `id` int UNSIGNED NOT NULL,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `migrations`
+-- Dumping data for table `migrations`
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
@@ -854,56 +907,61 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (57, '2024_07_22_000001_create_project_goal_table', 4),
 (58, '2025_07_23_182939_update_activity_calendars_table', 5),
 (59, '2025_07_23_182943_remove_activity_progress_log_id_from_tables', 5),
-(60, '2025_07_23_200000_add_project_id_to_goals', 5);
+(60, '2025_07_23_200000_add_project_id_to_goals', 5),
+(63, '2025_07_22_175947_alter_longtext_fields_in_projects_table', 6),
+(64, '2025_07_28_200513_add_address_fields_to_beneficiaries_table', 6);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `model_has_permissions`
+-- Table structure for table `model_has_permissions`
 --
 
 CREATE TABLE `model_has_permissions` (
-  `permission_id` bigint(20) UNSIGNED NOT NULL,
-  `model_type` varchar(255) NOT NULL,
-  `model_id` bigint(20) UNSIGNED NOT NULL
+  `permission_id` bigint UNSIGNED NOT NULL,
+  `model_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model_id` bigint UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `model_has_roles`
+-- Table structure for table `model_has_roles`
 --
 
 CREATE TABLE `model_has_roles` (
-  `role_id` bigint(20) UNSIGNED NOT NULL,
-  `model_type` varchar(255) NOT NULL,
-  `model_id` bigint(20) UNSIGNED NOT NULL
+  `role_id` bigint UNSIGNED NOT NULL,
+  `model_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model_id` bigint UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `model_has_roles`
+-- Dumping data for table `model_has_roles`
 --
 
 INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
 (1, 'App\\Models\\User', 1),
+(2, 'App\\Models\\User', 1),
+(2, 'App\\Models\\User', 2),
 (1, 'App\\Models\\User', 3),
-(1, 'App\\Models\\User', 4);
+(1, 'App\\Models\\User', 4),
+(2, 'App\\Models\\User', 7);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `organizations`
+-- Table structure for table `organizations`
 --
 
 CREATE TABLE `organizations` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(500) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `organizations`
+-- Dumping data for table `organizations`
 --
 
 INSERT INTO `organizations` (`id`, `name`, `created_at`, `updated_at`) VALUES
@@ -918,31 +976,38 @@ INSERT INTO `organizations` (`id`, `name`, `created_at`, `updated_at`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `password_reset_tokens`
+-- Table structure for table `password_reset_tokens`
 --
 
 CREATE TABLE `password_reset_tokens` (
-  `email` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `password_reset_tokens`
+--
+
+INSERT INTO `password_reset_tokens` (`email`, `token`, `created_at`) VALUES
+('dagargon89@gmail.com', '$2y$12$NZwmNFuek3PBeMqGYHuPxONx5RHAq5JdWUgg8qbn1uHRqQU9o00Xi', '2025-07-30 00:14:56');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `permissions`
+-- Table structure for table `permissions`
 --
 
 CREATE TABLE `permissions` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `guard_name` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `guard_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `permissions`
+-- Dumping data for table `permissions`
 --
 
 INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
@@ -1233,44 +1298,81 @@ INSERT INTO `permissions` (`id`, `name`, `guard_name`, `created_at`, `updated_at
 (285, 'page_ProjectCreationGuide', 'web', '2025-07-21 16:39:05', '2025-07-21 16:39:05'),
 (286, 'page_ProjectManagement', 'web', '2025-07-23 03:06:25', '2025-07-23 03:06:25'),
 (287, 'page_ProjectWizard', 'web', '2025-07-23 03:06:25', '2025-07-23 03:06:25'),
-(288, 'page_DataPublicationApproval', 'web', '2025-07-23 03:06:25', '2025-07-23 03:06:25');
+(288, 'page_DataPublicationApproval', 'web', '2025-07-23 03:06:25', '2025-07-23 03:06:25'),
+(289, 'page_ActivityCalendarView', 'web', '2025-07-29 02:00:21', '2025-07-29 02:00:21'),
+(290, 'page_ProjectGanttView', 'web', '2025-07-29 02:00:21', '2025-07-29 02:00:21'),
+(291, 'widget_ActivityCalendarCount', 'web', '2025-07-29 02:00:21', '2025-07-29 02:00:21'),
+(292, 'widget_DashboardStats', 'web', '2025-07-29 02:00:21', '2025-07-29 02:00:21'),
+(293, 'widget_ProjectCount', 'web', '2025-07-29 02:00:21', '2025-07-29 02:00:21'),
+(294, 'widget_RecentProjects', 'web', '2025-07-29 02:00:21', '2025-07-29 02:00:21'),
+(295, 'widget_ActivityOverview', 'web', '2025-07-29 02:00:21', '2025-07-29 02:00:21');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `planned_metrics`
+-- Table structure for table `planned_metrics`
 --
 
 CREATE TABLE `planned_metrics` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `activity_id` bigint(20) UNSIGNED NOT NULL,
-  `unit` varchar(100) DEFAULT NULL,
-  `year` int(11) DEFAULT NULL,
-  `month` int(11) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `activity_id` bigint UNSIGNED NOT NULL,
+  `unit` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `year` int DEFAULT NULL,
+  `month` int DEFAULT NULL,
   `population_target_value` decimal(10,2) DEFAULT NULL,
-  `population_real_value` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `population_real_value` decimal(10,2) NOT NULL DEFAULT '0.00',
   `product_target_value` decimal(10,2) DEFAULT NULL,
   `product_real_value` decimal(10,2) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `planned_metrics`
+--
+
+INSERT INTO `planned_metrics` (`id`, `activity_id`, `unit`, `year`, `month`, `population_target_value`, `population_real_value`, `product_target_value`, `product_real_value`, `created_at`, `updated_at`) VALUES
+(1, 47, NULL, NULL, NULL, 10.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-08-01 21:52:56'),
+(2, 48, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(3, 49, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(4, 50, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(5, 51, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(6, 52, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(7, 53, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(8, 54, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(9, 55, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(10, 56, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(11, 57, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(12, 58, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(13, 59, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(14, 60, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(15, 61, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(16, 62, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(17, 63, NULL, NULL, NULL, 10.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-08-01 21:51:32'),
+(18, 64, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(19, 65, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(20, 66, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(21, 67, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(22, 68, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(23, 69, NULL, NULL, NULL, 0.00, 0.00, 0.00, NULL, '2025-07-30 02:39:18', '2025-07-30 02:39:18'),
+(24, 70, NULL, NULL, NULL, 1000.00, 0.00, 12345.00, NULL, '2025-08-01 22:28:21', '2025-08-01 22:28:21');
+
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `polygons`
+-- Table structure for table `polygons`
 --
 
 CREATE TABLE `polygons` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `description` text DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `polygons`
+-- Dumping data for table `polygons`
 --
 
 INSERT INTO `polygons` (`id`, `name`, `description`, `created_at`, `updated_at`) VALUES
@@ -1289,19 +1391,19 @@ INSERT INTO `polygons` (`id`, `name`, `description`, `created_at`, `updated_at`)
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `programs`
+-- Table structure for table `programs`
 --
 
 CREATE TABLE `programs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `axes_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(500) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `axes_id` bigint UNSIGNED NOT NULL,
+  `name` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `programs`
+-- Dumping data for table `programs`
 --
 
 INSERT INTO `programs` (`id`, `axes_id`, `name`, `created_at`, `updated_at`) VALUES
@@ -1343,17 +1445,17 @@ INSERT INTO `programs` (`id`, `axes_id`, `name`, `created_at`, `updated_at`) VAL
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `program_indicators`
+-- Table structure for table `program_indicators`
 --
 
 CREATE TABLE `program_indicators` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(45) DEFAULT NULL,
-  `description` text DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
   `initial_value` decimal(10,2) DEFAULT NULL,
   `final_value` decimal(10,2) DEFAULT NULL,
-  `program_id` bigint(20) UNSIGNED NOT NULL,
-  `program_axes_id` bigint(20) UNSIGNED NOT NULL,
+  `program_id` bigint UNSIGNED NOT NULL,
+  `program_axes_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1361,56 +1463,57 @@ CREATE TABLE `program_indicators` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `projects`
+-- Table structure for table `projects`
 --
 
 CREATE TABLE `projects` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(500) NOT NULL,
-  `background` longtext DEFAULT NULL,
-  `justification` longtext DEFAULT NULL,
-  `general_objective` longtext DEFAULT NULL,
-  `financiers_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `background` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `justification` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `general_objective` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `financiers_id` bigint UNSIGNED NOT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `total_cost` double DEFAULT NULL,
   `funded_amount` double DEFAULT NULL,
   `cofunding_amount` double DEFAULT NULL,
   `monthly_disbursement` double DEFAULT NULL,
-  `followup_officer` text DEFAULT NULL,
-  `agreement_file` text DEFAULT NULL,
-  `project_base_file` text DEFAULT NULL,
-  `co_financier_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `followup_officer` text COLLATE utf8mb4_unicode_ci,
+  `agreement_file` text COLLATE utf8mb4_unicode_ci,
+  `project_base_file` text COLLATE utf8mb4_unicode_ci,
+  `co_financier_id` bigint UNSIGNED DEFAULT NULL,
+  `created_by` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `projects`
+-- Dumping data for table `projects`
 --
 
 INSERT INTO `projects` (`id`, `name`, `background`, `justification`, `general_objective`, `financiers_id`, `start_date`, `end_date`, `total_cost`, `funded_amount`, `cofunding_amount`, `monthly_disbursement`, `followup_officer`, `agreement_file`, `project_base_file`, `co_financier_id`, `created_by`, `created_at`, `updated_at`) VALUES
-(1, 'La mejora de espacios públicos y la activación socioambiental en el suroriente de Ciudad Juárez, Chihuahua, 2024-2025', 'La población de Riberas del Bravo representa el 3% de la población total de Ciudad Juárez, mayoritariamente es joven, principalmente en una edad de 18 a 24 años en ambos sexos, como se muestra en la Gráfica 1 cuyos datos coinciden con la base de INEGI (2020). Asimismo, en dicha gráfica presenta en el rango de edad de 25 a 39 años en el sexo femenino que son mayoría, mientras que en los demás rangos predomina el sexo masculino, incluso en general se tiene mayor porcentaje de este sexo, con un 50.6%.\nCon respecto a la ocupación de la población, INEGI (2020) exterioriza que el 55% de su población es económicamente activa a diferencia del 52% que existe en Juárez. \nEn Riberas del Bravo, 33% es operador seguido de un 20.7% que se dedican al hogar, un 17.1% son estudiantes, un 16.2% son empleados, Se tiene un porcentaje menor que tienen otro tipo de ocupación como es ser comerciantes, se encuentran jubilados, no tienen alguna ocupación, entre otros (para más detalle de las otras ocupaciones ver documento de gráficas).\nEl 9% de las familias encuestadas algún miembro del hogar tiene alguna discapacidad, referida principalmente de tipo motriz. INEGI indica que el 4.2% de las personas tienen alguna discapacidad y un 11.4% de la población tiene limitación.\nINEGI (2020) señala que en Riberas del Bravo sólo el 4% es analfabeta: donde el 1.4% de la población de 15 años y más es analfabeta, para la ciudad es de una diferencia de 0.1%; es decir es de 1.3%; y el 2.6% de la población de 8 a 14 años no sabe leer y escribir, mismo porcentaje se presenta a nivel municipal. Asimismo, indica que el nivel de escolaridad de Riberas del Bravo es de 9 años, mismo que se tiene en Ciudad Juárez, además es el mismo dato que se reflejan en los resultados de la encuesta, donde el 42.1% tiene como último grado de estudios la secundaria, seguido de un 27.6% que tiene la primaria; es decir, un 69.7% de la población tiene nivel básico, mientras que un 18% preparatoria y solamente el 4.2% tienen alguna profesión.\nUn elemento considerado en la encuesta para conocer la cohesión social de la comunidad se encuentra relacionado con la existencia de una vinculación con diferentes actores: gobierno, organización religiosa y asociación civil. La Gráfica 1 expresa si estos actores han trabajado en algún programa o proyecto en la colonia, en los tres casos el mayor porcentaje se encuentra como respuesta que No, solamente el 22% de los encuestados identificó que el gobierno ha realizado estas acciones, el 4.8% que han sido organizaciones religiosas y un 2% alguna organización de la sociedad civil. \nLa población encuestada reconoció que, por parte del gobierno, las dependencias que han trabajado son del gobierno del Estado, el Municipio, SEDESOL la academia de policía y el Centro comunitario. Para el caso de las organizaciones religiosas reconocieron que han sido cristianas, católicas, y pentecostés, mientras que en el caso de las organizaciones identificaron como los comités de vecinos, Red de mujeres, pueblos indígenas, universidad y un solo caso a la FECHAC.\nDe la población que identificó que han trabajado estos actores en Riberas del Bravo, solamente el 5.4% participó en las acciones realizadas por el gobierno, el 2% lo hizo con las organizaciones religiosas y el 1.8% ha participado en las organizaciones de la sociedad civil. \nOtro elemento considerado en la cohesión social se encuentra en la descripción de la relación con los vecinos. En la Gráfica 2 se indica que en todas las etapas existe buena relación, incluso en las etapas a excepción de la I, existen casos donde la relación es excelente. Por otro lado, existen con un porcentaje inferior de casos que la relación es mala como son en las etapas II, IV, V, VI, y VIII y solamente en la etapa VIII se refleja que la relación es muy mala, con un 0.8%.\nLos parques del fraccionamiento Riberas del Bravo distribuidos en todas las etapas, son espacios que son considerados áreas recreativas. El 31.5% de la población ocupa estas áreas y lo hacen para realizar actividades como caminar, jugar, como forma de distracción para los menores o para realizar algún deporte.\nSobre los comercios de la zona; no existe un supermercado dentro del fraccionamiento, el más cercano se ubica en la avenida Juárez Porvenir, mientras que existen 17 tiendas de auto servicio. INEGI (2020) señala de las unidades económicas que existen en Riberas del Bravo, el 54% corresponden al comercio al por menor, un 22% son de otros servicios y el 10% servicios de alojamiento temporal y de preparación de alimentos y bebidas.\nEn Riberas del Bravo se encuentran como activos de cohesión social dos centros comunitarios: centro comunitario Municipal Riveras del Bravo etapa 8 y el centro comunitario Estatal etapa 3, donde se dan servicios como talleres de habilidades, deportivos, apoyo psicológico, secundaria y preparatoria abierta. En donde se tiene alianzas con organizaciones para realizar estas actividades, las cuales son EMMA, CAPA, SEDEX, MUSPAC, ICHEA y Programa Desafío.', 'Considerando el abandono histórico de que han sido sujetos los espacios públicos de Ciudad Juárez, y su impacto en la conversión de estos, en espacios altamente deteriorados, contaminados que incluso  dificultan la convivencia y niegan el derecho a un ambiente sano y al goce pleno de la ciudad, la intervención de Juárez Limpio A.C. colocará el énfasis de sus acciones en trabajar codo a codo con la comunidad para reconectarse con el ecosistema, identificar los riesgos que se asocian con la contaminación ambiental y poner acciones en marcha para mejorar sus espacios públicos, y regenerar con ello, el sentido de pertenencia y el tejido social. \nLa intervención va de la mano con el Modelo Integral de Desarrollo Social (MIDAS). Juárez Limpio A.C. se unirá a la intervención con los objetivos postulados en posteriores apartados a través de sus programas ambientales A Reforestar Juárez, Pasaporte Ambiental y Educación Ambiental a través de huertos urbanos.\nA Reforestar Juárez es un programa que recurre a la forestación urbana como herramienta para promover la cohesión social. Se comenzará a trabajar con las comunidades ya establecidas previamente en el MIDAS, se levantará una pequeña encuesta relacionada a las prácticas ambientales de las personas asistentes y se llevarán a cabo grupos focales para detectar áreas de oportunidad para forestar o mantener áreas forestadas. Luego, se prepararán los sitios con limpiezas, acolchado, sistemas de riego y talleres técnicos. Se realizarán las forestaciones con especies adaptadas a la zona. Posteriormente se dará seguimiento a los sitios y comunidades forestadas\nEl Pasaporte Ambiental (PA) es un programa que nace de la necesidad de la comunidad juarense de llevar a cabo actividades individuales de cuidado del ambiente. Este consiste en una aplicación móvil donde las personas se podrán inscribir, registrar sus actividades en favor del ambiente y observar las demás que se hacen en otras partes de la ciudad. Esto promoverá la participación ciudadana en temas ambientales. Previo al registro de personas en la aplicación móvil, se promoverán talleres de cuidado del ambiente como reforzamiento del aprendizaje significativo.\nLos huertos urbanos resultan alternativas relevantes para naturar espacios en las grandes urbes y como herramientas de educación ambiental e instrumentos de inclusión social, que inciden en la disminución de los índices delictivos, contribuyen a la soberanía alimentaria, enriquecen la creatividad, reducen la huella ecológica, apoyan las economías locales y generan una consciencia profunda sobre la producción de los alimentos disminuyendo su desperdicio.\nLos huertos comunitarios estimulan la cohesión social, la construcción y fortalecimiento de lazos comunitarios, contribuyen con la proliferación de biodiversidad, la salud de suelo y el aire, la mitigación del cambio climático, e incluso funcionan como actividades terapéutico– relajantes.\nEste proyecto busca contribuir a los objetivos de desarrollo sostenible 3,11 y 13 a través de la disminución de materiales tóxicos al alcance de las personas, contribuyendo a la mejora de los espacios públicos y fortaleciendo la capacidad de adaptación de los riesgos relacionados con el clima. ', 'Promover la participación de la comunidad habitante de Riberas del Bravo en actividades de activación para la solución de problemas ambientales, fortalecer la cohesión social a través de acciones en pro de la activación de los espacios públicos.', 1, '2024-11-04', '2025-12-31', 1297959.21, 864478.64, 433480.57, 0, 'Ana Luisa Sáenz', NULL, NULL, 2, 3, '2025-07-21 20:37:11', '2025-07-24 16:06:03');
+(1, 'La mejora de espacios públicos y la activación socioambiental en el suroriente de Ciudad Juárez, Chihuahua, 2024-2025', 'La población de Riberas del Bravo representa el 3% de la población total de Ciudad Juárez, mayoritariamente es joven, principalmente en una edad de 18 a 24 años en ambos sexos, como se muestra en la Gráfica 1 cuyos datos coinciden con la base de INEGI (2020). Asimismo, en dicha gráfica presenta en el rango de edad de 25 a 39 años en el sexo femenino que son mayoría, mientras que en los demás rangos predomina el sexo masculino, incluso en general se tiene mayor porcentaje de este sexo, con un 50.6%.\nCon respecto a la ocupación de la población, INEGI (2020) exterioriza que el 55% de su población es económicamente activa a diferencia del 52% que existe en Juárez. \nEn Riberas del Bravo, 33% es operador seguido de un 20.7% que se dedican al hogar, un 17.1% son estudiantes, un 16.2% son empleados, Se tiene un porcentaje menor que tienen otro tipo de ocupación como es ser comerciantes, se encuentran jubilados, no tienen alguna ocupación, entre otros (para más detalle de las otras ocupaciones ver documento de gráficas).\nEl 9% de las familias encuestadas algún miembro del hogar tiene alguna discapacidad, referida principalmente de tipo motriz. INEGI indica que el 4.2% de las personas tienen alguna discapacidad y un 11.4% de la población tiene limitación.\nINEGI (2020) señala que en Riberas del Bravo sólo el 4% es analfabeta: donde el 1.4% de la población de 15 años y más es analfabeta, para la ciudad es de una diferencia de 0.1%; es decir es de 1.3%; y el 2.6% de la población de 8 a 14 años no sabe leer y escribir, mismo porcentaje se presenta a nivel municipal. Asimismo, indica que el nivel de escolaridad de Riberas del Bravo es de 9 años, mismo que se tiene en Ciudad Juárez, además es el mismo dato que se reflejan en los resultados de la encuesta, donde el 42.1% tiene como último grado de estudios la secundaria, seguido de un 27.6% que tiene la primaria; es decir, un 69.7% de la población tiene nivel básico, mientras que un 18% preparatoria y solamente el 4.2% tienen alguna profesión.\nUn elemento considerado en la encuesta para conocer la cohesión social de la comunidad se encuentra relacionado con la existencia de una vinculación con diferentes actores: gobierno, organización religiosa y asociación civil. La Gráfica 1 expresa si estos actores han trabajado en algún programa o proyecto en la colonia, en los tres casos el mayor porcentaje se encuentra como respuesta que No, solamente el 22% de los encuestados identificó que el gobierno ha realizado estas acciones, el 4.8% que han sido organizaciones religiosas y un 2% alguna organización de la sociedad civil. \nLa población encuestada reconoció que, por parte del gobierno, las dependencias que han trabajado son del gobierno del Estado, el Municipio, SEDESOL la academia de policía y el Centro comunitario. Para el caso de las organizaciones religiosas reconocieron que han sido cristianas, católicas, y pentecostés, mientras que en el caso de las organizaciones identificaron como los comités de vecinos, Red de mujeres, pueblos indígenas, universidad y un solo caso a la FECHAC.\nDe la población que identificó que han trabajado estos actores en Riberas del Bravo, solamente el 5.4% participó en las acciones realizadas por el gobierno, el 2% lo hizo con las organizaciones religiosas y el 1.8% ha participado en las organizaciones de la sociedad civil. \nOtro elemento considerado en la cohesión social se encuentra en la descripción de la relación con los vecinos. En la Gráfica 2 se indica que en todas las etapas existe buena relación, incluso en las etapas a excepción de la I, existen casos donde la relación es excelente. Por otro lado, existen con un porcentaje inferior de casos que la relación es mala como son en las etapas II, IV, V, VI, y VIII y solamente en la etapa VIII se refleja que la relación es muy mala, con un 0.8%.\nLos parques del fraccionamiento Riberas del Bravo distribuidos en todas las etapas, son espacios que son considerados áreas recreativas. El 31.5% de la población ocupa estas áreas y lo hacen para realizar actividades como caminar, jugar, como forma de distracción para los menores o para realizar algún deporte.\nSobre los comercios de la zona; no existe un supermercado dentro del fraccionamiento, el más cercano se ubica en la avenida Juárez Porvenir, mientras que existen 17 tiendas de auto servicio. INEGI (2020) señala de las unidades económicas que existen en Riberas del Bravo, el 54% corresponden al comercio al por menor, un 22% son de otros servicios y el 10% servicios de alojamiento temporal y de preparación de alimentos y bebidas.\nEn Riberas del Bravo se encuentran como activos de cohesión social dos centros comunitarios: centro comunitario Municipal Riveras del Bravo etapa 8 y el centro comunitario Estatal etapa 3, donde se dan servicios como talleres de habilidades, deportivos, apoyo psicológico, secundaria y preparatoria abierta. En donde se tiene alianzas con organizaciones para realizar estas actividades, las cuales son EMMA, CAPA, SEDEX, MUSPAC, ICHEA y Programa Desafío.', 'Considerando el abandono histórico de que han sido sujetos los espacios públicos de Ciudad Juárez, y su impacto en la conversión de estos, en espacios altamente deteriorados, contaminados que incluso  dificultan la convivencia y niegan el derecho a un ambiente sano y al goce pleno de la ciudad, la intervención de Juárez Limpio A.C. colocará el énfasis de sus acciones en trabajar codo a codo con la comunidad para reconectarse con el ecosistema, identificar los riesgos que se asocian con la contaminación ambiental y poner acciones en marcha para mejorar sus espacios públicos, y regenerar con ello, el sentido de pertenencia y el tejido social. \nLa intervención va de la mano con el Modelo Integral de Desarrollo Social (MIDAS). Juárez Limpio A.C. se unirá a la intervención con los objetivos postulados en posteriores apartados a través de sus programas ambientales A Reforestar Juárez, Pasaporte Ambiental y Educación Ambiental a través de huertos urbanos.\nA Reforestar Juárez es un programa que recurre a la forestación urbana como herramienta para promover la cohesión social. Se comenzará a trabajar con las comunidades ya establecidas previamente en el MIDAS, se levantará una pequeña encuesta relacionada a las prácticas ambientales de las personas asistentes y se llevarán a cabo grupos focales para detectar áreas de oportunidad para forestar o mantener áreas forestadas. Luego, se prepararán los sitios con limpiezas, acolchado, sistemas de riego y talleres técnicos. Se realizarán las forestaciones con especies adaptadas a la zona. Posteriormente se dará seguimiento a los sitios y comunidades forestadas\nEl Pasaporte Ambiental (PA) es un programa que nace de la necesidad de la comunidad juarense de llevar a cabo actividades individuales de cuidado del ambiente. Este consiste en una aplicación móvil donde las personas se podrán inscribir, registrar sus actividades en favor del ambiente y observar las demás que se hacen en otras partes de la ciudad. Esto promoverá la participación ciudadana en temas ambientales. Previo al registro de personas en la aplicación móvil, se promoverán talleres de cuidado del ambiente como reforzamiento del aprendizaje significativo.\nLos huertos urbanos resultan alternativas relevantes para naturar espacios en las grandes urbes y como herramientas de educación ambiental e instrumentos de inclusión social, que inciden en la disminución de los índices delictivos, contribuyen a la soberanía alimentaria, enriquecen la creatividad, reducen la huella ecológica, apoyan las economías locales y generan una consciencia profunda sobre la producción de los alimentos disminuyendo su desperdicio.\nLos huertos comunitarios estimulan la cohesión social, la construcción y fortalecimiento de lazos comunitarios, contribuyen con la proliferación de biodiversidad, la salud de suelo y el aire, la mitigación del cambio climático, e incluso funcionan como actividades terapéutico– relajantes.\nEste proyecto busca contribuir a los objetivos de desarrollo sostenible 3,11 y 13 a través de la disminución de materiales tóxicos al alcance de las personas, contribuyendo a la mejora de los espacios públicos y fortaleciendo la capacidad de adaptación de los riesgos relacionados con el clima. ', 'Promover la participación de la comunidad habitante de Riberas del Bravo en actividades de activación para la solución de problemas ambientales, fortalecer la cohesión social a través de acciones en pro de la activación de los espacios públicos.', 1, '2024-11-04', '2025-12-31', 1297959.21, 864478.64, 433480.57, 0, 'Ana Luisa Sáenz', NULL, NULL, 2, 3, '2025-07-21 20:37:11', '2025-07-24 16:06:03'),
+(3, 'proyecto 1', 'fghfghdfgshgsfhsgfh', 'dfgfdgdfgfdsgdsf', 'afdsgasfdfsadgfadsfsadfdsa', 2, '2025-08-01', '2025-08-03', 12345, 1234567789, 0, NULL, 'David', NULL, NULL, NULL, 1, '2025-08-01 22:28:21', '2025-08-01 22:28:21');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `project_disbursements`
+-- Table structure for table `project_disbursements`
 --
 
 CREATE TABLE `project_disbursements` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `projects_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `projects_id` bigint UNSIGNED NOT NULL,
   `amount` double DEFAULT NULL,
   `disbursement_date` date DEFAULT NULL,
-  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `created_by` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `project_disbursements`
+-- Dumping data for table `project_disbursements`
 --
 
 INSERT INTO `project_disbursements` (`id`, `projects_id`, `amount`, `disbursement_date`, `created_by`, `created_at`, `updated_at`) VALUES
@@ -1421,15 +1524,15 @@ INSERT INTO `project_disbursements` (`id`, `projects_id`, `amount`, `disbursemen
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `project_reports`
+-- Table structure for table `project_reports`
 --
 
 CREATE TABLE `project_reports` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
   `report_date` date DEFAULT NULL,
-  `report_file` text DEFAULT NULL,
-  `projects_id` bigint(20) UNSIGNED NOT NULL,
-  `created_by` bigint(20) UNSIGNED NOT NULL,
+  `report_file` text COLLATE utf8mb4_unicode_ci,
+  `projects_id` bigint UNSIGNED NOT NULL,
+  `created_by` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1437,101 +1540,102 @@ CREATE TABLE `project_reports` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `published_activities`
+-- Table structure for table `published_activities`
 --
 
 CREATE TABLE `published_activities` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `publication_id` bigint(20) UNSIGNED NOT NULL,
-  `original_activity_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `description` text DEFAULT NULL,
-  `specific_objective_id` bigint(20) UNSIGNED NOT NULL,
-  `goals_id` bigint(20) UNSIGNED NOT NULL,
-  `created_by` bigint(20) UNSIGNED NOT NULL,
-  `snapshot_date` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` bigint UNSIGNED NOT NULL,
+  `publication_id` bigint UNSIGNED NOT NULL,
+  `original_activity_id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `specific_objective_id` bigint UNSIGNED NOT NULL,
+  `goals_id` bigint UNSIGNED NOT NULL,
+  `created_by` bigint UNSIGNED NOT NULL,
+  `snapshot_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `published_metrics`
+-- Table structure for table `published_metrics`
 --
 
 CREATE TABLE `published_metrics` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `publication_id` bigint(20) UNSIGNED NOT NULL,
-  `original_metric_id` bigint(20) UNSIGNED NOT NULL,
-  `activity_id` bigint(20) UNSIGNED NOT NULL,
-  `unit` varchar(100) DEFAULT NULL,
-  `year` int(11) DEFAULT NULL,
-  `month` int(11) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `publication_id` bigint UNSIGNED NOT NULL,
+  `original_metric_id` bigint UNSIGNED NOT NULL,
+  `activity_id` bigint UNSIGNED NOT NULL,
+  `unit` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `year` int DEFAULT NULL,
+  `month` int DEFAULT NULL,
   `population_target_value` decimal(10,2) DEFAULT NULL,
   `population_real_value` decimal(10,2) DEFAULT NULL,
   `product_target_value` decimal(10,2) DEFAULT NULL,
   `product_real_value` decimal(10,2) DEFAULT NULL,
-  `snapshot_date` timestamp NOT NULL DEFAULT current_timestamp()
+  `snapshot_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `published_projects`
+-- Table structure for table `published_projects`
 --
 
 CREATE TABLE `published_projects` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `publication_id` bigint(20) UNSIGNED NOT NULL,
-  `original_project_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(500) NOT NULL,
-  `background` text DEFAULT NULL,
-  `justification` text DEFAULT NULL,
-  `general_objective` text DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `publication_id` bigint UNSIGNED NOT NULL,
+  `original_project_id` bigint UNSIGNED NOT NULL,
+  `name` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `background` text COLLATE utf8mb4_unicode_ci,
+  `justification` text COLLATE utf8mb4_unicode_ci,
+  `general_objective` text COLLATE utf8mb4_unicode_ci,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `total_cost` double DEFAULT NULL,
   `funded_amount` double DEFAULT NULL,
   `cofunding_amount` double DEFAULT NULL,
-  `financiers_id` bigint(20) UNSIGNED NOT NULL,
-  `co_financier_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `created_by` bigint(20) UNSIGNED NOT NULL,
-  `snapshot_date` timestamp NOT NULL DEFAULT current_timestamp()
+  `financiers_id` bigint UNSIGNED NOT NULL,
+  `co_financier_id` bigint UNSIGNED DEFAULT NULL,
+  `created_by` bigint UNSIGNED NOT NULL,
+  `snapshot_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `roles`
+-- Table structure for table `roles`
 --
 
 CREATE TABLE `roles` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `guard_name` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `guard_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `roles`
+-- Dumping data for table `roles`
 --
 
 INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
-(1, 'super_admin', 'web', '2025-07-21 16:21:04', '2025-07-21 16:21:04');
+(1, 'super_admin', 'web', '2025-07-21 16:21:04', '2025-07-21 16:21:04'),
+(2, 'capturista', 'web', '2025-07-29 22:51:52', '2025-07-29 22:51:52');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `role_has_permissions`
+-- Table structure for table `role_has_permissions`
 --
 
 CREATE TABLE `role_has_permissions` (
-  `permission_id` bigint(20) UNSIGNED NOT NULL,
-  `role_id` bigint(20) UNSIGNED NOT NULL
+  `permission_id` bigint UNSIGNED NOT NULL,
+  `role_id` bigint UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `role_has_permissions`
+-- Dumping data for table `role_has_permissions`
 --
 
 INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
@@ -1821,167 +1925,177 @@ INSERT INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 (284, 1),
 (286, 1),
 (287, 1),
-(288, 1);
+(288, 1),
+(289, 1),
+(290, 1),
+(291, 1),
+(292, 1),
+(293, 1),
+(294, 1),
+(295, 1),
+(283, 2),
+(284, 2),
+(289, 2),
+(290, 2);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `sessions`
+-- Table structure for table `sessions`
 --
 
 CREATE TABLE `sessions` (
-  `id` varchar(255) NOT NULL,
-  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `ip_address` varchar(45) DEFAULT NULL,
-  `user_agent` text DEFAULT NULL,
-  `payload` longtext NOT NULL,
-  `last_activity` int(11) NOT NULL
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` bigint UNSIGNED DEFAULT NULL,
+  `ip_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` text COLLATE utf8mb4_unicode_ci,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_activity` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `sessions`
+-- Dumping data for table `sessions`
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('x3mA8bo5kxdv2qHQDpYQVCNEe3mrtk90uo6XMlUT', 1, '201.146.125.224', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiMkxzVkFidEg2eFhHVndvd3ZTNDZ0UVpqWkRiTjk5UjBXOUlOZ2M5QSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NTg6Imh0dHBzOi8vcGFuZWwucGFydGljaXBhanVhcmV6Lm9yZy9hZG1pbi9nZXN0b3ItYWN0aXZpZGFkZXMiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO3M6MTc6InBhc3N3b3JkX2hhc2hfd2ViIjtzOjYwOiIkMnkkMTIkS0lSOTltTFBhUjRBVU9LSjJQNGk5ZXpaRWxhV0Nsa21uYm11Y1ZGU1AyQlE5cFJoeGNCLk8iO30=', 1753634561);
+('TqF0vjC7n1C4bKW0cXA6ReXJGplz1tIHg5Pm8Fu8', 2, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoieXN5M1JXaTdqUUF4ZUxCMVlVZmFuYkxqd29MYTV6M3ZwNzN3SmR5NyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6Mjk6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC91c3VhcmlvIjt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MjtzOjE3OiJwYXNzd29yZF9oYXNoX3dlYiI7czo2MDoiJDJ5JDEyJFZhNG9wdUV4aVVNdnZ2alUydmdoOE9qcW1neVV6enlQdE5lZEJ5czFnNUFFSTFZY1RpVXpPIjt9', 1754332659);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `specific_objectives`
+-- Table structure for table `specific_objectives`
 --
 
 CREATE TABLE `specific_objectives` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `description` text DEFAULT NULL,
-  `projects_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `projects_id` bigint UNSIGNED NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `specific_objectives`
+-- Dumping data for table `specific_objectives`
 --
 
 INSERT INTO `specific_objectives` (`id`, `description`, `projects_id`, `created_at`, `updated_at`) VALUES
 (7, 'OE1. Lograr que la comunidad habitante de Riberas del Bravo (80: Población femenina-39, Población masculina-41, Población de 0 a 14 años-23, Población de 15 a 29 años-24, Población de 30 a 59 años-31, Población de 60 años y más-2 ) se apropie de espacios públicos (incluyendo escuelas) en el polígono de Riberas del Bravo.', 1, '2025-07-24 16:06:03', '2025-07-24 16:06:03'),
 (8, 'OE2.  Impartir actividades que promuevan la educación ambiental como herramienta de cohesión social en las comunidades habitantes de Riberas del Bravo (350: Población femenina-172, Población masculina-178, Población de 0 a 14 años-103, Población de 15 a 29 años-103, Población de 30 a 59 años-134, Población de 60 años y más-10 ) y el suroriente de Juárez.', 1, '2025-07-24 16:06:03', '2025-07-24 16:06:03'),
 (9, 'OE3.  Divulgar temas de cuidado de los espacios públicos a la comunidad habitante de Riberas del Bravo (220: Población femenina-78, Población masculina-81, Población de 0 a 14 años-47, Población de 15 a 29 años-47, Población de 30 a 59 años-61, Población de 60 años y más-5), a través de la creación de dos huertos urbanos de la zona', 1, '2025-07-24 16:06:03', '2025-07-24 16:06:03'),
-(10, 'OE1. Lograr que la comunidad habitante de Riberas del Bravo (80: Población femenina-39, Población masculina-41, Población de 0 a 14 años-23, Población de 15 a 29 años-24, Población de 30 a 59 años-31, Población de 60 años y más-2 ) se apropie de espacios públicos (incluyendo escuelas) en el polígono de Riberas del Bravo.', 1, '2025-07-25 18:39:40', '2025-07-25 18:39:40'),
-(11, 'OE2.  Impartir actividades que promuevan la educación ambiental como herramienta de cohesión social en las comunidades habitantes de Riberas del Bravo (350: Población femenina-172, Población masculina-178, Población de 0 a 14 años-103, Población de 15 a 29 años-103, Población de 30 a 59 años-134, Población de 60 años y más-10 ) y el suroriente de Juárez.', 1, '2025-07-25 18:39:40', '2025-07-25 18:39:40'),
-(12, 'OE3.  Divulgar temas de cuidado de los espacios públicos a la comunidad habitante de Riberas del Bravo (220: Población femenina-78, Población masculina-81, Población de 0 a 14 años-47, Población de 15 a 29 años-47, Población de 30 a 59 años-61, Población de 60 años y más-5), a través de la creación de dos huertos urbanos de la zona', 1, '2025-07-25 18:39:40', '2025-07-25 18:39:40');
+(13, 'sdfgdfsgdfsgdfs', 3, '2025-08-01 22:28:21', '2025-08-01 22:28:21');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
-  `remember_token` varchar(100) DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `point_of_contact_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `phone` varchar(45) DEFAULT NULL,
-  `org_role` varchar(45) DEFAULT NULL,
-  `organizations_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `org_area` varchar(100) DEFAULT NULL,
-  `can_publish_data` tinyint(1) NOT NULL DEFAULT 0,
+  `point_of_contact_id` bigint UNSIGNED DEFAULT NULL,
+  `phone` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `org_role` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `organizations_id` bigint UNSIGNED DEFAULT NULL,
+  `org_area` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `can_publish_data` tinyint(1) NOT NULL DEFAULT '0',
   `last_publication_access` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Volcado de datos para la tabla `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `point_of_contact_id`, `phone`, `org_role`, `organizations_id`, `org_area`, `can_publish_data`, `last_publication_access`) VALUES
-(1, 'David García', 'dgarcia@planjuarez.org', NULL, '$2y$12$KIR99mLPaR4AUOKJ2P4i9ezZElaWClkmnbmucVFSP2BQ9pRhxcB.O', 'zAOTkKlSwg8tnqoNLiXhtwJgStva6b9gHYRbS8xesYljfwInnvKoijKM3dgz', '2025-07-18 15:42:35', '2025-07-18 15:42:35', NULL, NULL, NULL, NULL, NULL, 0, NULL),
-(2, 'Capturista', 'capturista@test.com', NULL, '$2y$12$Va4opuExiUMvvvjU2vgh8OjqmgyUzzyPtNedBys1g5AEI1YcTiUzO', NULL, '2025-07-18 18:49:25', '2025-07-18 18:49:25', NULL, NULL, NULL, NULL, NULL, 0, NULL),
+(1, 'David García', 'dgarcia@planjuarez.org', NULL, '$2y$12$KIR99mLPaR4AUOKJ2P4i9ezZElaWClkmnbmucVFSP2BQ9pRhxcB.O', 'YtulTCPi7vu25QUX9m3bSuJdR91O9UDQqRdgnGPkaqrEiAhIprh3vmqPKJ7Z', '2025-07-18 15:42:35', '2025-07-29 22:52:48', NULL, NULL, NULL, 3, NULL, 0, NULL),
+(2, 'Capturista', 'capturista@test.com', NULL, '$2y$12$Va4opuExiUMvvvjU2vgh8OjqmgyUzzyPtNedBys1g5AEI1YcTiUzO', NULL, '2025-07-18 18:49:25', '2025-07-29 22:52:23', NULL, NULL, NULL, 5, NULL, 0, NULL),
 (3, 'Judith Carrillo Carrera', 'jcarrillo@planjuarez.org', NULL, '$2y$12$59lZ6VvrfpB7gOCrfOI5FuZOrfHvYFWuacfDV0ndEUu.qIly960wu', NULL, '2025-07-21 19:22:31', '2025-07-21 19:22:31', NULL, NULL, NULL, NULL, NULL, 0, NULL),
 (4, 'Lizeth López Martínez', 'llopez@planjuarez.org', NULL, '$2y$12$2LjLp3NeytBxo0PTUfXnceF8UKCeiP4vYTEW5rGZHDpbf5mWyxfAy', 'rbyArOvKXRHOhFbQlGNailSRmAYOcD5S6HZaLzw5AuRZxLcUzzLQvbq9O7cy', '2025-07-25 14:54:14', '2025-07-25 14:56:40', NULL, NULL, 'Ejecutivo (a)', 3, 'Estudios y planeación estratégica ', 0, NULL),
 (5, 'Alejandra Villagrana', 'proyectosambientales@juarezlimpio.org', NULL, '$2y$12$QSIDUkgl8xF7hI46ZhR9QetAWAMyQP91lPMeaaHKdVEKWXm8sL1Jm', NULL, '2025-07-25 15:24:08', '2025-07-25 15:24:08', NULL, NULL, 'Coordinador (a)', 1, 'Proyectos  Ambientales', 0, NULL),
-(6, 'Lluvia Herrera', 'vinculacion@juarezlimpio.org', NULL, '$2y$12$ftth3gULnr2jPWHtdFztUuHmtNaTehHFVSpBHTh0RIFbvx7zf5V.S', NULL, '2025-07-25 15:27:36', '2025-07-25 15:27:36', 5, '6567755145', 'Ejecutivo (a)', 1, 'Atención Comunitaria', 0, NULL);
+(6, 'Lluvia Herrera', 'vinculacion@juarezlimpio.org', NULL, '$2y$12$ftth3gULnr2jPWHtdFztUuHmtNaTehHFVSpBHTh0RIFbvx7zf5V.S', NULL, '2025-07-25 15:27:36', '2025-07-25 15:27:36', 5, '6567755145', 'Ejecutivo (a)', 1, 'Atención Comunitaria', 0, NULL),
+(7, 'David 2', 'dagargon89@gmail.com', NULL, '$2y$12$tcJIjuQOl0ThPsX8t.1P.OYDfcoVfTCQukjrCtBto2ZqfIwOXFAni', NULL, '2025-07-29 21:22:12', '2025-07-29 23:12:03', NULL, NULL, NULL, 6, NULL, 0, NULL);
 
 --
--- Índices para tablas volcadas
+-- Indexes for dumped tables
 --
 
 --
--- Indices de la tabla `action_lines`
+-- Indexes for table `action_lines`
 --
 ALTER TABLE `action_lines`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `activities`
+-- Indexes for table `activities`
 --
 ALTER TABLE `activities`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `activity_calendars`
+-- Indexes for table `activity_calendars`
 --
 ALTER TABLE `activity_calendars`
   ADD PRIMARY KEY (`id`),
   ADD KEY `activity_calendars_location_id_foreign` (`location_id`);
 
 --
--- Indices de la tabla `activity_files`
+-- Indexes for table `activity_files`
 --
 ALTER TABLE `activity_files`
   ADD PRIMARY KEY (`id`),
   ADD KEY `activity_files_activity_calendar_id_foreign` (`activity_calendar_id`);
 
 --
--- Indices de la tabla `activity_logs`
+-- Indexes for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `axes`
+-- Indexes for table `axes`
 --
 ALTER TABLE `axes`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `beneficiaries`
+-- Indexes for table `beneficiaries`
 --
 ALTER TABLE `beneficiaries`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `beneficiaries_identifier_unique` (`identifier`);
 
 --
--- Indices de la tabla `beneficiary_registries`
+-- Indexes for table `beneficiary_registries`
 --
 ALTER TABLE `beneficiary_registries`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `cache`
+-- Indexes for table `cache`
 --
 ALTER TABLE `cache`
   ADD PRIMARY KEY (`key`);
 
 --
--- Indices de la tabla `cache_locks`
+-- Indexes for table `cache_locks`
 --
 ALTER TABLE `cache_locks`
   ADD PRIMARY KEY (`key`);
 
 --
--- Indices de la tabla `components`
+-- Indexes for table `components`
 --
 ALTER TABLE `components`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `data_publications`
+-- Indexes for table `data_publications`
 --
 ALTER TABLE `data_publications`
   ADD PRIMARY KEY (`id`),
@@ -1989,135 +2103,135 @@ ALTER TABLE `data_publications`
   ADD KEY `idx_publications_date` (`publication_date`);
 
 --
--- Indices de la tabla `failed_jobs`
+-- Indexes for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
 
 --
--- Indices de la tabla `financiers`
+-- Indexes for table `financiers`
 --
 ALTER TABLE `financiers`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `goals`
+-- Indexes for table `goals`
 --
 ALTER TABLE `goals`
   ADD PRIMARY KEY (`id`),
   ADD KEY `goals_project_id_foreign` (`project_id`);
 
 --
--- Indices de la tabla `jobs`
+-- Indexes for table `jobs`
 --
 ALTER TABLE `jobs`
   ADD PRIMARY KEY (`id`),
   ADD KEY `jobs_queue_index` (`queue`);
 
 --
--- Indices de la tabla `job_batches`
+-- Indexes for table `job_batches`
 --
 ALTER TABLE `job_batches`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `kpis`
+-- Indexes for table `kpis`
 --
 ALTER TABLE `kpis`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `locations`
+-- Indexes for table `locations`
 --
 ALTER TABLE `locations`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `locations_name_unique` (`name`);
 
 --
--- Indices de la tabla `migrations`
+-- Indexes for table `migrations`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `model_has_permissions`
+-- Indexes for table `model_has_permissions`
 --
 ALTER TABLE `model_has_permissions`
   ADD PRIMARY KEY (`permission_id`,`model_id`,`model_type`),
   ADD KEY `model_has_permissions_model_id_model_type_index` (`model_id`,`model_type`);
 
 --
--- Indices de la tabla `model_has_roles`
+-- Indexes for table `model_has_roles`
 --
 ALTER TABLE `model_has_roles`
   ADD PRIMARY KEY (`role_id`,`model_id`,`model_type`),
   ADD KEY `model_has_roles_model_id_model_type_index` (`model_id`,`model_type`);
 
 --
--- Indices de la tabla `organizations`
+-- Indexes for table `organizations`
 --
 ALTER TABLE `organizations`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `password_reset_tokens`
+-- Indexes for table `password_reset_tokens`
 --
 ALTER TABLE `password_reset_tokens`
   ADD PRIMARY KEY (`email`);
 
 --
--- Indices de la tabla `permissions`
+-- Indexes for table `permissions`
 --
 ALTER TABLE `permissions`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `permissions_name_guard_name_unique` (`name`,`guard_name`);
 
 --
--- Indices de la tabla `planned_metrics`
+-- Indexes for table `planned_metrics`
 --
 ALTER TABLE `planned_metrics`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `polygons`
+-- Indexes for table `polygons`
 --
 ALTER TABLE `polygons`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `polygons_name_unique` (`name`);
 
 --
--- Indices de la tabla `programs`
+-- Indexes for table `programs`
 --
 ALTER TABLE `programs`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `program_indicators`
+-- Indexes for table `program_indicators`
 --
 ALTER TABLE `program_indicators`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `projects`
+-- Indexes for table `projects`
 --
 ALTER TABLE `projects`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `project_disbursements`
+-- Indexes for table `project_disbursements`
 --
 ALTER TABLE `project_disbursements`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `project_reports`
+-- Indexes for table `project_reports`
 --
 ALTER TABLE `project_reports`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `published_activities`
+-- Indexes for table `published_activities`
 --
 ALTER TABLE `published_activities`
   ADD PRIMARY KEY (`id`),
@@ -2128,7 +2242,7 @@ ALTER TABLE `published_activities`
   ADD KEY `idx_published_activities_original` (`original_activity_id`);
 
 --
--- Indices de la tabla `published_metrics`
+-- Indexes for table `published_metrics`
 --
 ALTER TABLE `published_metrics`
   ADD PRIMARY KEY (`id`),
@@ -2138,7 +2252,7 @@ ALTER TABLE `published_metrics`
   ADD KEY `idx_published_metrics_original` (`original_metric_id`);
 
 --
--- Indices de la tabla `published_projects`
+-- Indexes for table `published_projects`
 --
 ALTER TABLE `published_projects`
   ADD PRIMARY KEY (`id`),
@@ -2149,21 +2263,21 @@ ALTER TABLE `published_projects`
   ADD KEY `idx_published_projects_financier` (`financiers_id`);
 
 --
--- Indices de la tabla `roles`
+-- Indexes for table `roles`
 --
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `roles_name_guard_name_unique` (`name`,`guard_name`);
 
 --
--- Indices de la tabla `role_has_permissions`
+-- Indexes for table `role_has_permissions`
 --
 ALTER TABLE `role_has_permissions`
   ADD PRIMARY KEY (`permission_id`,`role_id`),
   ADD KEY `role_has_permissions_role_id_foreign` (`role_id`);
 
 --
--- Indices de la tabla `sessions`
+-- Indexes for table `sessions`
 --
 ALTER TABLE `sessions`
   ADD PRIMARY KEY (`id`),
@@ -2171,256 +2285,256 @@ ALTER TABLE `sessions`
   ADD KEY `sessions_last_activity_index` (`last_activity`);
 
 --
--- Indices de la tabla `specific_objectives`
+-- Indexes for table `specific_objectives`
 --
 ALTER TABLE `specific_objectives`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `users_email_unique` (`email`);
 
 --
--- AUTO_INCREMENT de las tablas volcadas
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT de la tabla `action_lines`
+-- AUTO_INCREMENT for table `action_lines`
 --
 ALTER TABLE `action_lines`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
 
 --
--- AUTO_INCREMENT de la tabla `activities`
+-- AUTO_INCREMENT for table `activities`
 --
 ALTER TABLE `activities`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
--- AUTO_INCREMENT de la tabla `activity_calendars`
+-- AUTO_INCREMENT for table `activity_calendars`
 --
 ALTER TABLE `activity_calendars`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
--- AUTO_INCREMENT de la tabla `activity_files`
+-- AUTO_INCREMENT for table `activity_files`
 --
 ALTER TABLE `activity_files`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT de la tabla `activity_logs`
+-- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT de la tabla `axes`
+-- AUTO_INCREMENT for table `axes`
 --
 ALTER TABLE `axes`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT de la tabla `beneficiaries`
+-- AUTO_INCREMENT for table `beneficiaries`
 --
 ALTER TABLE `beneficiaries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT de la tabla `beneficiary_registries`
+-- AUTO_INCREMENT for table `beneficiary_registries`
 --
 ALTER TABLE `beneficiary_registries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
--- AUTO_INCREMENT de la tabla `components`
+-- AUTO_INCREMENT for table `components`
 --
 ALTER TABLE `components`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=120;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=120;
 
 --
--- AUTO_INCREMENT de la tabla `data_publications`
+-- AUTO_INCREMENT for table `data_publications`
 --
 ALTER TABLE `data_publications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `failed_jobs`
+-- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `financiers`
+-- AUTO_INCREMENT for table `financiers`
 --
 ALTER TABLE `financiers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT de la tabla `goals`
+-- AUTO_INCREMENT for table `goals`
 --
 ALTER TABLE `goals`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
--- AUTO_INCREMENT de la tabla `jobs`
+-- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT de la tabla `kpis`
+-- AUTO_INCREMENT for table `kpis`
 --
 ALTER TABLE `kpis`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `locations`
+-- AUTO_INCREMENT for table `locations`
 --
 ALTER TABLE `locations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT de la tabla `migrations`
+-- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
--- AUTO_INCREMENT de la tabla `organizations`
+-- AUTO_INCREMENT for table `organizations`
 --
 ALTER TABLE `organizations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT de la tabla `permissions`
+-- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=289;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=296;
 
 --
--- AUTO_INCREMENT de la tabla `planned_metrics`
+-- AUTO_INCREMENT for table `planned_metrics`
 --
 ALTER TABLE `planned_metrics`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
--- AUTO_INCREMENT de la tabla `polygons`
+-- AUTO_INCREMENT for table `polygons`
 --
 ALTER TABLE `polygons`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
--- AUTO_INCREMENT de la tabla `programs`
+-- AUTO_INCREMENT for table `programs`
 --
 ALTER TABLE `programs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
--- AUTO_INCREMENT de la tabla `program_indicators`
+-- AUTO_INCREMENT for table `program_indicators`
 --
 ALTER TABLE `program_indicators`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `projects`
+-- AUTO_INCREMENT for table `projects`
 --
 ALTER TABLE `projects`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT de la tabla `project_disbursements`
+-- AUTO_INCREMENT for table `project_disbursements`
 --
 ALTER TABLE `project_disbursements`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT de la tabla `project_reports`
+-- AUTO_INCREMENT for table `project_reports`
 --
 ALTER TABLE `project_reports`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `published_activities`
+-- AUTO_INCREMENT for table `published_activities`
 --
 ALTER TABLE `published_activities`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `published_metrics`
+-- AUTO_INCREMENT for table `published_metrics`
 --
 ALTER TABLE `published_metrics`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `published_projects`
+-- AUTO_INCREMENT for table `published_projects`
 --
 ALTER TABLE `published_projects`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `roles`
+-- AUTO_INCREMENT for table `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT de la tabla `specific_objectives`
+-- AUTO_INCREMENT for table `specific_objectives`
 --
 ALTER TABLE `specific_objectives`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
--- AUTO_INCREMENT de la tabla `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- Restricciones para tablas volcadas
+-- Constraints for dumped tables
 --
 
 --
--- Filtros para la tabla `activity_calendars`
+-- Constraints for table `activity_calendars`
 --
 ALTER TABLE `activity_calendars`
   ADD CONSTRAINT `activity_calendars_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE SET NULL;
 
 --
--- Filtros para la tabla `activity_files`
+-- Constraints for table `activity_files`
 --
 ALTER TABLE `activity_files`
   ADD CONSTRAINT `activity_files_activity_calendar_id_foreign` FOREIGN KEY (`activity_calendar_id`) REFERENCES `activity_calendars` (`id`) ON DELETE CASCADE;
 
 --
--- Filtros para la tabla `data_publications`
+-- Constraints for table `data_publications`
 --
 ALTER TABLE `data_publications`
   ADD CONSTRAINT `data_publications_published_by_foreign` FOREIGN KEY (`published_by`) REFERENCES `users` (`id`);
 
 --
--- Filtros para la tabla `goals`
+-- Constraints for table `goals`
 --
 ALTER TABLE `goals`
   ADD CONSTRAINT `goals_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
 
 --
--- Filtros para la tabla `model_has_permissions`
+-- Constraints for table `model_has_permissions`
 --
 ALTER TABLE `model_has_permissions`
   ADD CONSTRAINT `model_has_permissions_permission_id_foreign` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE;
 
 --
--- Filtros para la tabla `model_has_roles`
+-- Constraints for table `model_has_roles`
 --
 ALTER TABLE `model_has_roles`
   ADD CONSTRAINT `model_has_roles_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
 
 --
--- Filtros para la tabla `published_activities`
+-- Constraints for table `published_activities`
 --
 ALTER TABLE `published_activities`
   ADD CONSTRAINT `published_activities_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`),
@@ -2430,7 +2544,7 @@ ALTER TABLE `published_activities`
   ADD CONSTRAINT `published_activities_specific_objective_id_foreign` FOREIGN KEY (`specific_objective_id`) REFERENCES `specific_objectives` (`id`);
 
 --
--- Filtros para la tabla `published_metrics`
+-- Constraints for table `published_metrics`
 --
 ALTER TABLE `published_metrics`
   ADD CONSTRAINT `published_metrics_activity_id_foreign` FOREIGN KEY (`activity_id`) REFERENCES `activities` (`id`),
@@ -2438,7 +2552,7 @@ ALTER TABLE `published_metrics`
   ADD CONSTRAINT `published_metrics_publication_id_foreign` FOREIGN KEY (`publication_id`) REFERENCES `data_publications` (`id`) ON DELETE CASCADE;
 
 --
--- Filtros para la tabla `published_projects`
+-- Constraints for table `published_projects`
 --
 ALTER TABLE `published_projects`
   ADD CONSTRAINT `published_projects_co_financier_id_foreign` FOREIGN KEY (`co_financier_id`) REFERENCES `financiers` (`id`),

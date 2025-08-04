@@ -44,6 +44,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
         $firstCalendar = null;
         if ($this->activity_id) {
             $firstCalendar = ActivityCalendar::where('activity_id', $this->activity_id)
+                ->where('cancelled', false) // Filtrar fechas canceladas
                 ->orderBy('start_date')
                 ->orderBy('start_hour')
                 ->first();
@@ -72,6 +73,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                                 return [];
                             }
                             $calendars = ActivityCalendar::where('activity_id', $activityId)
+                                ->where('cancelled', false) // Filtrar fechas canceladas
                                 ->orderBy('start_date')
                                 ->orderBy('start_hour')
                                 ->get();
@@ -97,6 +99,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                                 return null;
                             }
                             $firstCalendar = ActivityCalendar::where('activity_id', $activityId)
+                                ->where('cancelled', false) // Filtrar fechas canceladas
                                 ->orderBy('start_date')
                                 ->orderBy('start_hour')
                                 ->first();
@@ -113,7 +116,9 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                             if (!$activityId) {
                                 return 'Selecciona una actividad primero';
                             }
-                            $count = ActivityCalendar::where('activity_id', $activityId)->count();
+                            $count = ActivityCalendar::where('activity_id', $activityId)
+                                ->where('cancelled', false) // Filtrar fechas canceladas
+                                ->count();
                             if ($count === 0) {
                                 return 'Esta actividad no tiene fechas y horarios programados';
                             }
@@ -129,6 +134,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
         $firstCalendar = null;
         if ($this->activity_id) {
             $firstCalendar = ActivityCalendar::where('activity_id', $this->activity_id)
+                ->where('cancelled', false) // Filtrar fechas canceladas
                 ->orderBy('start_date')
                 ->orderBy('start_hour')
                 ->first();

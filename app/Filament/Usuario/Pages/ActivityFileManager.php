@@ -43,6 +43,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
     {
         $userId = Auth::id();
         $firstActivityId = ActivityCalendar::where('assigned_person', $userId)
+            ->where('cancelled', false) // Filtrar fechas canceladas
             ->pluck('activity_id')
             ->unique()
             ->first();
@@ -51,6 +52,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
         $firstCalendar = null;
         if ($this->activity_id) {
             $firstCalendar = ActivityCalendar::where('activity_id', $this->activity_id)
+                ->where('cancelled', false) // Filtrar fechas canceladas
                 ->where('assigned_person', $userId) // Filtrar por responsable
                 ->orderBy('start_date')
                 ->orderBy('start_hour')
@@ -73,6 +75,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
 
                             // Obtener las actividades donde el usuario es responsable
                             $activityIds = ActivityCalendar::where('assigned_person', $userId)
+                                ->where('cancelled', false) // Filtrar fechas canceladas
                                 ->pluck('activity_id')
                                 ->unique()
                                 ->toArray();
@@ -90,6 +93,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                         ->default(function () {
                             $userId = Auth::id();
                             $firstActivityId = ActivityCalendar::where('assigned_person', $userId)
+                                ->where('cancelled', false) // Filtrar fechas canceladas
                                 ->pluck('activity_id')
                                 ->unique()
                                 ->first();
@@ -106,6 +110,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                             }
 
                             $calendars = ActivityCalendar::where('activity_id', $activityId)
+                                ->where('cancelled', false) // Filtrar fechas canceladas
                                 ->where('assigned_person', $userId) // Filtrar por responsable
                                 ->orderBy('start_date')
                                 ->orderBy('start_hour')
@@ -135,6 +140,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                             }
 
                             $firstCalendar = ActivityCalendar::where('activity_id', $activityId)
+                                ->where('cancelled', false) // Filtrar fechas canceladas
                                 ->where('assigned_person', $userId) // Filtrar por responsable
                                 ->orderBy('start_date')
                                 ->orderBy('start_hour')
@@ -156,6 +162,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
                             }
 
                             $count = ActivityCalendar::where('activity_id', $activityId)
+                                ->where('cancelled', false) // Filtrar fechas canceladas
                                 ->where('assigned_person', $userId) // Filtrar por responsable
                                 ->count();
 
@@ -175,6 +182,7 @@ class ActivityFileManager extends Page implements Tables\Contracts\HasTable
         $firstCalendar = null;
         if ($this->activity_id) {
             $firstCalendar = ActivityCalendar::where('activity_id', $this->activity_id)
+                ->where('cancelled', false) // Filtrar fechas canceladas
                 ->where('assigned_person', $userId) // Filtrar por responsable
                 ->orderBy('start_date')
                 ->orderBy('start_hour')

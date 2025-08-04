@@ -17,6 +17,26 @@ class UpcomingActivitiesWidget extends Widget
     // Hacer que el widget ocupe todo el ancho disponible
     protected int|string|array $columnSpan = 'full';
 
+    // Propiedad para el modal
+    public ?int $selectedActivityId = null;
+
+    public function openActivityModal(int $activityId): void
+    {
+        $this->selectedActivityId = $activityId;
+        $this->dispatch('open-modal', id: 'activity-details-modal');
+    }
+
+    public function getSelectedActivity()
+    {
+        if (!$this->selectedActivityId) {
+            return null;
+        }
+
+        return ActivityCalendar::query()
+            ->with(['activity', 'activity.goal', 'location'])
+            ->find($this->selectedActivityId);
+    }
+
     public function getUpcomingActivities()
     {
         return ActivityCalendar::query()

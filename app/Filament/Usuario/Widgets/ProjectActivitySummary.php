@@ -9,6 +9,7 @@ use App\Models\ActivityCalendar;
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
+
 class ProjectActivitySummary extends BaseWidget
 {
     // use HasWidgetShield;
@@ -28,7 +29,7 @@ class ProjectActivitySummary extends BaseWidget
         // Query base para obtener proyectos con actividades del usuario
         $query = Project::query()
             ->withCount([
-                'goals as total_goals',
+                'goals as total_goals_count',
             ])
             ->whereHas('goals.activities.activityCalendars', function ($query) use ($userId) {
                 $query->where('assigned_person', $userId);
@@ -54,47 +55,59 @@ class ProjectActivitySummary extends BaseWidget
                     ->label('Total Metas')
                     ->sortable()
                     ->color('primary'),
-                Tables\Columns\TextColumn::make('activities_summary')
+                Tables\Columns\TextColumn::make('activities_summary_test')
                     ->label('Resumen de Actividades')
-                    ->formatStateUsing(function ($record) use ($userId) {
-                        $query = \App\Models\ActivityCalendar::whereHas('activity.goal.project', function ($q) use ($record) {
-                            $q->where('id', $record->id);
-                        })->where('assigned_person', $userId);
+                    ->getStateUsing(function ($record) use ($userId) {
+                        try {
+                            $query = ActivityCalendar::whereHas('activity.goal.project', function ($q) use ($record) {
+                                $q->where('id', $record->id);
+                            })->where('assigned_person', $userId);
 
-                        $totalActivities = $query->count();
-                        $activeActivities = (clone $query)->where('cancelled', 0)->count();
-                        $cancelledActivities = (clone $query)->where('cancelled', 1)->count();
+                            $totalActivities = $query->count();
+                            $activeActivities = (clone $query)->where('cancelled', 0)->count();
+                            $cancelledActivities = (clone $query)->where('cancelled', 1)->count();
 
-                        return "Total: {$totalActivities} | Activas: {$activeActivities} | Canceladas: {$cancelledActivities}";
+                            return "Total: {$totalActivities} | Activas: {$activeActivities} | Canceladas: {$cancelledActivities}";
+                        } catch (\Exception $e) {
+                            return "Error: " . $e->getMessage();
+                        }
                     })
                     ->color('info'),
-                Tables\Columns\TextColumn::make('progress')
+                Tables\Columns\TextColumn::make('progress_test')
                     ->label('Progreso')
-                    ->formatStateUsing(function ($record) use ($userId) {
-                        $query = \App\Models\ActivityCalendar::whereHas('activity.goal.project', function ($q) use ($record) {
-                            $q->where('id', $record->id);
-                        })->where('assigned_person', $userId);
+                    ->getStateUsing(function ($record) use ($userId) {
+                        try {
+                            $query = ActivityCalendar::whereHas('activity.goal.project', function ($q) use ($record) {
+                                $q->where('id', $record->id);
+                            })->where('assigned_person', $userId);
 
-                        $totalActivities = $query->count();
-                        $activeActivities = (clone $query)->where('cancelled', 0)->count();
+                            $totalActivities = $query->count();
+                            $activeActivities = (clone $query)->where('cancelled', 0)->count();
 
-                        if ($totalActivities == 0) return '0%';
-                        $percentage = round(($activeActivities / $totalActivities) * 100);
-                        return $percentage . '%';
+                            if ($totalActivities == 0) return '0%';
+                            $percentage = round(($activeActivities / $totalActivities) * 100);
+                            return $percentage . '%';
+                        } catch (\Exception $e) {
+                            return "Error: " . $e->getMessage();
+                        }
                     })
                     ->color(function ($record) use ($userId) {
-                        $query = \App\Models\ActivityCalendar::whereHas('activity.goal.project', function ($q) use ($record) {
-                            $q->where('id', $record->id);
-                        })->where('assigned_person', $userId);
+                        try {
+                            $query = ActivityCalendar::whereHas('activity.goal.project', function ($q) use ($record) {
+                                $q->where('id', $record->id);
+                            })->where('assigned_person', $userId);
 
-                        $totalActivities = $query->count();
-                        $activeActivities = (clone $query)->where('cancelled', 0)->count();
+                            $totalActivities = $query->count();
+                            $activeActivities = (clone $query)->where('cancelled', 0)->count();
 
-                        if ($totalActivities == 0) return 'gray';
-                        $percentage = ($activeActivities / $totalActivities) * 100;
-                        if ($percentage >= 80) return 'success';
-                        if ($percentage >= 50) return 'warning';
-                        return 'danger';
+                            if ($totalActivities == 0) return 'gray';
+                            $percentage = ($activeActivities / $totalActivities) * 100;
+                            if ($percentage >= 80) return 'success';
+                            if ($percentage >= 50) return 'warning';
+                            return 'danger';
+                        } catch (\Exception $e) {
+                            return 'gray';
+                        }
                     }),
             ])
             ->defaultSort('name', 'asc')

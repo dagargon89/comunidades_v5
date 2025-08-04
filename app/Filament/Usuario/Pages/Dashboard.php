@@ -15,11 +15,7 @@ class Dashboard extends BaseDashboard
             // ========================================
             // WIDGETS DE RESUMEN GENERAL (HEADER)
             // ========================================
-            // Solo los widgets más importantes para el resumen general
-           // \App\Filament\Usuario\Widgets\ActivityCalendarCount::class,        // Resumen de actividades (total, activas, canceladas, etc.)
-           // \App\Filament\Usuario\Widgets\ActivityFileStats::class,            // Estado de documentación y archivos
-           // \App\Filament\Usuario\Widgets\BeneficiaryStats::class,             // Resumen de beneficiarios registrados
-           \App\Filament\Usuario\Widgets\Custom::class,
+
         ];
     }
 
@@ -31,7 +27,7 @@ class Dashboard extends BaseDashboard
             // ========================================
 
             // SECCIÓN 1: SEGUIMIENTO DE ACTIVIDADES
-            \App\Filament\Usuario\Widgets\UpcomingActivitiesWidget::class,      // Próximas actividades (hoy, mañana, semana)
+           // \App\Filament\Usuario\Widgets\UpcomingActivitiesWidget::class,      // Próximas actividades (hoy, mañana, semana)
             // \App\Filament\Usuario\Widgets\ProjectProgressWidget::class,         // Progreso por proyecto con barras de avance
 
             // SECCIÓN 2: GESTIÓN DE DOCUMENTACIÓN

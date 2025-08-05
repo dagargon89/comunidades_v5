@@ -5,22 +5,22 @@
 
     {{-- Resumen de estadísticas --}}
     <x-filament::section>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="bg-blue-50 p-4 rounded-lg">
-                <div class="text-2xl font-bold text-blue-600">{{ $pendingProjects->count() }}</div>
-                <div class="text-sm text-gray-600">Proyectos pendientes</div>
+        <div class="flex flex-wrap gap-4 justify-center">
+            <div class="bg-blue-50 p-3 rounded-lg min-w-[120px] text-center">
+                <div class="text-xl font-bold text-blue-600">{{ $pendingProjects->count() }}</div>
+                <div class="text-xs text-gray-600">Proyectos</div>
             </div>
-            <div class="bg-green-50 p-4 rounded-lg">
-                <div class="text-2xl font-bold text-green-600">{{ $pendingActivities->count() }}</div>
-                <div class="text-sm text-gray-600">Actividades pendientes</div>
+            <div class="bg-green-50 p-3 rounded-lg min-w-[120px] text-center">
+                <div class="text-xl font-bold text-green-600">{{ $pendingActivities->count() }}</div>
+                <div class="text-xs text-gray-600">Actividades</div>
             </div>
-            <div class="bg-yellow-50 p-4 rounded-lg">
-                <div class="text-2xl font-bold text-yellow-600">{{ $pendingMetrics->count() }}</div>
-                <div class="text-sm text-gray-600">Métricas pendientes</div>
+            <div class="bg-yellow-50 p-3 rounded-lg min-w-[120px] text-center">
+                <div class="text-xl font-bold text-yellow-600">{{ $pendingMetrics->count() }}</div>
+                <div class="text-xs text-gray-600">Métricas</div>
             </div>
-            <div class="bg-purple-50 p-4 rounded-lg">
-                <div class="text-2xl font-bold text-purple-600">{{ $pendingProjects->count() + $pendingActivities->count() + $pendingMetrics->count() }}</div>
-                <div class="text-sm text-gray-600">Total de elementos</div>
+            <div class="bg-purple-50 p-3 rounded-lg min-w-[120px] text-center">
+                <div class="text-xl font-bold text-purple-600">{{ $pendingProjects->count() + $pendingActivities->count() + $pendingMetrics->count() }}</div>
+                <div class="text-xs text-gray-600">Total</div>
             </div>
         </div>
     </x-filament::section>

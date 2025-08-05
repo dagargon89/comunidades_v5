@@ -36,11 +36,11 @@
                     <div class="border rounded-lg p-3 max-h-60 overflow-y-auto">
                         @if(count($allProjects) > 0)
                             @foreach($allProjects as $projectAnalysis)
-                                <label class="flex items-center space-x-2 py-1 hover:bg-gray-50 rounded px-2">
+                                <label class="flex items-center space-x-2 py-1 hover:bg-gray-50 rounded px-2 cursor-pointer">
                                     <input
                                         type="checkbox"
-                                        wire:model="selectedProjects"
-                                        value="{{ $projectAnalysis['project']->id }}"
+                                        wire:click="toggleProjectSelection({{ $projectAnalysis['project']->id }})"
+                                        @if(in_array($projectAnalysis['project']->id, $selectedProjects)) checked @endif
                                         class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                                     >
                                     <span class="text-sm">

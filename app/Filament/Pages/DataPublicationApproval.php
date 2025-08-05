@@ -60,6 +60,26 @@ class DataPublicationApproval extends Page
         }
     }
 
+    public function toggleProjectSelection($projectId)
+    {
+        if (in_array($projectId, $this->selectedProjects)) {
+            // Remover del array
+            $this->selectedProjects = array_values(array_filter($this->selectedProjects, function($id) use ($projectId) {
+                return $id != $projectId;
+            }));
+        } else {
+            // Agregar al array
+            $this->selectedProjects[] = $projectId;
+        }
+
+        // Debug: mostrar el estado actual
+        Notification::make()
+            ->title('Selección actualizada')
+            ->body('Proyectos seleccionados: ' . count($this->selectedProjects))
+            ->info()
+            ->send();
+    }
+
     public function selectAllProjects()
     {
         $this->selectedProjects = collect($this->allProjects)->pluck('project.id')->toArray();
@@ -102,6 +122,14 @@ class DataPublicationApproval extends Page
 
         foreach ($allProjects as $project) {
             $projectAnalysis = $this->analyzeProject($project, $lastPublication);
+
+            // Debug: mostrar resultado del análisis de cada proyecto
+            $actionType = $projectAnalysis['needs_action'] ? ($projectAnalysis['action_type'] === 'publish' ? 'NUEVO' : 'ACTUALIZAR') : 'SIN ACCIÓN';
+            Notification::make()
+                ->title('Proyecto: ' . $project->name)
+                ->body('Resultado: ' . $actionType . ' | Actividades: ' . $projectAnalysis['current_activities_count'] . ' | Métricas: ' . $projectAnalysis['current_metrics_count'])
+                ->info()
+                ->send();
 
             // Solo agregar proyectos que realmente necesitan acción
             if ($projectAnalysis['needs_action']) {
@@ -170,14 +198,14 @@ class DataPublicationApproval extends Page
                 ->first();
 
             if ($publishedProject) {
-                // Proyecto ya publicado, verificar si hay cambios
+                // Proyecto ya publicado en la última publicación, verificar si hay cambios
                 $analysis['last_publication_date'] = $lastPublication->publication_date;
+                $analysis['debug_info'][] = '✅ Proyecto YA publicado en la última publicación';
 
-                // Obtener datos publicados
+                // Obtener datos publicados de la última publicación
                 $publishedActivities = \App\Models\PublishedActivity::where('publication_id', $lastPublication->id)
-                    ->whereHas('originalActivity.goal', function($query) use ($project) {
-                        $query->where('project_id', $project->id);
-                    })->get();
+                    ->where('project_id', $project->id)
+                    ->get();
 
                 $publishedMetrics = \App\Models\PublishedMetric::where('publication_id', $lastPublication->id)
                     ->whereHas('originalMetric.activity.goal', function($query) use ($project) {
@@ -188,27 +216,32 @@ class DataPublicationApproval extends Page
                 $analysis['published_metrics_count'] = $publishedMetrics->count();
 
                 // Debug: información de datos publicados
-                $analysis['debug_info'][] = 'Actividades publicadas: ' . $analysis['published_activities_count'];
-                $analysis['debug_info'][] = 'Métricas publicadas: ' . $analysis['published_metrics_count'];
+                $analysis['debug_info'][] = 'Actividades publicadas en última publicación: ' . $analysis['published_activities_count'];
+                $analysis['debug_info'][] = 'Métricas publicadas en última publicación: ' . $analysis['published_metrics_count'];
 
                 // Detectar cambios comparando timestamps - SOLO si hay datos para comparar
                 $hasChanges = false;
 
                 // Solo verificar timestamps si hay datos publicados para comparar
                 if ($analysis['published_activities_count'] > 0 || $analysis['published_metrics_count'] > 0) {
+                    // Usar publication_date en lugar de snapshot_date porque snapshot_date no está guardando la fecha correcta
+                    $publicationDate = \Carbon\Carbon::parse($lastPublication->publication_date);
+
                     // Verificar si el proyecto fue actualizado después de la publicación
-                    $projectUpdatedAfterPublication = $project->updated_at && $project->updated_at->gt($lastPublication->publication_date);
+                    $projectUpdatedAfterPublication = $project->updated_at && $project->updated_at->gt($publicationDate);
 
                     // Verificar si alguna actividad fue actualizada después de la publicación
-                    $activitiesUpdatedAfterPublication = $currentActivities->where('updated_at', '>', $lastPublication->publication_date)->count() > 0;
+                    $activitiesUpdatedAfterPublication = $currentActivities->where('updated_at', '>', $publicationDate)->count() > 0;
 
                     // Verificar si alguna métrica fue actualizada después de la publicación
-                    $metricsUpdatedAfterPublication = $currentMetrics->where('updated_at', '>', $lastPublication->publication_date)->count() > 0;
+                    $metricsUpdatedAfterPublication = $currentMetrics->where('updated_at', '>', $publicationDate)->count() > 0;
 
                     // Debug: información de timestamps
-                    $analysis['debug_info'][] = 'Proyecto actualizado después de publicación: ' . ($projectUpdatedAfterPublication ? 'SÍ' : 'NO');
-                    $analysis['debug_info'][] = 'Actividades actualizadas después de publicación: ' . ($activitiesUpdatedAfterPublication ? 'SÍ' : 'NO');
-                    $analysis['debug_info'][] = 'Métricas actualizadas después de publicación: ' . ($metricsUpdatedAfterPublication ? 'SÍ' : 'NO');
+                    $analysis['debug_info'][] = 'Proyecto actualizado después de la publicación: ' . ($projectUpdatedAfterPublication ? 'SÍ' : 'NO');
+                    $analysis['debug_info'][] = 'Actividades actualizadas después de la publicación: ' . ($activitiesUpdatedAfterPublication ? 'SÍ' : 'NO');
+                    $analysis['debug_info'][] = 'Métricas actualizadas después de la publicación: ' . ($metricsUpdatedAfterPublication ? 'SÍ' : 'NO');
+                    $analysis['debug_info'][] = 'Publication date: ' . $publicationDate->format('d/m/Y H:i');
+                    $analysis['debug_info'][] = 'Snapshot date (incorrecto): ' . $publishedProject->snapshot_date;
 
                     // También verificar cambios en valores
                     $analysis['cost_changed'] = $project->total_cost != $publishedProject->total_cost;
@@ -224,9 +257,12 @@ class DataPublicationApproval extends Page
                     if ($projectUpdatedAfterPublication || $activitiesUpdatedAfterPublication || $metricsUpdatedAfterPublication ||
                         $analysis['cost_changed'] || $analysis['activities_changed'] || $analysis['metrics_changed']) {
                         $hasChanges = true;
+                        $analysis['debug_info'][] = '🔴 CAMBIOS DETECTADOS - Marcar como ACTUALIZAR';
+                    } else {
+                        $analysis['debug_info'][] = '✅ SIN CAMBIOS - No necesita acción';
                     }
                 } else {
-                    $analysis['debug_info'][] = 'No hay datos publicados para comparar';
+                    $analysis['debug_info'][] = '⚠️ No hay datos publicados para comparar';
                 }
 
                 if ($hasChanges) {
@@ -254,21 +290,27 @@ class DataPublicationApproval extends Page
                     }
                 }
             } else {
-                // Proyecto no publicado
-                $analysis['debug_info'][] = 'Proyecto no publicado anteriormente';
+                // Proyecto no publicado en la última publicación
+                $analysis['debug_info'][] = '❌ Proyecto NO publicado en la última publicación';
                 if ($analysis['current_activities_count'] > 0 || $analysis['current_metrics_count'] > 0) {
                     $analysis['needs_action'] = true;
                     $analysis['action_type'] = 'publish';
                     $analysis['changes_summary'][] = 'Nuevo proyecto para publicar';
+                    $analysis['debug_info'][] = '🟢 Marcar como NUEVO para publicar';
+                } else {
+                    $analysis['debug_info'][] = '⚠️ No tiene actividades ni métricas - No necesita acción';
                 }
             }
         } else {
             // No hay publicaciones anteriores
-            $analysis['debug_info'][] = 'No hay publicaciones anteriores';
+            $analysis['debug_info'][] = '⚠️ No hay publicaciones anteriores';
             if ($analysis['current_activities_count'] > 0 || $analysis['current_metrics_count'] > 0) {
                 $analysis['needs_action'] = true;
                 $analysis['action_type'] = 'publish';
                 $analysis['changes_summary'][] = 'Primera publicación del proyecto';
+                $analysis['debug_info'][] = '🟢 Primera publicación - Marcar como NUEVO';
+            } else {
+                $analysis['debug_info'][] = '⚠️ No tiene actividades ni métricas - No necesita acción';
             }
         }
 

@@ -101,18 +101,40 @@ class ProjectManagement extends Page implements Tables\Contracts\HasTable
                     ->modalSubmitActionLabel('Sí, eliminar')
                     ->modalCancelActionLabel('Cancelar')
                     ->action(function (Project $record) {
-                        $record->specificObjectives()->delete();
-                        $record->kpis()->delete();
+                        // Eliminar en orden correcto respetando las restricciones de clave foránea
                         $record->goals()->each(function($goal) {
                             $goal->activities()->each(function($activity) {
-                                // Eliminar planned metrics de la actividad
-                                $activity->plannedMetrics()->delete();
-                                // Eliminar activity logs relacionados
+                                // 1. Eliminar activity_logs relacionados con planned_metrics
                                 \App\Models\ActivityLog::whereIn('planned_metrics_id', $activity->plannedMetrics()->pluck('id'))->delete();
+
+                                // 2. Eliminar published_metrics relacionados con planned_metrics
+                                \App\Models\PublishedMetric::whereIn('original_metric_id', $activity->plannedMetrics()->pluck('id'))->delete();
+
+                                // 3. Eliminar planned_metrics de la actividad
+                                $activity->plannedMetrics()->delete();
+
+                                // 4. Eliminar activity_files relacionados con activity_calendars
+                                \App\Models\ActivityFile::whereIn('activity_calendar_id', $activity->activityCalendars()->pluck('id'))->delete();
+
+                                // 5. Eliminar beneficiary_registries relacionados con activity_calendars
+                                \App\Models\BeneficiaryRegistry::whereIn('activity_calendar_id', $activity->activityCalendars()->pluck('id'))->delete();
+
+                                // 6. Eliminar activity_calendars
+                                $activity->activityCalendars()->delete();
+
+                                // 7. Eliminar la actividad
                                 $activity->delete();
                             });
                             $goal->delete();
                         });
+
+                        // 8. Eliminar specific_objectives
+                        $record->specificObjectives()->delete();
+
+                        // 9. Eliminar kpis
+                        $record->kpis()->delete();
+
+                        // 10. Eliminar el proyecto
                         $record->delete();
                     }),
             ])
@@ -127,18 +149,40 @@ class ProjectManagement extends Page implements Tables\Contracts\HasTable
                         ->modalCancelActionLabel('Cancelar')
                         ->action(function ($records) {
                             foreach ($records as $record) {
-                                $record->specificObjectives()->delete();
-                                $record->kpis()->delete();
+                                // Eliminar en orden correcto respetando las restricciones de clave foránea
                                 $record->goals()->each(function($goal) {
                                     $goal->activities()->each(function($activity) {
-                                        // Eliminar planned metrics de la actividad
-                                        $activity->plannedMetrics()->delete();
-                                        // Eliminar activity logs relacionados
+                                        // 1. Eliminar activity_logs relacionados con planned_metrics
                                         \App\Models\ActivityLog::whereIn('planned_metrics_id', $activity->plannedMetrics()->pluck('id'))->delete();
+
+                                        // 2. Eliminar published_metrics relacionados con planned_metrics
+                                        \App\Models\PublishedMetric::whereIn('original_metric_id', $activity->plannedMetrics()->pluck('id'))->delete();
+
+                                        // 3. Eliminar planned_metrics de la actividad
+                                        $activity->plannedMetrics()->delete();
+
+                                        // 4. Eliminar activity_files relacionados con activity_calendars
+                                        \App\Models\ActivityFile::whereIn('activity_calendar_id', $activity->activityCalendars()->pluck('id'))->delete();
+
+                                        // 5. Eliminar beneficiary_registries relacionados con activity_calendars
+                                        \App\Models\BeneficiaryRegistry::whereIn('activity_calendar_id', $activity->activityCalendars()->pluck('id'))->delete();
+
+                                        // 6. Eliminar activity_calendars
+                                        $activity->activityCalendars()->delete();
+
+                                        // 7. Eliminar la actividad
                                         $activity->delete();
                                     });
                                     $goal->delete();
                                 });
+
+                                // 8. Eliminar specific_objectives
+                                $record->specificObjectives()->delete();
+
+                                // 9. Eliminar kpis
+                                $record->kpis()->delete();
+
+                                // 10. Eliminar el proyecto
                                 $record->delete();
                             }
                         })

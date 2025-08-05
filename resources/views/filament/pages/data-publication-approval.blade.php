@@ -1,186 +1,198 @@
 <x-filament-panels::page>
     <x-slot name="header">
-        <h1 class="text-2xl font-bold tracking-tight">Datos pendientes de publicación</h1>
+        <h1 class="text-2xl font-bold tracking-tight">Análisis y publicación de datos</h1>
     </x-slot>
 
     {{-- Resumen de estadísticas --}}
     <x-filament::section>
         <div class="flex flex-wrap gap-4 justify-center">
             <div class="bg-blue-50 p-3 rounded-lg min-w-[120px] text-center">
-                <div class="text-xl font-bold text-blue-600">{{ $pendingProjects->count() }}</div>
+                <div class="text-xl font-bold text-blue-600">{{ count($allProjects) }}</div>
                 <div class="text-xs text-gray-600">Proyectos</div>
             </div>
             <div class="bg-green-50 p-3 rounded-lg min-w-[120px] text-center">
-                <div class="text-xl font-bold text-green-600">{{ collect($projectsWithData)->sum('activities_count') }}</div>
-                <div class="text-xs text-gray-600">Actividades</div>
+                <div class="text-xl font-bold text-green-600">{{ count($projectsToPublish) }}</div>
+                <div class="text-xs text-gray-600">Nuevos</div>
             </div>
             <div class="bg-yellow-50 p-3 rounded-lg min-w-[120px] text-center">
-                <div class="text-xl font-bold text-yellow-600">{{ collect($projectsWithData)->sum('metrics_count') }}</div>
-                <div class="text-xs text-gray-600">Métricas</div>
+                <div class="text-xl font-bold text-yellow-600">{{ count($projectsToUpdate) }}</div>
+                <div class="text-xs text-gray-600">Actualizar</div>
             </div>
             <div class="bg-purple-50 p-3 rounded-lg min-w-[120px] text-center">
-                <div class="text-xl font-bold text-purple-600">{{ $pendingProjects->count() + collect($projectsWithData)->sum('activities_count') + collect($projectsWithData)->sum('metrics_count') }}</div>
-                <div class="text-xs text-gray-600">Total</div>
+                <div class="text-xl font-bold text-purple-600">{{ count($selectedProjects) }}</div>
+                <div class="text-xs text-gray-600">Seleccionados</div>
             </div>
         </div>
     </x-filament::section>
 
-    {{-- Botón de comparación --}}
-    <x-filament::section>
-        <div class="flex justify-center">
-            <x-filament::button
-                wire:click="toggleComparison"
-                color="{{ $showComparison ? 'warning' : 'info' }}"
-                size="md"
-                icon="{{ $showComparison ? 'heroicon-o-eye-slash' : 'heroicon-o-eye' }}"
-            >
-                {{ $showComparison ? 'Ocultar comparación' : 'Mostrar comparación con última publicación' }}
-            </x-filament::button>
-        </div>
-    </x-filament::section>
-
-    {{-- Datos organizados por proyecto --}}
-    @forelse($projectsWithData as $projectData)
-        @php
-            $comparisonData = $showComparison ? collect($projectsWithComparison)->firstWhere('project.id', $projectData['project']->id) : null;
-        @endphp
+    @if(count($allProjects) > 0)
+        {{-- Selección de proyectos --}}
         <x-filament::section>
-            <div class="space-y-6">
-                {{-- Información del proyecto --}}
-                <div class="border-b pb-4">
-                    <h2 class="text-xl font-bold text-gray-800 mb-3">{{ $projectData['project']->name }}</h2>
+            <div class="space-y-4">
+                <h2 class="text-lg font-semibold">Seleccionar proyectos para publicar/actualizar</h2>
 
-                    @if($showComparison)
-                        <div class="mb-4 p-3 bg-blue-50 rounded-lg">
-                            @if($comparisonData && $comparisonData['published_project'])
-                                <h4 class="font-semibold text-blue-800 mb-2">📊 Comparación con última publicación ({{ $comparisonData['last_publication']->publication_date->format('d/m/Y H:i') }})</h4>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                                    <div>
-                                        <strong>Costo total:</strong>
-                                        <span class="{{ $projectData['project']->total_cost != $comparisonData['published_project']->total_cost ? 'text-red-600 font-bold' : 'text-gray-600' }}">
-                                            ${{ number_format($projectData['project']->total_cost ?? 0, 2) }}
+                                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-700">Seleccionar proyectos:</label>
+                    <div class="border rounded-lg p-3 max-h-60 overflow-y-auto">
+                        @if(count($allProjects) > 0)
+                            @foreach($allProjects as $projectAnalysis)
+                                <label class="flex items-center space-x-2 py-1 hover:bg-gray-50 rounded px-2">
+                                    <input
+                                        type="checkbox"
+                                        wire:model="selectedProjects"
+                                        value="{{ $projectAnalysis['project']->id }}"
+                                        class="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                                    >
+                                    <span class="text-sm">
+                                        <span class="font-medium">{{ $projectAnalysis['project']->name }}</span>
+                                        <span class="ml-2 px-2 py-1 text-xs rounded-full {{ $projectAnalysis['action_type'] === 'publish' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                            {{ $projectAnalysis['action_type'] === 'publish' ? 'NUEVO' : 'ACTUALIZAR' }}
                                         </span>
-                                        @if($projectData['project']->total_cost != $comparisonData['published_project']->total_cost)
-                                            <span class="text-xs text-gray-500">(antes: ${{ number_format($comparisonData['published_project']->total_cost ?? 0, 2) }})</span>
-                                        @endif
-                                    </div>
-                                    <div>
-                                        <strong>Actividades:</strong>
-                                        <span class="{{ $projectData['activities_count'] != $comparisonData['published_activities']->count() ? 'text-red-600 font-bold' : 'text-gray-600' }}">
-                                            {{ $projectData['activities_count'] }}
-                                        </span>
-                                        @if($projectData['activities_count'] != $comparisonData['published_activities']->count())
-                                            <span class="text-xs text-gray-500">(antes: {{ $comparisonData['published_activities']->count() }})</span>
-                                        @endif
-                                    </div>
-                                    <div>
-                                        <strong>Métricas:</strong>
-                                        <span class="{{ $projectData['metrics_count'] != $comparisonData['published_metrics']->count() ? 'text-red-600 font-bold' : 'text-gray-600' }}">
-                                            {{ $projectData['metrics_count'] }}
-                                        </span>
-                                        @if($projectData['metrics_count'] != $comparisonData['published_metrics']->count())
-                                            <span class="text-xs text-gray-500">(antes: {{ $comparisonData['published_metrics']->count() }})</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            @else
-                                <h4 class="font-semibold text-blue-800 mb-2">📊 Información de comparación</h4>
-                                <div class="text-sm text-gray-600">
-                                    <p>✅ Este proyecto no ha sido publicado anteriormente</p>
-                                    <p>📈 Será la primera publicación de este proyecto</p>
-                                    <p>📊 Datos actuales: {{ $projectData['activities_count'] }} actividades, {{ $projectData['metrics_count'] }} métricas</p>
-                                </div>
-                            @endif
-                        </div>
-                    @endif
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                        <div><strong>Financiador:</strong> {{ $projectData['project']->financiers->name ?? 'No definido' }}</div>
-                        <div><strong>Costo total:</strong> ${{ number_format($projectData['project']->total_cost ?? 0, 2) }}</div>
-                        <div><strong>Período:</strong> {{ $projectData['project']->start_date?->format('d/m/Y') ?? 'No definida' }} - {{ $projectData['project']->end_date?->format('d/m/Y') ?? 'No definida' }}</div>
-                        <div><strong>Oficial:</strong> {{ $projectData['project']->followup_officer ?? 'No asignado' }}</div>
+                                    </span>
+                                </label>
+                            @endforeach
+                        @else
+                            <p class="text-gray-500 text-sm">No hay proyectos disponibles para seleccionar</p>
+                        @endif
                     </div>
                 </div>
 
-                {{-- Actividades del proyecto --}}
-                @if($projectData['activities']->count() > 0)
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-700 mb-3">Actividades pendientes ({{ $projectData['activities_count'] }})</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            @foreach($projectData['activities'] as $activity)
-                                <x-filament::card>
-                                    <div class="space-y-2">
-                                        <div><strong>Nombre:</strong> {{ $activity->name }}</div>
-                                        <div><strong>Descripción:</strong> {{ Str::limit($activity->description ?? 'Sin descripción', 100) }}</div>
-                                        <div><strong>Meta:</strong> {{ Str::limit($activity->goal->description ?? 'Sin meta', 80) }}</div>
-                                        <div><strong>Objetivo específico:</strong> {{ Str::limit($activity->specificObjective->description ?? 'Sin objetivo específico', 80) }}</div>
-                                    </div>
-                                </x-filament::card>
-                            @endforeach
-                        </div>
+                @if(count($allProjects) > 0)
+                    <div class="text-sm text-gray-600 mt-2">
+                        <p>Proyectos disponibles: {{ count($allProjects) }}</p>
+                        <p>Nuevos: {{ count($projectsToPublish) }} | Actualizar: {{ count($projectsToUpdate) }}</p>
                     </div>
-                @endif
 
-                {{-- Métricas del proyecto --}}
-                @if($projectData['metrics']->count() > 0)
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-700 mb-3">Métricas pendientes ({{ $projectData['metrics_count'] }})</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            @foreach($projectData['metrics'] as $metric)
-                                <x-filament::card>
-                                    <div class="space-y-2">
-                                        <div><strong>Actividad:</strong> {{ $metric->activity->name ?? 'Sin actividad' }}</div>
-                                        <div><strong>Unidad:</strong> {{ $metric->unit ?? 'No definida' }}</div>
-                                        <div><strong>Período:</strong> {{ $metric->year ?? 'N/A' }}/{{ $metric->month ?? 'N/A' }}</div>
-                                        <div><strong>Meta población:</strong> {{ number_format($metric->population_target_value ?? 0) }}</div>
-                                        <div><strong>Valor real población:</strong> {{ number_format($metric->population_real_value ?? 0) }}</div>
-                                        <div><strong>Meta producto:</strong> {{ number_format($metric->product_target_value ?? 0) }}</div>
-                                        <div><strong>Valor real producto:</strong> {{ number_format($metric->product_real_value ?? 0) }}</div>
-                                    </div>
-                                </x-filament::card>
-                            @endforeach
-                        </div>
+                    <div class="flex gap-2 mt-3">
+                        <x-filament::button
+                            wire:click="selectAllProjects"
+                            size="sm"
+                            color="primary"
+                        >
+                            Seleccionar todos
+                        </x-filament::button>
+
+                        <x-filament::button
+                            wire:click="clearSelection"
+                            size="sm"
+                            color="gray"
+                        >
+                            Limpiar selección
+                        </x-filament::button>
                     </div>
                 @endif
             </div>
         </x-filament::section>
-    @empty
+
+        {{-- Detalles de proyectos seleccionados --}}
+        @if(count($selectedProjects) > 0)
+            <x-filament::section>
+                <div class="space-y-6">
+                    <h2 class="text-lg font-semibold">Detalles de proyectos seleccionados</h2>
+
+                    @foreach($allProjects as $projectAnalysis)
+                        @if(in_array($projectAnalysis['project']->id, $selectedProjects))
+                            <div class="border rounded-lg p-4 {{ $projectAnalysis['action_type'] === 'publish' ? 'bg-green-50' : 'bg-yellow-50' }}">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="text-lg font-semibold {{ $projectAnalysis['action_type'] === 'publish' ? 'text-green-800' : 'text-yellow-800' }}">
+                                        {{ $projectAnalysis['project']->name }}
+                                    </h3>
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $projectAnalysis['action_type'] === 'publish' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800' }}">
+                                        {{ $projectAnalysis['action_type'] === 'publish' ? 'NUEVO' : 'ACTUALIZAR' }}
+                                    </span>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-3">
+                                    <div><strong>Financiador:</strong> {{ $projectAnalysis['project']->financiers->name ?? 'No definido' }}</div>
+                                    <div><strong>Costo total:</strong> ${{ number_format($projectAnalysis['project']->total_cost ?? 0, 2) }}</div>
+                                    <div><strong>Oficial:</strong> {{ $projectAnalysis['project']->followup_officer ?? 'No asignado' }}</div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3">
+                                    <div><strong>Actividades actuales:</strong> {{ $projectAnalysis['current_activities_count'] }}</div>
+                                    <div><strong>Métricas actuales:</strong> {{ $projectAnalysis['current_metrics_count'] }}</div>
+                                </div>
+
+                                @if($projectAnalysis['action_type'] === 'update')
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3">
+                                        <div><strong>Actividades publicadas:</strong> {{ $projectAnalysis['published_activities_count'] }}</div>
+                                        <div><strong>Métricas publicadas:</strong> {{ $projectAnalysis['published_metrics_count'] }}</div>
+                                    </div>
+
+                                    @if($projectAnalysis['last_publication_date'])
+                                        <div class="text-xs text-gray-600 mb-3">
+                                            Última publicación: {{ $projectAnalysis['last_publication_date']->format('d/m/Y H:i') }}
+                                        </div>
+                                    @endif
+                                @endif
+
+                                                                 @if(count($projectAnalysis['changes_summary']) > 0)
+                                     <div class="bg-white p-3 rounded border">
+                                         <h4 class="font-semibold text-sm mb-2">Cambios detectados:</h4>
+                                         <ul class="text-sm space-y-1">
+                                             @foreach($projectAnalysis['changes_summary'] as $change)
+                                                 <li class="flex items-center">
+                                                     <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                                                     {{ $change }}
+                                                 </li>
+                                             @endforeach
+                                         </ul>
+                                     </div>
+                                 @endif
+
+                                 {{-- Información de debug --}}
+                                 <div class="bg-gray-50 p-3 rounded border mt-3">
+                                     <h4 class="font-semibold text-sm mb-2 text-gray-600">Información de debug:</h4>
+                                     <ul class="text-xs space-y-1 text-gray-600">
+                                         @foreach($projectAnalysis['debug_info'] as $debug)
+                                             <li>{{ $debug }}</li>
+                                         @endforeach
+                                     </ul>
+                                 </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            </x-filament::section>
+        @endif
+
+        {{-- Campo para notas de publicación --}}
+        <x-filament::section>
+            <div class="space-y-4">
+                <h2 class="text-lg font-semibold">Notas de publicación (opcional)</h2>
+                <x-filament::input.wrapper>
+                    <x-filament::input
+                        wire:model="publicationNotes"
+                        placeholder="Ingrese notas sobre esta publicación..."
+                        type="textarea"
+                        rows="3"
+                    />
+                </x-filament::input.wrapper>
+            </div>
+        </x-filament::section>
+
+        {{-- Botón de aprobación --}}
+        <x-filament::section>
+            <div class="space-y-4">
+                <h2 class="text-lg font-semibold">Acción de aprobación</h2>
+                <div class="flex justify-center">
+                    <x-filament::button
+                        wire:click="approvePublication"
+                        color="success"
+                        size="lg"
+                        icon="heroicon-o-check-circle"
+                    >
+                        Publicar proyectos seleccionados
+                    </x-filament::button>
+                </div>
+            </div>
+        </x-filament::section>
+    @else
         <x-filament::section>
             <div class="text-center text-gray-500 py-8">
-                <p class="text-lg">No hay proyectos pendientes de publicación.</p>
+                <p class="text-lg">✅ No hay proyectos que requieran publicación o actualización.</p>
+                <p class="text-sm mt-2">Todos los proyectos están actualizados o no tienen datos para publicar.</p>
             </div>
         </x-filament::section>
-    @endforelse
-
-    {{-- Campo para notas de publicación --}}
-    <x-filament::section>
-        <div class="space-y-4">
-            <h2 class="text-lg font-semibold">Notas de publicación (opcional)</h2>
-            <x-filament::input.wrapper>
-                <x-filament::input
-                    wire:model="publicationNotes"
-                    placeholder="Ingrese notas sobre esta publicación..."
-                    type="textarea"
-                    rows="3"
-                />
-            </x-filament::input.wrapper>
-        </div>
-    </x-filament::section>
-
-    {{-- Botón de aprobación --}}
-    <x-filament::section>
-        <div class="space-y-4">
-            <h2 class="text-lg font-semibold">Acción de aprobación</h2>
-            <div class="flex justify-center">
-                <x-filament::button
-                    wire:click="approvePublication"
-                    color="success"
-                    size="lg"
-                    icon="heroicon-o-check-circle"
-                >
-                    Aprobar todo
-                </x-filament::button>
-            </div>
-        </div>
-    </x-filament::section>
+    @endif
 </x-filament-panels::page>

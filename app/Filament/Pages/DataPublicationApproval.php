@@ -19,152 +19,273 @@ class DataPublicationApproval extends Page
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static string $view = 'filament.pages.data-publication-approval';
 
-    public $pendingProjects = [];
-    public $projectsWithData = [];
-    public $projectsWithComparison = [];
+    public $allProjects = [];
+    public $selectedProjects = [];
+    public $projectsToPublish = [];
+    public $projectsToUpdate = [];
     public $publicationNotes = '';
-    public $showComparison = false;
 
     public function mount()
     {
-        $this->loadPendingData();
-    }
+        $this->selectedProjects = []; // Inicializar como array vacío
+        $this->loadProjectAnalysis();
 
-    public function loadPendingData()
-    {
-        // Obtener proyectos pendientes
-        $this->pendingProjects = Project::whereDoesntHave('publishedProjects')->get();
-
-        // Agrupar actividades y métricas por proyecto
-        $this->projectsWithData = [];
-
-        foreach ($this->pendingProjects as $project) {
-            // Obtener actividades del proyecto
-            $activities = Activity::whereDoesntHave('publishedActivities')
-                ->whereHas('goal', function($query) use ($project) {
-                    $query->where('project_id', $project->id);
-                })
-                ->with(['goal', 'specificObjective'])
-                ->get();
-
-            // Obtener métricas del proyecto
-            $metrics = PlannedMetric::whereDoesntHave('publishedMetrics')
-                ->whereHas('activity.goal', function($query) use ($project) {
-                    $query->where('project_id', $project->id);
-                })
-                ->with(['activity.goal.project'])
-                ->get();
-
-            $this->projectsWithData[] = [
-                'project' => $project,
-                'activities' => $activities,
-                'metrics' => $metrics,
-                'activities_count' => $activities->count(),
-                'metrics_count' => $metrics->count()
-            ];
-        }
-
-        // Cargar datos de comparación si se solicita
-        if ($this->showComparison) {
-            $this->loadComparisonData();
-        }
-    }
-
-    public function loadComparisonData()
-    {
-        $this->projectsWithComparison = [];
-
-        // Obtener la última publicación
-        $lastPublication = DataPublication::orderBy('publication_date', 'desc')->first();
-
-        if ($lastPublication) {
-            foreach ($this->pendingProjects as $project) {
-                // Obtener datos actuales del proyecto
-                $currentProject = $project;
-
-                // Obtener datos publicados del proyecto
-                $publishedProject = $project->publishedProjects()
-                    ->where('publication_id', $lastPublication->id)
-                    ->first();
-
-                // Obtener actividades actuales vs publicadas
-                $currentActivities = Activity::whereHas('goal', function($query) use ($project) {
-                    $query->where('project_id', $project->id);
-                })->with(['goal', 'specificObjective'])->get();
-
-                // Obtener métricas actuales vs publicadas
-                $currentMetrics = PlannedMetric::whereHas('activity.goal', function($query) use ($project) {
-                    $query->where('project_id', $project->id);
-                })->with(['activity.goal.project'])->get();
-
-                // Obtener actividades publicadas (simplificado)
-                $publishedActivities = collect();
-                if ($publishedProject) {
-                    // Buscar actividades publicadas relacionadas con este proyecto
-                    $publishedActivities = \App\Models\PublishedActivity::where('publication_id', $lastPublication->id)
-                        ->whereHas('originalActivity.goal', function($query) use ($project) {
-                            $query->where('project_id', $project->id);
-                        })->get();
-                }
-
-                // Obtener métricas publicadas (simplificado)
-                $publishedMetrics = collect();
-                if ($publishedProject) {
-                    // Buscar métricas publicadas relacionadas con este proyecto
-                    $publishedMetrics = \App\Models\PublishedMetric::where('publication_id', $lastPublication->id)
-                        ->whereHas('originalMetric.activity.goal', function($query) use ($project) {
-                            $query->where('project_id', $project->id);
-                        })->get();
-                }
-
-                $this->projectsWithComparison[] = [
-                    'project' => $currentProject,
-                    'published_project' => $publishedProject,
-                    'current_activities' => $currentActivities,
-                    'published_activities' => $publishedActivities,
-                    'current_metrics' => $currentMetrics,
-                    'published_metrics' => $publishedMetrics,
-                    'last_publication' => $lastPublication
-                ];
-            }
-        }
-    }
-
-    public function toggleComparison()
-    {
-        $this->showComparison = !$this->showComparison;
-
-        if ($this->showComparison) {
-            $this->loadComparisonData();
-
-            // Debug: verificar si hay datos de comparación
-            $lastPublication = DataPublication::orderBy('publication_date', 'desc')->first();
-
-            if ($lastPublication) {
-                Notification::make()
-                    ->title('Comparación activada')
-                    ->body('Última publicación: ' . $lastPublication->publication_date->format('d/m/Y H:i') .
-                           ' - Proyectos con comparación: ' . count($this->projectsWithComparison))
-                    ->info()
-                    ->send();
-            } else {
-                Notification::make()
-                    ->title('No hay datos para comparar')
-                    ->body('No se encontraron publicaciones anteriores')
-                    ->warning()
-                    ->send();
-            }
+        // Debug: mostrar información de lo que se detectó
+        if (count($this->allProjects) > 0) {
+            Notification::make()
+                ->title('Análisis completado')
+                ->body('Proyectos detectados: ' . count($this->allProjects) .
+                       ' (Nuevos: ' . count($this->projectsToPublish) .
+                       ', Actualizar: ' . count($this->projectsToUpdate) . ')')
+                ->info()
+                ->send();
         } else {
             Notification::make()
-                ->title('Comparación desactivada')
-                ->body('Vista de comparación oculta')
+                ->title('No se detectaron cambios')
+                ->body('Todos los proyectos están actualizados o no tienen datos para publicar')
+                ->warning()
+                ->send();
+        }
+    }
+
+    public function updatedSelectedProjects()
+    {
+        // Debug: mostrar qué proyectos se seleccionaron
+        if (count($this->selectedProjects) > 0) {
+            Notification::make()
+                ->title('Proyectos seleccionados')
+                ->body('Seleccionaste ' . count($this->selectedProjects) . ' proyecto(s)')
                 ->info()
                 ->send();
         }
     }
 
+    public function selectAllProjects()
+    {
+        $this->selectedProjects = collect($this->allProjects)->pluck('project.id')->toArray();
+        Notification::make()
+            ->title('Todos los proyectos seleccionados')
+            ->body('Se han seleccionado todos los proyectos disponibles')
+            ->info()
+            ->send();
+    }
+
+    public function clearSelection()
+    {
+        $this->selectedProjects = [];
+        Notification::make()
+            ->title('Selección limpiada')
+            ->body('Se han deseleccionado todos los proyectos')
+            ->info()
+            ->send();
+    }
+
+    public function loadProjectAnalysis()
+    {
+        $this->allProjects = [];
+        $this->projectsToPublish = [];
+        $this->projectsToUpdate = [];
+
+        // Obtener todos los proyectos
+        $allProjects = Project::with(['financiers', 'goals.activities', 'goals.activities.plannedMetrics'])->get();
+
+        // Obtener la última publicación
+        $lastPublication = DataPublication::orderBy('publication_date', 'desc')->first();
+
+        // Debug: mostrar información inicial
+        Notification::make()
+            ->title('Debug: Análisis iniciado')
+            ->body('Proyectos totales: ' . $allProjects->count() .
+                   ' | Última publicación: ' . ($lastPublication ? $lastPublication->publication_date->format('d/m/Y H:i') : 'Ninguna'))
+            ->info()
+            ->send();
+
+        foreach ($allProjects as $project) {
+            $projectAnalysis = $this->analyzeProject($project, $lastPublication);
+
+            // Solo agregar proyectos que realmente necesitan acción
+            if ($projectAnalysis['needs_action']) {
+                $this->allProjects[] = $projectAnalysis;
+
+                if ($projectAnalysis['action_type'] === 'publish') {
+                    $this->projectsToPublish[] = $projectAnalysis;
+                } else {
+                    $this->projectsToUpdate[] = $projectAnalysis;
+                }
+            }
+        }
+
+        // Debug: mostrar resultado final
+        Notification::make()
+            ->title('Debug: Análisis completado')
+            ->body('Proyectos con acción: ' . count($this->allProjects) .
+                   ' | Nuevos: ' . count($this->projectsToPublish) .
+                   ' | Actualizar: ' . count($this->projectsToUpdate))
+            ->info()
+            ->send();
+    }
+
+    public function analyzeProject($project, $lastPublication)
+    {
+        $analysis = [
+            'project' => $project,
+            'needs_action' => false,
+            'action_type' => null, // 'publish' o 'update'
+            'current_activities_count' => 0,
+            'current_metrics_count' => 0,
+            'published_activities_count' => 0,
+            'published_metrics_count' => 0,
+            'cost_changed' => false,
+            'activities_changed' => false,
+            'metrics_changed' => false,
+            'last_publication_date' => null,
+            'changes_summary' => [],
+            'debug_info' => [] // Información de debug
+        ];
+
+        // Contar actividades y métricas actuales
+        $currentActivities = Activity::whereHas('goal', function($query) use ($project) {
+            $query->where('project_id', $project->id);
+        })->get();
+
+        $currentMetrics = PlannedMetric::whereHas('activity.goal', function($query) use ($project) {
+            $query->where('project_id', $project->id);
+        })->get();
+
+        $analysis['current_activities_count'] = $currentActivities->count();
+        $analysis['current_metrics_count'] = $currentMetrics->count();
+
+        // Debug: información del proyecto
+        $analysis['debug_info'][] = 'Proyecto: ' . $project->name;
+        $analysis['debug_info'][] = 'Actividades actuales: ' . $analysis['current_activities_count'];
+        $analysis['debug_info'][] = 'Métricas actuales: ' . $analysis['current_metrics_count'];
+        $analysis['debug_info'][] = 'Última actualización del proyecto: ' . ($project->updated_at ? $project->updated_at->format('d/m/Y H:i') : 'N/A');
+
+        // Verificar si el proyecto ya fue publicado
+        if ($lastPublication) {
+            $analysis['debug_info'][] = 'Última publicación: ' . $lastPublication->publication_date->format('d/m/Y H:i');
+
+            $publishedProject = $project->publishedProjects()
+                ->where('publication_id', $lastPublication->id)
+                ->first();
+
+            if ($publishedProject) {
+                // Proyecto ya publicado, verificar si hay cambios
+                $analysis['last_publication_date'] = $lastPublication->publication_date;
+
+                // Obtener datos publicados
+                $publishedActivities = \App\Models\PublishedActivity::where('publication_id', $lastPublication->id)
+                    ->whereHas('originalActivity.goal', function($query) use ($project) {
+                        $query->where('project_id', $project->id);
+                    })->get();
+
+                $publishedMetrics = \App\Models\PublishedMetric::where('publication_id', $lastPublication->id)
+                    ->whereHas('originalMetric.activity.goal', function($query) use ($project) {
+                        $query->where('project_id', $project->id);
+                    })->get();
+
+                $analysis['published_activities_count'] = $publishedActivities->count();
+                $analysis['published_metrics_count'] = $publishedMetrics->count();
+
+                // Debug: información de datos publicados
+                $analysis['debug_info'][] = 'Actividades publicadas: ' . $analysis['published_activities_count'];
+                $analysis['debug_info'][] = 'Métricas publicadas: ' . $analysis['published_metrics_count'];
+
+                // Detectar cambios comparando timestamps - SOLO si hay datos para comparar
+                $hasChanges = false;
+
+                // Solo verificar timestamps si hay datos publicados para comparar
+                if ($analysis['published_activities_count'] > 0 || $analysis['published_metrics_count'] > 0) {
+                    // Verificar si el proyecto fue actualizado después de la publicación
+                    $projectUpdatedAfterPublication = $project->updated_at && $project->updated_at->gt($lastPublication->publication_date);
+
+                    // Verificar si alguna actividad fue actualizada después de la publicación
+                    $activitiesUpdatedAfterPublication = $currentActivities->where('updated_at', '>', $lastPublication->publication_date)->count() > 0;
+
+                    // Verificar si alguna métrica fue actualizada después de la publicación
+                    $metricsUpdatedAfterPublication = $currentMetrics->where('updated_at', '>', $lastPublication->publication_date)->count() > 0;
+
+                    // Debug: información de timestamps
+                    $analysis['debug_info'][] = 'Proyecto actualizado después de publicación: ' . ($projectUpdatedAfterPublication ? 'SÍ' : 'NO');
+                    $analysis['debug_info'][] = 'Actividades actualizadas después de publicación: ' . ($activitiesUpdatedAfterPublication ? 'SÍ' : 'NO');
+                    $analysis['debug_info'][] = 'Métricas actualizadas después de publicación: ' . ($metricsUpdatedAfterPublication ? 'SÍ' : 'NO');
+
+                    // También verificar cambios en valores
+                    $analysis['cost_changed'] = $project->total_cost != $publishedProject->total_cost;
+                    $analysis['activities_changed'] = $analysis['current_activities_count'] != $analysis['published_activities_count'];
+                    $analysis['metrics_changed'] = $analysis['current_metrics_count'] != $analysis['published_metrics_count'];
+
+                    // Debug: información de cambios en valores
+                    $analysis['debug_info'][] = 'Costo cambiado: ' . ($analysis['cost_changed'] ? 'SÍ' : 'NO');
+                    $analysis['debug_info'][] = 'Cantidad de actividades cambiada: ' . ($analysis['activities_changed'] ? 'SÍ' : 'NO');
+                    $analysis['debug_info'][] = 'Cantidad de métricas cambiada: ' . ($analysis['metrics_changed'] ? 'SÍ' : 'NO');
+
+                    // Detectar si hay cambios basados en timestamps O valores
+                    if ($projectUpdatedAfterPublication || $activitiesUpdatedAfterPublication || $metricsUpdatedAfterPublication ||
+                        $analysis['cost_changed'] || $analysis['activities_changed'] || $analysis['metrics_changed']) {
+                        $hasChanges = true;
+                    }
+                } else {
+                    $analysis['debug_info'][] = 'No hay datos publicados para comparar';
+                }
+
+                if ($hasChanges) {
+                    $analysis['needs_action'] = true;
+                    $analysis['action_type'] = 'update';
+
+                    // Crear resumen de cambios
+                    if ($projectUpdatedAfterPublication) {
+                        $analysis['changes_summary'][] = 'Proyecto modificado después de la última publicación (' . $project->updated_at->format('d/m/Y H:i') . ')';
+                    }
+                    if ($activitiesUpdatedAfterPublication) {
+                        $analysis['changes_summary'][] = 'Actividades modificadas después de la última publicación';
+                    }
+                    if ($metricsUpdatedAfterPublication) {
+                        $analysis['changes_summary'][] = 'Métricas modificadas después de la última publicación';
+                    }
+                    if ($analysis['cost_changed']) {
+                        $analysis['changes_summary'][] = 'Costo modificado: $' . number_format($publishedProject->total_cost, 2) . ' → $' . number_format($project->total_cost, 2);
+                    }
+                    if ($analysis['activities_changed']) {
+                        $analysis['changes_summary'][] = 'Cantidad de actividades: ' . $analysis['published_activities_count'] . ' → ' . $analysis['current_activities_count'];
+                    }
+                    if ($analysis['metrics_changed']) {
+                        $analysis['changes_summary'][] = 'Cantidad de métricas: ' . $analysis['published_metrics_count'] . ' → ' . $analysis['current_metrics_count'];
+                    }
+                }
+            } else {
+                // Proyecto no publicado
+                $analysis['debug_info'][] = 'Proyecto no publicado anteriormente';
+                if ($analysis['current_activities_count'] > 0 || $analysis['current_metrics_count'] > 0) {
+                    $analysis['needs_action'] = true;
+                    $analysis['action_type'] = 'publish';
+                    $analysis['changes_summary'][] = 'Nuevo proyecto para publicar';
+                }
+            }
+        } else {
+            // No hay publicaciones anteriores
+            $analysis['debug_info'][] = 'No hay publicaciones anteriores';
+            if ($analysis['current_activities_count'] > 0 || $analysis['current_metrics_count'] > 0) {
+                $analysis['needs_action'] = true;
+                $analysis['action_type'] = 'publish';
+                $analysis['changes_summary'][] = 'Primera publicación del proyecto';
+            }
+        }
+
+        return $analysis;
+    }
+
     public function approvePublication()
     {
+        if (empty($this->selectedProjects)) {
+            Notification::make()
+                ->title('No hay proyectos seleccionados')
+                ->body('Por favor selecciona al menos un proyecto para publicar')
+                ->warning()
+                ->send();
+            return;
+        }
+
         try {
             $service = new DataPublicationService();
 
@@ -183,8 +304,9 @@ class DataPublicationApproval extends Page
                 ->success()
                 ->send();
 
-            // Recargar los datos pendientes
-            $this->loadPendingData();
+            // Recargar los datos
+            $this->loadProjectAnalysis();
+            $this->selectedProjects = [];
             $this->publicationNotes = '';
 
         } catch (\Exception $e) {

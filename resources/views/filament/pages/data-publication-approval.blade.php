@@ -25,64 +25,7 @@
         </div>
     </x-filament::section>
 
-    {{-- Campo para notas de publicación --}}
-    <x-filament::section>
-        <div class="space-y-4">
-            <h2 class="text-lg font-semibold">Notas de publicación (opcional)</h2>
-            <x-filament::input.wrapper>
-                <x-filament::input
-                    wire:model="publicationNotes"
-                    placeholder="Ingrese notas sobre esta publicación..."
-                    type="textarea"
-                    rows="3"
-                />
-            </x-filament::input.wrapper>
-        </div>
-    </x-filament::section>
 
-    {{-- Botones de aprobación --}}
-    <x-filament::section>
-        <div class="space-y-4">
-            <h2 class="text-lg font-semibold">Acciones de aprobación</h2>
-            <div class="flex flex-wrap gap-4">
-                <x-filament::button
-                    wire:click="approvePublication"
-                    color="success"
-                    size="lg"
-                    icon="heroicon-o-check-circle"
-                >
-                    Aprobar todo
-                </x-filament::button>
-
-                <x-filament::button
-                    wire:click="approveProjectsOnly"
-                    color="primary"
-                    size="lg"
-                    icon="heroicon-o-document-text"
-                >
-                    Aprobar solo proyectos
-                </x-filament::button>
-
-                <x-filament::button
-                    wire:click="approveActivitiesOnly"
-                    color="warning"
-                    size="lg"
-                    icon="heroicon-o-calendar"
-                >
-                    Aprobar solo actividades
-                </x-filament::button>
-
-                <x-filament::button
-                    wire:click="approveMetricsOnly"
-                    color="info"
-                    size="lg"
-                    icon="heroicon-o-chart-bar"
-                >
-                    Aprobar solo métricas
-                </x-filament::button>
-            </div>
-        </div>
-    </x-filament::section>
 
     {{-- Proyectos no publicados --}}
     <h2 class="text-lg font-semibold mt-6 mb-2">Proyectos no publicados ({{ $pendingProjects->count() }})</h2>
@@ -147,5 +90,37 @@
                 <div class="text-gray-500">No hay métricas pendientes de publicación.</div>
             @endforelse
         </x-filament::grid>
+    </x-filament::section>
+
+    {{-- Campo para notas de publicación --}}
+    <x-filament::section>
+        <div class="space-y-4">
+            <h2 class="text-lg font-semibold">Notas de publicación (opcional)</h2>
+            <x-filament::input.wrapper>
+                <x-filament::input
+                    wire:model="publicationNotes"
+                    placeholder="Ingrese notas sobre esta publicación..."
+                    type="textarea"
+                    rows="3"
+                />
+            </x-filament::input.wrapper>
+        </div>
+    </x-filament::section>
+
+    {{-- Botón de aprobación --}}
+    <x-filament::section>
+        <div class="space-y-4">
+            <h2 class="text-lg font-semibold">Acción de aprobación</h2>
+            <div class="flex justify-center">
+                <x-filament::button
+                    wire:click="approvePublication"
+                    color="success"
+                    size="lg"
+                    icon="heroicon-o-check-circle"
+                >
+                    Aprobar todo
+                </x-filament::button>
+            </div>
+        </div>
     </x-filament::section>
 </x-filament-panels::page>

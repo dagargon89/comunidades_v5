@@ -25,13 +25,75 @@
         </div>
     </x-filament::section>
 
+    {{-- Botón de comparación --}}
+    <x-filament::section>
+        <div class="flex justify-center">
+            <x-filament::button
+                wire:click="toggleComparison"
+                color="{{ $showComparison ? 'warning' : 'info' }}"
+                size="md"
+                icon="{{ $showComparison ? 'heroicon-o-eye-slash' : 'heroicon-o-eye' }}"
+            >
+                {{ $showComparison ? 'Ocultar comparación' : 'Mostrar comparación con última publicación' }}
+            </x-filament::button>
+        </div>
+    </x-filament::section>
+
     {{-- Datos organizados por proyecto --}}
     @forelse($projectsWithData as $projectData)
+        @php
+            $comparisonData = $showComparison ? collect($projectsWithComparison)->firstWhere('project.id', $projectData['project']->id) : null;
+        @endphp
         <x-filament::section>
             <div class="space-y-6">
                 {{-- Información del proyecto --}}
                 <div class="border-b pb-4">
                     <h2 class="text-xl font-bold text-gray-800 mb-3">{{ $projectData['project']->name }}</h2>
+
+                    @if($showComparison)
+                        <div class="mb-4 p-3 bg-blue-50 rounded-lg">
+                            @if($comparisonData && $comparisonData['published_project'])
+                                <h4 class="font-semibold text-blue-800 mb-2">📊 Comparación con última publicación ({{ $comparisonData['last_publication']->publication_date->format('d/m/Y H:i') }})</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <strong>Costo total:</strong>
+                                        <span class="{{ $projectData['project']->total_cost != $comparisonData['published_project']->total_cost ? 'text-red-600 font-bold' : 'text-gray-600' }}">
+                                            ${{ number_format($projectData['project']->total_cost ?? 0, 2) }}
+                                        </span>
+                                        @if($projectData['project']->total_cost != $comparisonData['published_project']->total_cost)
+                                            <span class="text-xs text-gray-500">(antes: ${{ number_format($comparisonData['published_project']->total_cost ?? 0, 2) }})</span>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <strong>Actividades:</strong>
+                                        <span class="{{ $projectData['activities_count'] != $comparisonData['published_activities']->count() ? 'text-red-600 font-bold' : 'text-gray-600' }}">
+                                            {{ $projectData['activities_count'] }}
+                                        </span>
+                                        @if($projectData['activities_count'] != $comparisonData['published_activities']->count())
+                                            <span class="text-xs text-gray-500">(antes: {{ $comparisonData['published_activities']->count() }})</span>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <strong>Métricas:</strong>
+                                        <span class="{{ $projectData['metrics_count'] != $comparisonData['published_metrics']->count() ? 'text-red-600 font-bold' : 'text-gray-600' }}">
+                                            {{ $projectData['metrics_count'] }}
+                                        </span>
+                                        @if($projectData['metrics_count'] != $comparisonData['published_metrics']->count())
+                                            <span class="text-xs text-gray-500">(antes: {{ $comparisonData['published_metrics']->count() }})</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @else
+                                <h4 class="font-semibold text-blue-800 mb-2">📊 Información de comparación</h4>
+                                <div class="text-sm text-gray-600">
+                                    <p>✅ Este proyecto no ha sido publicado anteriormente</p>
+                                    <p>📈 Será la primera publicación de este proyecto</p>
+                                    <p>📊 Datos actuales: {{ $projectData['activities_count'] }} actividades, {{ $projectData['metrics_count'] }} métricas</p>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
                         <div><strong>Financiador:</strong> {{ $projectData['project']->financiers->name ?? 'No definido' }}</div>
                         <div><strong>Costo total:</strong> ${{ number_format($projectData['project']->total_cost ?? 0, 2) }}</div>

@@ -19,8 +19,7 @@ class DataPublicationApproval extends Page
     protected static string $view = 'filament.pages.data-publication-approval';
 
     public $pendingProjects = [];
-    public $pendingActivities = [];
-    public $pendingMetrics = [];
+    public $projectsWithData = [];
     public $publicationNotes = '';
 
     public function mount()
@@ -30,9 +29,37 @@ class DataPublicationApproval extends Page
 
     public function loadPendingData()
     {
+        // Obtener proyectos pendientes
         $this->pendingProjects = Project::whereDoesntHave('publishedProjects')->get();
-        $this->pendingActivities = Activity::whereDoesntHave('publishedActivities')->get();
-        $this->pendingMetrics = PlannedMetric::whereDoesntHave('publishedMetrics')->get();
+
+        // Agrupar actividades y métricas por proyecto
+        $this->projectsWithData = [];
+
+        foreach ($this->pendingProjects as $project) {
+            // Obtener actividades del proyecto
+            $activities = Activity::whereDoesntHave('publishedActivities')
+                ->whereHas('goal', function($query) use ($project) {
+                    $query->where('project_id', $project->id);
+                })
+                ->with(['goal', 'specificObjective'])
+                ->get();
+
+            // Obtener métricas del proyecto
+            $metrics = PlannedMetric::whereDoesntHave('publishedMetrics')
+                ->whereHas('activity.goal', function($query) use ($project) {
+                    $query->where('project_id', $project->id);
+                })
+                ->with(['activity.goal.project'])
+                ->get();
+
+            $this->projectsWithData[] = [
+                'project' => $project,
+                'activities' => $activities,
+                'metrics' => $metrics,
+                'activities_count' => $activities->count(),
+                'metrics_count' => $metrics->count()
+            ];
+        }
     }
 
     public function approvePublication()

@@ -11,86 +11,84 @@
                 <div class="text-xs text-gray-600">Proyectos</div>
             </div>
             <div class="bg-green-50 p-3 rounded-lg min-w-[120px] text-center">
-                <div class="text-xl font-bold text-green-600">{{ $pendingActivities->count() }}</div>
+                <div class="text-xl font-bold text-green-600">{{ collect($projectsWithData)->sum('activities_count') }}</div>
                 <div class="text-xs text-gray-600">Actividades</div>
             </div>
             <div class="bg-yellow-50 p-3 rounded-lg min-w-[120px] text-center">
-                <div class="text-xl font-bold text-yellow-600">{{ $pendingMetrics->count() }}</div>
+                <div class="text-xl font-bold text-yellow-600">{{ collect($projectsWithData)->sum('metrics_count') }}</div>
                 <div class="text-xs text-gray-600">Métricas</div>
             </div>
             <div class="bg-purple-50 p-3 rounded-lg min-w-[120px] text-center">
-                <div class="text-xl font-bold text-purple-600">{{ $pendingProjects->count() + $pendingActivities->count() + $pendingMetrics->count() }}</div>
+                <div class="text-xl font-bold text-purple-600">{{ $pendingProjects->count() + collect($projectsWithData)->sum('activities_count') + collect($projectsWithData)->sum('metrics_count') }}</div>
                 <div class="text-xs text-gray-600">Total</div>
             </div>
         </div>
     </x-filament::section>
 
-
-
-    {{-- Proyectos no publicados --}}
-    <h2 class="text-lg font-semibold mt-6 mb-2">Proyectos no publicados ({{ $pendingProjects->count() }})</h2>
-    <x-filament::section>
-        <x-filament::grid default="1" md="2" class="gap-4">
-            @forelse($pendingProjects as $project)
-                <x-filament::card>
-                    <div class="space-y-2">
-                        <div><strong>Nombre:</strong> {{ $project->name }}</div>
-                        <div><strong>Financiador:</strong> {{ $project->financiers->name ?? 'No definido' }}</div>
-                        <div><strong>Costo total:</strong> ${{ number_format($project->total_cost ?? 0, 2) }}</div>
-                        <div><strong>Monto financiado:</strong> ${{ number_format($project->funded_amount ?? 0, 2) }}</div>
-                        <div><strong>Cofinanciamiento:</strong> ${{ number_format($project->cofunding_amount ?? 0, 2) }}</div>
-                        <div><strong>Período:</strong> {{ $project->start_date?->format('d/m/Y') ?? 'No definida' }} - {{ $project->end_date?->format('d/m/Y') ?? 'No definida' }}</div>
-                        <div><strong>Oficial de seguimiento:</strong> {{ $project->followup_officer ?? 'No asignado' }}</div>
+    {{-- Datos organizados por proyecto --}}
+    @forelse($projectsWithData as $projectData)
+        <x-filament::section>
+            <div class="space-y-6">
+                {{-- Información del proyecto --}}
+                <div class="border-b pb-4">
+                    <h2 class="text-xl font-bold text-gray-800 mb-3">{{ $projectData['project']->name }}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                        <div><strong>Financiador:</strong> {{ $projectData['project']->financiers->name ?? 'No definido' }}</div>
+                        <div><strong>Costo total:</strong> ${{ number_format($projectData['project']->total_cost ?? 0, 2) }}</div>
+                        <div><strong>Período:</strong> {{ $projectData['project']->start_date?->format('d/m/Y') ?? 'No definida' }} - {{ $projectData['project']->end_date?->format('d/m/Y') ?? 'No definida' }}</div>
+                        <div><strong>Oficial:</strong> {{ $projectData['project']->followup_officer ?? 'No asignado' }}</div>
                     </div>
-                </x-filament::card>
-            @empty
-                <div class="text-gray-500">No hay proyectos pendientes de publicación.</div>
-            @endforelse
-        </x-filament::grid>
-    </x-filament::section>
+                </div>
 
-    {{-- Actividades no publicadas --}}
-    <h2 class="text-lg font-semibold mt-8 mb-2">Actividades no publicadas ({{ $pendingActivities->count() }})</h2>
-    <x-filament::section>
-        <x-filament::grid default="1" md="2" class="gap-4">
-            @forelse($pendingActivities as $activity)
-                <x-filament::card>
-                    <div class="space-y-2">
-                        <div><strong>Nombre:</strong> {{ $activity->name }}</div>
-                        <div><strong>Descripción:</strong> {{ Str::limit($activity->description ?? 'Sin descripción', 100) }}</div>
-                        <div><strong>Meta:</strong> {{ Str::limit($activity->goal->description ?? 'Sin meta', 80) }}</div>
-                        <div><strong>Proyecto:</strong> {{ $activity->goal->project->name ?? 'Sin proyecto' }}</div>
-                        <div><strong>Objetivo específico:</strong> {{ Str::limit($activity->specificObjective->description ?? 'Sin objetivo específico', 80) }}</div>
+                {{-- Actividades del proyecto --}}
+                @if($projectData['activities']->count() > 0)
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-3">Actividades pendientes ({{ $projectData['activities_count'] }})</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach($projectData['activities'] as $activity)
+                                <x-filament::card>
+                                    <div class="space-y-2">
+                                        <div><strong>Nombre:</strong> {{ $activity->name }}</div>
+                                        <div><strong>Descripción:</strong> {{ Str::limit($activity->description ?? 'Sin descripción', 100) }}</div>
+                                        <div><strong>Meta:</strong> {{ Str::limit($activity->goal->description ?? 'Sin meta', 80) }}</div>
+                                        <div><strong>Objetivo específico:</strong> {{ Str::limit($activity->specificObjective->description ?? 'Sin objetivo específico', 80) }}</div>
+                                    </div>
+                                </x-filament::card>
+                            @endforeach
+                        </div>
                     </div>
-                </x-filament::card>
-            @empty
-                <div class="text-gray-500">No hay actividades pendientes de publicación.</div>
-            @endforelse
-        </x-filament::grid>
-    </x-filament::section>
+                @endif
 
-    {{-- Métricas no publicadas --}}
-    <h2 class="text-lg font-semibold mt-8 mb-2">Métricas no publicadas ({{ $pendingMetrics->count() }})</h2>
-    <x-filament::section>
-        <x-filament::grid default="1" md="2" class="gap-4">
-            @forelse($pendingMetrics as $metric)
-                <x-filament::card>
-                    <div class="space-y-2">
-                        <div><strong>Actividad:</strong> {{ $metric->activity->name ?? 'Sin actividad' }}</div>
-                        <div><strong>Unidad:</strong> {{ $metric->unit ?? 'No definida' }}</div>
-                        <div><strong>Período:</strong> {{ $metric->year ?? 'N/A' }}/{{ $metric->month ?? 'N/A' }}</div>
-                        <div><strong>Meta población:</strong> {{ number_format($metric->population_target_value ?? 0) }}</div>
-                        <div><strong>Valor real población:</strong> {{ number_format($metric->population_real_value ?? 0) }}</div>
-                        <div><strong>Meta producto:</strong> {{ number_format($metric->product_target_value ?? 0) }}</div>
-                        <div><strong>Valor real producto:</strong> {{ number_format($metric->product_real_value ?? 0) }}</div>
-                        <div><strong>Proyecto:</strong> {{ $metric->activity->goal->project->name ?? 'Sin proyecto' }}</div>
+                {{-- Métricas del proyecto --}}
+                @if($projectData['metrics']->count() > 0)
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-3">Métricas pendientes ({{ $projectData['metrics_count'] }})</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach($projectData['metrics'] as $metric)
+                                <x-filament::card>
+                                    <div class="space-y-2">
+                                        <div><strong>Actividad:</strong> {{ $metric->activity->name ?? 'Sin actividad' }}</div>
+                                        <div><strong>Unidad:</strong> {{ $metric->unit ?? 'No definida' }}</div>
+                                        <div><strong>Período:</strong> {{ $metric->year ?? 'N/A' }}/{{ $metric->month ?? 'N/A' }}</div>
+                                        <div><strong>Meta población:</strong> {{ number_format($metric->population_target_value ?? 0) }}</div>
+                                        <div><strong>Valor real población:</strong> {{ number_format($metric->population_real_value ?? 0) }}</div>
+                                        <div><strong>Meta producto:</strong> {{ number_format($metric->product_target_value ?? 0) }}</div>
+                                        <div><strong>Valor real producto:</strong> {{ number_format($metric->product_real_value ?? 0) }}</div>
+                                    </div>
+                                </x-filament::card>
+                            @endforeach
+                        </div>
                     </div>
-                </x-filament::card>
-            @empty
-                <div class="text-gray-500">No hay métricas pendientes de publicación.</div>
-            @endforelse
-        </x-filament::grid>
-    </x-filament::section>
+                @endif
+            </div>
+        </x-filament::section>
+    @empty
+        <x-filament::section>
+            <div class="text-center text-gray-500 py-8">
+                <p class="text-lg">No hay proyectos pendientes de publicación.</p>
+            </div>
+        </x-filament::section>
+    @endforelse
 
     {{-- Campo para notas de publicación --}}
     <x-filament::section>

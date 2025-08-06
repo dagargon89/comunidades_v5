@@ -11,6 +11,7 @@ use App\Services\DataPublicationService;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class DataPublicationApproval extends Page
 {
@@ -122,6 +123,13 @@ class DataPublicationApproval extends Page
             $lastPublication = DataPublication::find($lastProjectPublication->publication_id);
             $analysis['last_publication_date'] = $lastPublication->publication_date;
 
+            // Debug temporal
+            Log::info("Proyecto {$project->id} - Última publicación:", [
+                'publication_id' => $lastProjectPublication->publication_id,
+                'publication_date' => $lastPublication->publication_date,
+                'snapshot_date' => $lastProjectPublication->snapshot_date
+            ]);
+
             // Obtener datos publicados de esa publicación específica
             $publishedActivities = \App\Models\PublishedActivity::where('publication_id', $lastProjectPublication->publication_id)
                 ->where('project_id', $project->id)
@@ -147,6 +155,19 @@ class DataPublicationApproval extends Page
 
             // Detectar si hay cambios en cualquier nivel
             $hasChanges = count($projectChanges) > 0 || count($activityChanges) > 0 || count($metricChanges) > 0;
+
+            // Debug temporal
+            if ($hasChanges) {
+                Log::info("Proyecto {$project->id} tiene cambios:", [
+                    'project_changes' => count($projectChanges),
+                    'activity_changes' => count($activityChanges),
+                    'metric_changes' => count($metricChanges),
+                    'current_activities' => $analysis['current_activities_count'],
+                    'published_activities' => $analysis['published_activities_count'],
+                    'current_metrics' => $analysis['current_metrics_count'],
+                    'published_metrics' => $analysis['published_metrics_count']
+                ]);
+            }
 
             if ($hasChanges) {
                 $analysis['needs_action'] = true;
@@ -475,6 +496,7 @@ class DataPublicationApproval extends Page
                 ->send();
 
             // Recargar los datos
+            sleep(1); // Pequeña pausa para asegurar que los datos se han guardado
             $this->loadProjectAnalysis();
             $this->selectedProjects = [];
             $this->publicationNotes = '';

@@ -225,10 +225,12 @@ class DataPublicationApproval extends Page
 
         foreach ($fieldsToCompare as $field => $label) {
             if ($project->$field != $publishedProject->$field) {
+                $highlighted = $this->highlightDifferences($publishedProject->$field, $project->$field);
                 $changes[] = [
                     'field' => $label,
-                    'old_value' => $publishedProject->$field,
-                    'new_value' => $project->$field
+                    'old_value' => $highlighted['old'],
+                    'new_value' => $highlighted['new'],
+                    'highlighted' => $highlighted['highlighted']
                 ];
             }
         }
@@ -400,6 +402,50 @@ class DataPublicationApproval extends Page
         }
 
         return $changes;
+    }
+
+    private function highlightDifferences($oldValue, $newValue, $maxLength = 100)
+    {
+        // Si los valores son muy largos, truncar para mostrar
+        $oldDisplay = strlen($oldValue) > $maxLength ? substr($oldValue, 0, $maxLength) . '...' : $oldValue;
+        $newDisplay = strlen($newValue) > $maxLength ? substr($newValue, 0, $maxLength) . '...' : $newValue;
+
+        // Si son valores cortos, usar comparación simple
+        if (strlen($oldValue) <= 50 && strlen($newValue) <= 50) {
+            return [
+                'old' => $oldDisplay,
+                'new' => $newDisplay,
+                'highlighted' => false
+            ];
+        }
+
+        // Para valores largos, encontrar las diferencias
+        $wordsOld = explode(' ', $oldValue);
+        $wordsNew = explode(' ', $newValue);
+
+        $highlightedOld = [];
+        $highlightedNew = [];
+
+        // Comparar palabras
+        $maxWords = max(count($wordsOld), count($wordsNew));
+        for ($i = 0; $i < $maxWords; $i++) {
+            $oldWord = $wordsOld[$i] ?? '';
+            $newWord = $wordsNew[$i] ?? '';
+
+            if ($oldWord !== $newWord) {
+                $highlightedOld[] = '<span class="px-1 text-red-800 bg-red-200 rounded">' . htmlspecialchars($oldWord) . '</span>';
+                $highlightedNew[] = '<span class="px-1 text-green-800 bg-green-200 rounded">' . htmlspecialchars($newWord) . '</span>';
+            } else {
+                $highlightedOld[] = htmlspecialchars($oldWord);
+                $highlightedNew[] = htmlspecialchars($newWord);
+            }
+        }
+
+        return [
+            'old' => implode(' ', $highlightedOld),
+            'new' => implode(' ', $highlightedNew),
+            'highlighted' => true
+        ];
     }
 
     public function approvePublication()

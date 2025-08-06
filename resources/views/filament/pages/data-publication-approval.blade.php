@@ -133,35 +133,71 @@
 
                                         @if(isset($projectAnalysis['detailed_changes']))
                                             {{-- Tabla detallada de cambios --}}
-                                            <div class="overflow-x-auto">
-                                                <table class="min-w-full text-xs border-collapse">
+                                            <div class="w-full">
+                                                <table class="w-full text-xs border-collapse">
                                                     <thead>
                                                         <tr class="bg-gray-50">
-                                                            <th class="border px-2 py-1 text-left font-medium">Campo</th>
-                                                            <th class="border px-2 py-1 text-left font-medium">Valor anterior</th>
-                                                            <th class="border px-2 py-1 text-left font-medium">Valor nuevo</th>
+                                                            <th class="border px-2 py-1 text-left font-medium w-1/3">Campo</th>
+                                                            <th class="border px-2 py-1 text-left font-medium w-1/3">Valor anterior</th>
+                                                            <th class="border px-2 py-1 text-left font-medium w-1/3">Valor nuevo</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         @foreach($projectAnalysis['detailed_changes']['project'] as $change)
                                                             <tr class="border-b">
                                                                 <td class="border px-2 py-1 font-medium">{{ $change['field'] }}</td>
-                                                                <td class="border px-2 py-1 text-red-600">{{ $change['old_value'] }}</td>
-                                                                <td class="border px-2 py-1 text-green-600">{{ $change['new_value'] }}</td>
+                                                                <td class="border px-2 py-1 text-red-600">
+                                                                    @if($change['highlighted'])
+                                                                        {!! $change['old_value'] !!}
+                                                                    @else
+                                                                        {{ $change['old_value'] }}
+                                                                    @endif
+                                                                </td>
+                                                                <td class="border px-2 py-1 text-green-600">
+                                                                    @if($change['highlighted'])
+                                                                        {!! $change['new_value'] !!}
+                                                                    @else
+                                                                        {{ $change['new_value'] }}
+                                                                    @endif
+                                                                </td>
                                                             </tr>
                                                         @endforeach
                                                         @foreach($projectAnalysis['detailed_changes']['activities'] as $change)
                                                             <tr class="border-b bg-blue-50">
                                                                 <td class="border px-2 py-1 font-medium">{{ $change['field'] }}</td>
-                                                                <td class="border px-2 py-1 text-red-600">{{ $change['old_value'] }}</td>
-                                                                <td class="border px-2 py-1 text-green-600">{{ $change['new_value'] }}</td>
+                                                                <td class="border px-2 py-1 text-red-600">
+                                                                    @if($change['highlighted'])
+                                                                        {!! $change['old_value'] !!}
+                                                                    @else
+                                                                        {{ $change['old_value'] }}
+                                                                    @endif
+                                                                </td>
+                                                                <td class="border px-2 py-1 text-green-600">
+                                                                    @if($change['highlighted'])
+                                                                        {!! $change['new_value'] !!}
+                                                                    @else
+                                                                        {{ $change['new_value'] }}
+                                                                    @endif
+                                                                </td>
                                                             </tr>
                                                         @endforeach
                                                         @foreach($projectAnalysis['detailed_changes']['metrics'] as $change)
                                                             <tr class="border-b bg-purple-50">
                                                                 <td class="border px-2 py-1 font-medium">{{ $change['field'] }}</td>
-                                                                <td class="border px-2 py-1 text-red-600">{{ $change['old_value'] }}</td>
-                                                                <td class="border px-2 py-1 text-green-600">{{ $change['new_value'] }}</td>
+                                                                <td class="border px-2 py-1 text-red-600">
+                                                                    @if($change['highlighted'])
+                                                                        {!! $change['old_value'] !!}
+                                                                    @else
+                                                                        {{ $change['old_value'] }}
+                                                                    @endif
+                                                                </td>
+                                                                <td class="border px-2 py-1 text-green-600">
+                                                                    @if($change['highlighted'])
+                                                                        {!! $change['new_value'] !!}
+                                                                    @else
+                                                                        {{ $change['new_value'] }}
+                                                                    @endif
+                                                                </td>
                                                             </tr>
                                                         @endforeach
                                                     </tbody>

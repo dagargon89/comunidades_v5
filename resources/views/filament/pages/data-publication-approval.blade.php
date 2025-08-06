@@ -3,28 +3,6 @@
         <h1 class="text-2xl font-bold tracking-tight">Análisis y publicación de datos</h1>
     </x-slot>
 
-    {{-- Resumen de estadísticas --}}
-    <x-filament::section>
-        <div class="flex flex-wrap gap-4 justify-center">
-            <div class="bg-blue-50 p-3 rounded-lg min-w-[120px] text-center">
-                <div class="text-xl font-bold text-blue-600">{{ count($allProjects) }}</div>
-                <div class="text-xs text-gray-600">Proyectos</div>
-            </div>
-            <div class="bg-green-50 p-3 rounded-lg min-w-[120px] text-center">
-                <div class="text-xl font-bold text-green-600">{{ count($projectsToPublish) }}</div>
-                <div class="text-xs text-gray-600">Nuevos</div>
-            </div>
-            <div class="bg-yellow-50 p-3 rounded-lg min-w-[120px] text-center">
-                <div class="text-xl font-bold text-yellow-600">{{ count($projectsToUpdate) }}</div>
-                <div class="text-xs text-gray-600">Actualizar</div>
-            </div>
-            <div class="bg-purple-50 p-3 rounded-lg min-w-[120px] text-center">
-                <div class="text-xl font-bold text-purple-600">{{ count($selectedProjects) }}</div>
-                <div class="text-xs text-gray-600">Seleccionados</div>
-            </div>
-        </div>
-    </x-filament::section>
-
     @if(count($allProjects) > 0)
         {{-- Selección de proyectos --}}
         <x-filament::section>
@@ -62,24 +40,6 @@
                     <div class="text-sm text-gray-600 mt-2">
                         <p>Proyectos disponibles: {{ count($allProjects) }}</p>
                         <p>Nuevos: {{ count($projectsToPublish) }} | Actualizar: {{ count($projectsToUpdate) }}</p>
-                    </div>
-
-                    <div class="flex gap-2 mt-3">
-                        <x-filament::button
-                            wire:click="selectAllProjects"
-                            size="sm"
-                            color="primary"
-                        >
-                            Seleccionar todos
-                        </x-filament::button>
-
-                        <x-filament::button
-                            wire:click="clearSelection"
-                            size="sm"
-                            color="gray"
-                        >
-                            Limpiar selección
-                        </x-filament::button>
                     </div>
                 @endif
             </div>
@@ -147,14 +107,14 @@
                                                             <tr class="border-b">
                                                                 <td class="border px-2 py-1 font-medium">{{ $change['field'] }}</td>
                                                                 <td class="border px-2 py-1 text-red-600">
-                                                                    @if($change['highlighted'])
+                                                                    @if(isset($change['highlighted']) && $change['highlighted'])
                                                                         {!! $change['old_value'] !!}
                                                                     @else
                                                                         {{ $change['old_value'] }}
                                                                     @endif
                                                                 </td>
                                                                 <td class="border px-2 py-1 text-green-600">
-                                                                    @if($change['highlighted'])
+                                                                    @if(isset($change['highlighted']) && $change['highlighted'])
                                                                         {!! $change['new_value'] !!}
                                                                     @else
                                                                         {{ $change['new_value'] }}
@@ -166,14 +126,14 @@
                                                             <tr class="border-b bg-blue-50">
                                                                 <td class="border px-2 py-1 font-medium">{{ $change['field'] }}</td>
                                                                 <td class="border px-2 py-1 text-red-600">
-                                                                    @if($change['highlighted'])
+                                                                    @if(isset($change['highlighted']) && $change['highlighted'])
                                                                         {!! $change['old_value'] !!}
                                                                     @else
                                                                         {{ $change['old_value'] }}
                                                                     @endif
                                                                 </td>
                                                                 <td class="border px-2 py-1 text-green-600">
-                                                                    @if($change['highlighted'])
+                                                                    @if(isset($change['highlighted']) && $change['highlighted'])
                                                                         {!! $change['new_value'] !!}
                                                                     @else
                                                                         {{ $change['new_value'] }}
@@ -185,14 +145,14 @@
                                                             <tr class="border-b bg-purple-50">
                                                                 <td class="border px-2 py-1 font-medium">{{ $change['field'] }}</td>
                                                                 <td class="border px-2 py-1 text-red-600">
-                                                                    @if($change['highlighted'])
+                                                                    @if(isset($change['highlighted']) && $change['highlighted'])
                                                                         {!! $change['old_value'] !!}
                                                                     @else
                                                                         {{ $change['old_value'] }}
                                                                     @endif
                                                                 </td>
                                                                 <td class="border px-2 py-1 text-green-600">
-                                                                    @if($change['highlighted'])
+                                                                    @if(isset($change['highlighted']) && $change['highlighted'])
                                                                         {!! $change['new_value'] !!}
                                                                     @else
                                                                         {{ $change['new_value'] }}

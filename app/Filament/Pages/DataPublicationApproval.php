@@ -56,26 +56,6 @@ class DataPublicationApproval extends Page
         }
     }
 
-    public function selectAllProjects()
-    {
-        $this->selectedProjects = collect($this->allProjects)->pluck('project.id')->toArray();
-        Notification::make()
-            ->title('Todos los proyectos seleccionados')
-            ->body('Se han seleccionado todos los proyectos disponibles')
-            ->info()
-            ->send();
-    }
-
-    public function clearSelection()
-    {
-        $this->selectedProjects = [];
-        Notification::make()
-            ->title('Selección limpiada')
-            ->body('Se han deseleccionado todos los proyectos')
-            ->info()
-            ->send();
-    }
-
     public function loadProjectAnalysis()
     {
         $this->allProjects = [];
@@ -240,14 +220,16 @@ class DataPublicationApproval extends Page
             $changes[] = [
                 'field' => 'Fecha de inicio',
                 'old_value' => $publishedProject->start_date,
-                'new_value' => $currentStartDate
+                'new_value' => $currentStartDate,
+                'highlighted' => false
             ];
         }
         if ($currentEndDate != $publishedProject->end_date) {
             $changes[] = [
                 'field' => 'Fecha de fin',
                 'old_value' => $publishedProject->end_date,
-                'new_value' => $currentEndDate
+                'new_value' => $currentEndDate,
+                'highlighted' => false
             ];
         }
 
@@ -273,7 +255,8 @@ class DataPublicationApproval extends Page
             $changes[] = [
                 'field' => 'Cantidad de actividades',
                 'old_value' => $publishedActivities->count(),
-                'new_value' => $currentActivities->count()
+                'new_value' => $currentActivities->count(),
+                'highlighted' => false
             ];
         }
 
@@ -287,7 +270,8 @@ class DataPublicationApproval extends Page
             $changes[] = [
                 'field' => 'Actividades agregadas',
                 'old_value' => '0',
-                'new_value' => count($addedActivities) . ' actividad(es)'
+                'new_value' => count($addedActivities) . ' actividad(es)',
+                'highlighted' => false
             ];
         }
 
@@ -297,7 +281,8 @@ class DataPublicationApproval extends Page
             $changes[] = [
                 'field' => 'Actividades eliminadas',
                 'old_value' => count($removedActivities) . ' actividad(es)',
-                'new_value' => '0'
+                'new_value' => '0',
+                'highlighted' => false
             ];
         }
 
@@ -306,17 +291,21 @@ class DataPublicationApproval extends Page
             $publishedActivity = $publishedActivities->where('original_activity_id', $currentActivity->id)->first();
             if ($publishedActivity) {
                 if ($currentActivity->name != $publishedActivity->name) {
+                    $highlighted = $this->highlightDifferences($publishedActivity->name, $currentActivity->name);
                     $changes[] = [
                         'field' => 'Nombre de actividad (ID: ' . $currentActivity->id . ')',
-                        'old_value' => $publishedActivity->name,
-                        'new_value' => $currentActivity->name
+                        'old_value' => $highlighted['old'],
+                        'new_value' => $highlighted['new'],
+                        'highlighted' => $highlighted['highlighted']
                     ];
                 }
                 if ($currentActivity->description != $publishedActivity->description) {
+                    $highlighted = $this->highlightDifferences($publishedActivity->description, $currentActivity->description);
                     $changes[] = [
                         'field' => 'Descripción de actividad (ID: ' . $currentActivity->id . ')',
-                        'old_value' => $publishedActivity->description,
-                        'new_value' => $currentActivity->description
+                        'old_value' => $highlighted['old'],
+                        'new_value' => $highlighted['new'],
+                        'highlighted' => $highlighted['highlighted']
                     ];
                 }
             }
@@ -345,7 +334,8 @@ class DataPublicationApproval extends Page
             $changes[] = [
                 'field' => 'Cantidad de métricas',
                 'old_value' => $publishedMetrics->count(),
-                'new_value' => $currentMetrics->count()
+                'new_value' => $currentMetrics->count(),
+                'highlighted' => false
             ];
         }
 
@@ -359,7 +349,8 @@ class DataPublicationApproval extends Page
             $changes[] = [
                 'field' => 'Métricas agregadas',
                 'old_value' => '0',
-                'new_value' => count($addedMetrics) . ' métrica(s)'
+                'new_value' => count($addedMetrics) . ' métrica(s)',
+                'highlighted' => false
             ];
         }
 
@@ -369,7 +360,8 @@ class DataPublicationApproval extends Page
             $changes[] = [
                 'field' => 'Métricas eliminadas',
                 'old_value' => count($removedMetrics) . ' métrica(s)',
-                'new_value' => '0'
+                'new_value' => '0',
+                'highlighted' => false
             ];
         }
 
@@ -378,24 +370,30 @@ class DataPublicationApproval extends Page
             $publishedMetric = $publishedMetrics->where('original_metric_id', $currentMetric->id)->first();
             if ($publishedMetric) {
                 if ($currentMetric->name != $publishedMetric->name) {
+                    $highlighted = $this->highlightDifferences($publishedMetric->name, $currentMetric->name);
                     $changes[] = [
                         'field' => 'Nombre de métrica (ID: ' . $currentMetric->id . ')',
-                        'old_value' => $publishedMetric->name,
-                        'new_value' => $currentMetric->name
+                        'old_value' => $highlighted['old'],
+                        'new_value' => $highlighted['new'],
+                        'highlighted' => $highlighted['highlighted']
                     ];
                 }
                 if ($currentMetric->description != $publishedMetric->description) {
+                    $highlighted = $this->highlightDifferences($publishedMetric->description, $currentMetric->description);
                     $changes[] = [
                         'field' => 'Descripción de métrica (ID: ' . $currentMetric->id . ')',
-                        'old_value' => $publishedMetric->description,
-                        'new_value' => $currentMetric->description
+                        'old_value' => $highlighted['old'],
+                        'new_value' => $highlighted['new'],
+                        'highlighted' => $highlighted['highlighted']
                     ];
                 }
                 if ($currentMetric->target_value != $publishedMetric->target_value) {
+                    $highlighted = $this->highlightDifferences($publishedMetric->target_value, $currentMetric->target_value);
                     $changes[] = [
                         'field' => 'Valor objetivo de métrica (ID: ' . $currentMetric->id . ')',
-                        'old_value' => $publishedMetric->target_value,
-                        'new_value' => $currentMetric->target_value
+                        'old_value' => $highlighted['old'],
+                        'new_value' => $highlighted['new'],
+                        'highlighted' => $highlighted['highlighted']
                     ];
                 }
             }
@@ -462,11 +460,10 @@ class DataPublicationApproval extends Page
         try {
             $service = new DataPublicationService();
 
-            $result = $service->publishDataSnapshot(
+            $result = $service->publishSelectedProjects(
                 Auth::id(),
-                $this->publicationNotes ?: 'Aprobación manual desde panel de administración',
-                null,
-                null
+                $this->selectedProjects,
+                $this->publicationNotes ?: 'Aprobación manual desde panel de administración'
             );
 
             Notification::make()

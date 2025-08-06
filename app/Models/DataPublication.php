@@ -11,6 +11,8 @@ class DataPublication extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'publication_date',
         'published_by',

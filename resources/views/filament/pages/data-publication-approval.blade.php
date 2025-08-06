@@ -50,6 +50,7 @@
                                         </span>
                                     </span>
                                 </label>
+
                             @endforeach
                         @else
                             <p class="text-gray-500 text-sm">No hay proyectos disponibles para seleccionar</p>
@@ -126,29 +127,60 @@
                                     @endif
                                 @endif
 
-                                                                 @if(count($projectAnalysis['changes_summary']) > 0)
-                                     <div class="bg-white p-3 rounded border">
-                                         <h4 class="font-semibold text-sm mb-2">Cambios detectados:</h4>
-                                         <ul class="text-sm space-y-1">
-                                             @foreach($projectAnalysis['changes_summary'] as $change)
-                                                 <li class="flex items-center">
-                                                     <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
-                                                     {{ $change }}
-                                                 </li>
-                                             @endforeach
-                                         </ul>
-                                     </div>
-                                 @endif
+                                @if(count($projectAnalysis['changes_summary']) > 0)
+                                    <div class="bg-white p-3 rounded border">
+                                        <h4 class="font-semibold text-sm mb-2">Cambios detectados:</h4>
 
-                                 {{-- Información de debug --}}
-                                 <div class="bg-gray-50 p-3 rounded border mt-3">
-                                     <h4 class="font-semibold text-sm mb-2 text-gray-600">Información de debug:</h4>
-                                     <ul class="text-xs space-y-1 text-gray-600">
-                                         @foreach($projectAnalysis['debug_info'] as $debug)
-                                             <li>{{ $debug }}</li>
-                                         @endforeach
-                                     </ul>
-                                 </div>
+                                        @if(isset($projectAnalysis['detailed_changes']))
+                                            {{-- Tabla detallada de cambios --}}
+                                            <div class="overflow-x-auto">
+                                                <table class="min-w-full text-xs border-collapse">
+                                                    <thead>
+                                                        <tr class="bg-gray-50">
+                                                            <th class="border px-2 py-1 text-left font-medium">Campo</th>
+                                                            <th class="border px-2 py-1 text-left font-medium">Valor anterior</th>
+                                                            <th class="border px-2 py-1 text-left font-medium">Valor nuevo</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($projectAnalysis['detailed_changes']['project'] as $change)
+                                                            <tr class="border-b">
+                                                                <td class="border px-2 py-1 font-medium">{{ $change['field'] }}</td>
+                                                                <td class="border px-2 py-1 text-red-600">{{ $change['old_value'] }}</td>
+                                                                <td class="border px-2 py-1 text-green-600">{{ $change['new_value'] }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                        @foreach($projectAnalysis['detailed_changes']['activities'] as $change)
+                                                            <tr class="border-b bg-blue-50">
+                                                                <td class="border px-2 py-1 font-medium">{{ $change['field'] }}</td>
+                                                                <td class="border px-2 py-1 text-red-600">{{ $change['old_value'] }}</td>
+                                                                <td class="border px-2 py-1 text-green-600">{{ $change['new_value'] }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                        @foreach($projectAnalysis['detailed_changes']['metrics'] as $change)
+                                                            <tr class="border-b bg-purple-50">
+                                                                <td class="border px-2 py-1 font-medium">{{ $change['field'] }}</td>
+                                                                <td class="border px-2 py-1 text-red-600">{{ $change['old_value'] }}</td>
+                                                                <td class="border px-2 py-1 text-green-600">{{ $change['new_value'] }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        @else
+                                            {{-- Resumen simple para compatibilidad --}}
+                                            <ul class="text-sm space-y-1">
+                                                @foreach($projectAnalysis['changes_summary'] as $change)
+                                                    <li class="flex items-center">
+                                                        <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                                                        {{ $change }}
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                    </div>
+                                @endif
+
                             </div>
                         @endif
                     @endforeach
@@ -188,10 +220,11 @@
             </div>
         </x-filament::section>
     @else
+        {{-- Mensaje cuando no hay proyectos --}}
         <x-filament::section>
-            <div class="text-center text-gray-500 py-8">
-                <p class="text-lg">✅ No hay proyectos que requieran publicación o actualización.</p>
-                <p class="text-sm mt-2">Todos los proyectos están actualizados o no tienen datos para publicar.</p>
+            <div class="space-y-4">
+                <h2 class="text-lg font-semibold">No hay proyectos que requieran acción</h2>
+                <p class="text-gray-600">Todos los proyectos están actualizados o no tienen actividades/métricas para publicar.</p>
             </div>
         </x-filament::section>
     @endif

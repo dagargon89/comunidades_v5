@@ -123,7 +123,26 @@ class ActivityCalendarView extends Page implements Forms\Contracts\HasForms
                                     ->reactive()
                                     ->createOptionForm([
                                         Forms\Components\TextInput::make('name')->label('Nombre')->required(),
-                                        Forms\Components\TextInput::make('category')->label('Categoría'),
+                                        Forms\Components\Select::make('category')
+                                            ->label('Categoría')
+                                            ->options([
+                                                'Centro Comunitario' => 'Centro Comunitario',
+                                                'Centro Implementador Desafío' => 'Centro Implementador Desafío',
+                                                'Domicilio particular' => 'Domicilio particular',
+                                                'Edificio Participa Juárez' => 'Edificio Participa Juárez',
+                                                'Escuela pública' => 'Escuela pública',
+                                                'Escuela privada' => 'Escuela privada',
+                                                'Espacios Gubernamentales' => 'Espacios Gubernamentales',
+                                                'Mercado' => 'Mercado',
+                                                'Parque público' => 'Parque público',
+                                                'Vía pública' => 'Vía pública',
+                                                'Virtual' => 'Virtual',
+                                                'Sede OSC externas' => 'Sede OSC externas',
+                                                'Otro' => 'Otro',
+                                            ])
+                                            ->required()
+                                            ->searchable()
+                                            ->placeholder('Seleccione una categoría'),
                                         Forms\Components\TextInput::make('street')->label('Calle'),
                                         Forms\Components\TextInput::make('neighborhood')->label('Colonia'),
                                         Forms\Components\TextInput::make('ext_number')->label('Número exterior'),

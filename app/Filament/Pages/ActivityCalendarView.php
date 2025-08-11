@@ -121,6 +121,7 @@ class ActivityCalendarView extends Page implements Forms\Contracts\HasForms
                                     ->searchable()
                                     ->required()
                                     ->reactive()
+                                    ->native(false)
                                     ->createOptionForm([
                                         Forms\Components\TextInput::make('name')->label('Nombre')->required(),
                                         Forms\Components\Select::make('category')

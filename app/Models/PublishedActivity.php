@@ -10,6 +10,7 @@ class PublishedActivity extends Model
     protected $fillable = [
         'publication_id',
         'original_activity_id',
+        'project_id', // ← ESTE ERA EL CAMPO FALTANTE QUE CAUSABA TODO EL PROBLEMA
         'name',
         'description',
         'specific_objective_id',

@@ -100,24 +100,22 @@ class DataPublicationApproval extends Page
             'debug_info' => [] // Información de debug
         ];
 
-        // Contar actividades y métricas actuales usando la MISMA LÓGICA que el procedimiento almacenado
-        $currentActivities = Activity::whereHas('specificObjective', function($query) use ($project) {
-            $query->where('projects_id', $project->id);
+        // Contar actividades y métricas actuales
+        $currentActivities = Activity::whereHas('goal', function($query) use ($project) {
+            $query->where('project_id', $project->id);
         })->get();
 
-        $currentMetrics = PlannedMetric::whereHas('activity.specificObjective', function($query) use ($project) {
-            $query->where('projects_id', $project->id);
+        $currentMetrics = PlannedMetric::whereHas('activity.goal', function($query) use ($project) {
+            $query->where('project_id', $project->id);
         })->get();
 
         $analysis['current_activities_count'] = $currentActivities->count();
         $analysis['current_metrics_count'] = $currentMetrics->count();
 
         // Verificar si el proyecto ya fue publicado
-        // Buscar la última publicación específica de este proyecto basándose en la fecha de publicación
+        // Buscar la última publicación específica de este proyecto
         $lastProjectPublication = $project->publishedProjects()
-            ->join('data_publications', 'published_projects.publication_id', '=', 'data_publications.id')
-            ->orderBy('data_publications.publication_date', 'desc')
-            ->select('published_projects.*')
+            ->orderBy('publication_id', 'desc')
             ->first();
 
         if ($lastProjectPublication) {
@@ -228,12 +226,21 @@ class DataPublicationApproval extends Page
     {
         $changes = [];
 
-        // SOLO comparar campos críticos que realmente importan
+        // Convertir fechas a formato Y-m-d para comparación correcta
+        $currentStartDate = $project->start_date ? $project->start_date->format('Y-m-d') : null;
+        $currentEndDate = $project->end_date ? $project->end_date->format('Y-m-d') : null;
+
+        // Comparar todos los campos del proyecto
         $fieldsToCompare = [
             'name' => 'Nombre',
+            'background' => 'Antecedentes',
+            'justification' => 'Justificación',
+            'general_objective' => 'Objetivo general',
             'total_cost' => 'Costo total',
             'funded_amount' => 'Monto financiado',
             'cofunding_amount' => 'Monto cofinanciado',
+            'financiers_id' => 'ID del financiador',
+            'co_financier_id' => 'ID del cofinanciador',
         ];
 
         foreach ($fieldsToCompare as $field => $label) {
@@ -258,9 +265,23 @@ class DataPublicationApproval extends Page
             }
         }
 
-        // NO comparar campos de texto largos que pueden causar falsos positivos
-        // NO comparar fechas que pueden tener problemas de formato
-        // NO comparar campos de relación que pueden tener inconsistencias
+        // Comparar fechas por separado
+        if ($currentStartDate != $publishedProject->start_date) {
+            $changes[] = [
+                'field' => 'Fecha de inicio',
+                'old_value' => $publishedProject->start_date,
+                'new_value' => $currentStartDate,
+                'highlighted' => false
+            ];
+        }
+        if ($currentEndDate != $publishedProject->end_date) {
+            $changes[] = [
+                'field' => 'Fecha de fin',
+                'old_value' => $publishedProject->end_date,
+                'new_value' => $currentEndDate,
+                'highlighted' => false
+            ];
+        }
 
         return $changes;
     }
@@ -269,9 +290,9 @@ class DataPublicationApproval extends Page
     {
         $changes = [];
 
-        // Obtener actividades actuales del proyecto usando la MISMA LÓGICA que el procedimiento almacenado
-        $currentActivities = Activity::whereHas('specificObjective', function($query) use ($project) {
-            $query->where('projects_id', $project->id);
+        // Obtener actividades actuales del proyecto
+        $currentActivities = Activity::whereHas('goal', function($query) use ($project) {
+            $query->where('project_id', $project->id);
         })->get();
 
         // Obtener actividades publicadas del proyecto
@@ -279,7 +300,7 @@ class DataPublicationApproval extends Page
             ->where('project_id', $project->id)
             ->get();
 
-        // SOLO comparar cantidad - esto es lo único que realmente importa
+        // Comparar cantidad
         if ($currentActivities->count() != $publishedActivities->count()) {
             Log::info("Proyecto - Diferencia en cantidad de actividades:", [
                 'current_count' => $currentActivities->count(),
@@ -294,8 +315,56 @@ class DataPublicationApproval extends Page
             ];
         }
 
-        // NO comparar actividades individuales por ID - esto causa falsos positivos
-        // NO comparar contenido de actividades - esto puede causar comparaciones problemáticas
+        // Comparar actividades individuales
+        $currentActivityIds = $currentActivities->pluck('id')->toArray();
+        $publishedActivityIds = $publishedActivities->pluck('original_activity_id')->toArray();
+
+        // Actividades agregadas
+        $addedActivities = array_diff($currentActivityIds, $publishedActivityIds);
+        if (count($addedActivities) > 0) {
+            $changes[] = [
+                'field' => 'Actividades agregadas',
+                'old_value' => '0',
+                'new_value' => count($addedActivities) . ' actividad(es)',
+                'highlighted' => false
+            ];
+        }
+
+        // Actividades eliminadas
+        $removedActivities = array_diff($publishedActivityIds, $currentActivityIds);
+        if (count($removedActivities) > 0) {
+            $changes[] = [
+                'field' => 'Actividades eliminadas',
+                'old_value' => count($removedActivities) . ' actividad(es)',
+                'new_value' => '0',
+                'highlighted' => false
+            ];
+        }
+
+        // Comparar contenido de actividades existentes
+        foreach ($currentActivities as $currentActivity) {
+            $publishedActivity = $publishedActivities->where('original_activity_id', $currentActivity->id)->first();
+            if ($publishedActivity) {
+                if ($currentActivity->name != $publishedActivity->name) {
+                    $highlighted = $this->highlightDifferences($publishedActivity->name, $currentActivity->name);
+                    $changes[] = [
+                        'field' => 'Nombre de actividad (ID: ' . $currentActivity->id . ')',
+                        'old_value' => $highlighted['old'],
+                        'new_value' => $highlighted['new'],
+                        'highlighted' => $highlighted['highlighted']
+                    ];
+                }
+                if ($currentActivity->description != $publishedActivity->description) {
+                    $highlighted = $this->highlightDifferences($publishedActivity->description, $currentActivity->description);
+                    $changes[] = [
+                        'field' => 'Descripción de actividad (ID: ' . $currentActivity->id . ')',
+                        'old_value' => $highlighted['old'],
+                        'new_value' => $highlighted['new'],
+                        'highlighted' => $highlighted['highlighted']
+                    ];
+                }
+            }
+        }
 
         return $changes;
     }
@@ -304,18 +373,18 @@ class DataPublicationApproval extends Page
     {
         $changes = [];
 
-        // Obtener métricas actuales del proyecto usando la MISMA LÓGICA que el procedimiento almacenado
-        $currentMetrics = PlannedMetric::whereHas('activity.specificObjective', function($query) use ($project) {
-            $query->where('projects_id', $project->id);
+        // Obtener métricas actuales del proyecto
+        $currentMetrics = PlannedMetric::whereHas('activity.goal', function($query) use ($project) {
+            $query->where('project_id', $project->id);
         })->get();
 
         // Obtener métricas publicadas del proyecto
         $publishedMetrics = \App\Models\PublishedMetric::where('publication_id', $publicationId)
-            ->whereHas('originalMetric.activity.specificObjective', function($query) use ($project) {
-                $query->where('projects_id', $project->id);
+            ->whereHas('originalMetric.activity.goal', function($query) use ($project) {
+                $query->where('project_id', $project->id);
             })->get();
 
-        // SOLO comparar cantidad - esto es lo único que realmente importa
+        // Comparar cantidad
         if ($currentMetrics->count() != $publishedMetrics->count()) {
             Log::info("Proyecto - Diferencia en cantidad de métricas:", [
                 'current_count' => $currentMetrics->count(),
@@ -330,8 +399,102 @@ class DataPublicationApproval extends Page
             ];
         }
 
-        // NO comparar métricas individuales por ID - esto causa falsos positivos
-        // NO comparar contenido de métricas - esto causa comparaciones de campos inexistentes
+        // Comparar métricas individuales
+        $currentMetricIds = $currentMetrics->pluck('id')->toArray();
+        $publishedMetricIds = $publishedMetrics->pluck('original_metric_id')->toArray();
+
+        // Métricas agregadas
+        $addedMetrics = array_diff($currentMetricIds, $publishedMetricIds);
+        if (count($addedMetrics) > 0) {
+            Log::info("Proyecto - Métricas agregadas detectadas:", [
+                'added_metric_ids' => $addedMetrics,
+                'current_metric_ids' => $currentMetricIds,
+                'published_metric_ids' => $publishedMetricIds
+            ]);
+
+            $changes[] = [
+                'field' => 'Métricas agregadas',
+                'old_value' => '0',
+                'new_value' => count($addedMetrics) . ' métrica(s)',
+                'highlighted' => false
+            ];
+        }
+
+        // Métricas eliminadas
+        $removedMetrics = array_diff($publishedMetricIds, $currentMetricIds);
+        if (count($removedMetrics) > 0) {
+            Log::info("Proyecto - Métricas eliminadas detectadas:", [
+                'removed_metric_ids' => $removedMetrics,
+                'current_metric_ids' => $currentMetricIds,
+                'published_metric_ids' => $publishedMetricIds
+            ]);
+
+            $changes[] = [
+                'field' => 'Métricas eliminadas',
+                'old_value' => count($removedMetrics) . ' métrica(s)',
+                'new_value' => '0',
+                'highlighted' => false
+            ];
+        }
+
+        // Comparar contenido de métricas existentes - SOLO campos que existen en ambas tablas
+        foreach ($currentMetrics as $currentMetric) {
+            $publishedMetric = $publishedMetrics->where('original_metric_id', $currentMetric->id)->first();
+            if ($publishedMetric) {
+                // Comparar population_target_value
+                if ($currentMetric->population_target_value != $publishedMetric->population_target_value) {
+                    $highlighted = $this->highlightDifferences($publishedMetric->population_target_value, $currentMetric->population_target_value);
+                    $changes[] = [
+                        'field' => 'Valor objetivo de población (ID: ' . $currentMetric->id . ')',
+                        'old_value' => $highlighted['old'],
+                        'new_value' => $highlighted['new'],
+                        'highlighted' => $highlighted['highlighted']
+                    ];
+                }
+
+                // Comparar product_target_value
+                if ($currentMetric->product_target_value != $publishedMetric->product_target_value) {
+                    $highlighted = $this->highlightDifferences($publishedMetric->product_target_value, $currentMetric->product_target_value);
+                    $changes[] = [
+                        'field' => 'Valor objetivo de producto (ID: ' . $currentMetric->id . ')',
+                        'old_value' => $highlighted['old'],
+                        'new_value' => $highlighted['new'],
+                        'highlighted' => $highlighted['highlighted']
+                    ];
+                }
+
+                // Comparar unit
+                if ($currentMetric->unit != $publishedMetric->unit) {
+                    $highlighted = $this->highlightDifferences($publishedMetric->unit, $currentMetric->unit);
+                    $changes[] = [
+                        'field' => 'Unidad de métrica (ID: ' . $currentMetric->id . ')',
+                        'old_value' => $highlighted['old'],
+                        'new_value' => $highlighted['new'],
+                        'highlighted' => $highlighted['highlighted']
+                    ];
+                }
+
+                // Comparar year
+                if ($currentMetric->year != $publishedMetric->year) {
+                    $changes[] = [
+                        'field' => 'Año de métrica (ID: ' . $currentMetric->id . ')',
+                        'old_value' => $publishedMetric->year,
+                        'new_value' => $currentMetric->year,
+                        'highlighted' => false
+                    ];
+                }
+
+                // Comparar month
+                if ($currentMetric->month != $publishedMetric->month) {
+                    $changes[] = [
+                        'field' => 'Mes de métrica (ID: ' . $currentMetric->id . ')',
+                        'old_value' => $publishedMetric->month,
+                        'new_value' => $currentMetric->month,
+                        'highlighted' => false
+                    ];
+                }
+            }
+        }
 
         return $changes;
     }

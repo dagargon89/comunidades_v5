@@ -192,20 +192,16 @@ class DataPublicationService
                 ]);
                 $totalProjects++;
 
-                // Publicar actividades del proyecto usando la MISMA LÓGICA que el procedimiento almacenado
-                $activities = \App\Models\Activity::whereHas('specificObjective', function($query) use ($projectId) {
-                    $query->where('projects_id', $projectId);
+                // Publicar actividades del proyecto
+                $activities = \App\Models\Activity::whereHas('goal', function($query) use ($projectId) {
+                    $query->where('project_id', $projectId);
                 })->get();
 
                 foreach ($activities as $activity) {
-                    // Obtener el project_id de la misma forma que el procedimiento almacenado
-                    $specificObjective = \App\Models\SpecificObjective::find($activity->specific_objective_id);
-                    $correctProjectId = $specificObjective ? $specificObjective->projects_id : $projectId;
-
-                    $publishedActivity = \App\Models\PublishedActivity::create([
+                    \App\Models\PublishedActivity::create([
                         'publication_id' => $publication->id,
                         'original_activity_id' => $activity->id,
-                        'project_id' => $correctProjectId, // Usar el project_id correcto desde specific_objectives
+                        'project_id' => $projectId,
                         'name' => $activity->name,
                         'description' => $activity->description,
                         'specific_objective_id' => $activity->specific_objective_id,
@@ -213,7 +209,6 @@ class DataPublicationService
                         'created_by' => $activity->created_by,
                         'snapshot_date' => now()
                     ]);
-
                     $totalActivities++;
 
                     // Publicar métricas de la actividad

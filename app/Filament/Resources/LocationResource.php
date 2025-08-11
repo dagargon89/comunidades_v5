@@ -42,10 +42,26 @@ class LocationResource extends Resource
                             ->required()
                             ->maxLength(150)
                             ->placeholder('Ingrese el nombre de la ubicación'),
-                        Forms\Components\TextInput::make('category')
+                        Forms\Components\Select::make('category')
                             ->label('Categoría')
-                            ->maxLength(50)
-                            ->placeholder('Ej: Oficina, Taller, Almacén'),
+                            ->options([
+                                'Centro Comunitario' => 'Centro Comunitario',
+                                'Centro Implementador Desafío' => 'Centro Implementador Desafío',
+                                'Domicilio particular' => 'Domicilio particular',
+                                'Edificio Participa Juárez' => 'Edificio Participa Juárez',
+                                'Escuela pública' => 'Escuela pública',
+                                'Escuela privada' => 'Escuela privada',
+                                'Espacios Gubernamentales' => 'Espacios Gubernamentales',
+                                'Mercado' => 'Mercado',
+                                'Parque público' => 'Parque público',
+                                'Vía pública' => 'Vía pública',
+                                'Virtual' => 'Virtual',
+                                'Sede OSC externas' => 'Sede OSC externas',
+                                'Otro' => 'Otro',
+                            ])
+                            ->required()
+                            ->searchable()
+                            ->placeholder('Seleccione una categoría'),
                         Forms\Components\Select::make('polygons_id')
                             ->relationship('polygons', 'name')
                             ->label('Polígono')

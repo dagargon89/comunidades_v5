@@ -158,7 +158,7 @@ php artisan tinker
 
 ### Paso 4: Acceder a la Página de Filament
 
-1. Ir a `/admin/publicaciones-datos`
+1. Ir a `/admin/vista-publicaciones-datos`
 2. Verificar que aparecen las estadísticas
 3. Probar el formulario de publicación
 4. Revisar el historial de publicaciones
@@ -167,7 +167,7 @@ php artisan tinker
 
 #### Desde Filament
 
-1. Navegar a `/admin/publicaciones-datos`
+1. Navegar a `/admin/vista-publicaciones-datos`
 2. Completar el formulario (opcional)
 3. Hacer clic en "Nueva Publicación"
 4. Confirmar la acción

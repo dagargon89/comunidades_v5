@@ -26,7 +26,6 @@ class Beneficiary extends Model
         'ext_number',
         'neighborhood',
         'address_backup',
-        'identifier',
         'created_by',
     ];
 

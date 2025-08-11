@@ -236,10 +236,6 @@ class BeneficiaryRegistryView extends Page implements HasTable
     protected function getTableColumns(): array
     {
         return [
-            Tables\Columns\TextColumn::make('beneficiaries.identifier')
-                ->label('Identificador')
-                ->sortable()
-                ->searchable(),
             Tables\Columns\TextColumn::make('beneficiaries.last_name')
                 ->label('Apellido Paterno')
                 ->sortable()
@@ -447,18 +443,15 @@ class BeneficiaryRegistryView extends Page implements HasTable
                     // Log temporal para depurar
                     Log::info('Datos recibidos en acción:', $data);
 
-                    // Generar identificador automáticamente
-                    $identifier = \App\Models\BeneficiaryRegistry::generarIdentificador(
-                        $data['first_names'],
-                        $data['last_name'],
-                        $data['mother_last_name'],
-                        $data['birth_year'],
-                        $data['gender']
-                    );
-
                     // Buscar beneficiario existente o crear uno nuevo
                     $beneficiary = \App\Models\Beneficiary::firstOrCreate(
-                        ['identifier' => $identifier],
+                        [
+                            'first_names' => $data['first_names'],
+                            'last_name' => $data['last_name'],
+                            'mother_last_name' => $data['mother_last_name'],
+                            'birth_year' => $data['birth_year'],
+                            'gender' => $data['gender'],
+                        ],
                         [
                             'last_name' => $data['last_name'],
                             'mother_last_name' => $data['mother_last_name'],
@@ -470,7 +463,6 @@ class BeneficiaryRegistryView extends Page implements HasTable
                             'ext_number' => $data['ext_number'] ?? null,
                             'neighborhood' => $data['neighborhood'] ?? null,
                             'address_backup' => $data['address_backup'] ?? null,
-                            'identifier' => $identifier,
                             'created_by' => Auth::id(),
                         ]
                     );
@@ -672,15 +664,14 @@ class BeneficiaryRegistryView extends Page implements HasTable
                     $registered = 0;
                     $skipped = 0;
                     foreach ($data['beneficiarios'] as $beneficiary) {
-                        $identifier = \App\Models\BeneficiaryRegistry::generarIdentificador(
-                            $beneficiary['first_names'] ?? '',
-                            $beneficiary['last_name'] ?? '',
-                            $beneficiary['mother_last_name'] ?? '',
-                            $beneficiary['birth_year'] ?? '',
-                            $beneficiary['gender'] ?? ''
-                        );
                         $beneficiaryModel = \App\Models\Beneficiary::firstOrCreate(
-                            ['identifier' => $identifier],
+                            [
+                                'first_names' => $beneficiary['first_names'],
+                                'last_name' => $beneficiary['last_name'],
+                                'mother_last_name' => $beneficiary['mother_last_name'],
+                                'birth_year' => $beneficiary['birth_year'],
+                                'gender' => $beneficiary['gender'],
+                            ],
                             [
                                 'last_name' => $beneficiary['last_name'],
                                 'mother_last_name' => $beneficiary['mother_last_name'],
@@ -692,7 +683,6 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                 'ext_number' => $beneficiary['ext_number'] ?? null,
                                 'neighborhood' => $beneficiary['neighborhood'] ?? null,
                                 'address_backup' => $beneficiary['address_backup'] ?? null,
-                                'identifier' => $identifier,
                                 'created_by' => Auth::id(),
                             ]
                         );

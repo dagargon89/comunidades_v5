@@ -18,6 +18,9 @@ class DataPublicationApproval extends Page
     use HasPageShield;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $slug = 'aprobacion-publicacion-datos';
+    protected static ?string $navigationLabel = 'Aprobación de Publicación de Datos';
+    protected static ?string $title = 'Aprobación de Publicación de Datos';
     protected static string $view = 'filament.pages.data-publication-approval';
 
     public $allProjects = [];

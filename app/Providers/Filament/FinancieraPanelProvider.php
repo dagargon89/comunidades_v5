@@ -33,14 +33,12 @@ class FinancieraPanelProvider extends PanelProvider
                 'primary' => Color::Blue,
             ])
             ->discoverResources(in: app_path('Filament/Financiera/Resources'), for: 'App\\Filament\\Financiera\\Resources')
-            ->discoverPages(in: app_path('Filament/Financiera/Pages'), for: 'App\\Filament\\Financiera\\Pages')
+            //->discoverPages(in: app_path('Filament/Financiera/Pages'), for: 'App\\Filament\\Financiera\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Financiera/Widgets'), for: 'App\\Filament\\Financiera\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

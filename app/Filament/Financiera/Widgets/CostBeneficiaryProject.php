@@ -9,7 +9,7 @@ class CostBeneficiaryProject extends ChartWidget
 {
     protected static ?string $heading = 'Costo por Beneficiario por Proyecto';
 
-    protected static ?string $maxHeight = '400px';
+   // protected static ?string $maxHeight = '400px';
 
     protected function getData(): array
     {
@@ -88,7 +88,7 @@ class CostBeneficiaryProject extends ChartWidget
                 ]
             ],
             'responsive' => true,
-            'maintainAspectRatio' => false,
+            'maintainAspectRatio' => true,
         ];
     }
 

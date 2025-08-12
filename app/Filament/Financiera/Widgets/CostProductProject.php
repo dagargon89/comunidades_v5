@@ -59,15 +59,15 @@ class CostProductProject extends ChartWidget
     protected function getOptions(): array
     {
         return [
-            'indexAxis' => 'x', // Hacer la gráfica vertical
+            'indexAxis' => 'x',
             'plugins' => [
                 'legend' => [
-                    'display' => true, // Mostrar leyenda
+                    'display' => true,
                 ],
                 'tooltip' => [
-                    'callbacks' => [
-                        'label' => 'function(context) { return "$" + context.parsed.y.toLocaleString(); }'
-                    ]
+                    'enabled' => true,
+                    'mode' => 'index',
+                    'intersect' => false,
                 ],
             ],
             'scales' => [

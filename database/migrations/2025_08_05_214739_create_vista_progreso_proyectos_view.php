@@ -51,17 +51,15 @@ return new class extends Migration
                     )
                     ELSE NULL
                 END AS product_progress_percent,
-                COUNT(
-                    DISTINCT CASE
-                        WHEN ac.end_date <= CURDATE() THEN ac.id
-                    END
-                ) AS Eventos_completados,
-                COUNT(
-                    DISTINCT CASE
-                        WHEN ac.end_date > CURDATE() THEN ac.id
-                    END
-                ) AS Eventos_calendarizados,
-                COUNT(DISTINCT br.beneficiaries_id) AS Beneficiarios_registrados
+                ac.id AS Evento_id,
+                ac.start_date AS Evento_fecha_inicio,
+                ac.end_date AS Evento_fecha_fin,
+                CASE
+                    WHEN ac.end_date <= CURDATE() THEN 'Completado'
+                    WHEN ac.end_date > CURDATE() THEN 'Calendarizado'
+                    ELSE 'Sin fecha'
+                END AS Evento_estado,
+                COUNT(DISTINCT br.beneficiaries_id) AS Beneficiarios_evento
             FROM
                 projects p
                 LEFT JOIN specific_objectives sp ON p.id = sp.projects_id
@@ -87,7 +85,10 @@ return new class extends Migration
                 pm.population_target_value,
                 pm.population_real_value,
                 pm.product_target_value,
-                pm.product_real_value
+                pm.product_real_value,
+                ac.id,
+                ac.start_date,
+                ac.end_date
         ");
     }
 

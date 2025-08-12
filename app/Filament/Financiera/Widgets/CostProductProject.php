@@ -13,24 +13,29 @@ class CostProductProject extends ChartWidget
 
     protected function getData(): array
     {
-        // Consultar la vista para obtener datos de proyectos con costo por producto
-        $data = DB::table('vista_progreso_proyectos')
+        // Consultar directamente las tablas para obtener datos de proyectos con costo por producto
+        $data = DB::table('projects as p')
             ->select([
-                'Proyecto',
-                'Proyecto_cantidad_financiada',
-                'Productos_realizados'
+                'p.name as project_name',
+                'p.funded_amount',
+                DB::raw('COALESCE(SUM(pm.product_real_value), 0) as products_completed')
             ])
-            ->whereNotNull('Proyecto_cantidad_financiada')
-            ->where('Productos_realizados', '>', 0)
+            ->leftJoin('specific_objectives as so', 'p.id', '=', 'so.projects_id')
+            ->leftJoin('activities as a', 'so.id', '=', 'a.specific_objective_id')
+            ->leftJoin('planned_metrics as pm', 'a.id', '=', 'pm.activity_id')
+            ->whereNotNull('p.funded_amount')
+            ->where('p.funded_amount', '>', 0)
+            ->groupBy('p.id', 'p.name', 'p.funded_amount')
+            ->having('products_completed', '>', 0)
             ->get()
             ->map(function ($item) {
                 // Calcular costo por producto
-                $costPerProduct = $item->Productos_realizados > 0
-                    ? $item->Proyecto_cantidad_financiada / $item->Productos_realizados
+                $costPerProduct = $item->products_completed > 0
+                    ? $item->funded_amount / $item->products_completed
                     : 0;
 
                 return [
-                    'project' => $item->Proyecto,
+                    'project' => $item->project_name,
                     'cost_per_product' => round($costPerProduct, 2)
                 ];
             })
@@ -75,6 +80,14 @@ class CostProductProject extends ChartWidget
                     'title' => [
                         'display' => true,
                         'text' => 'Proyecto'
+                    ],
+                    'ticks' => [
+                        'display' => true,
+                        'maxRotation' => 45,
+                        'minRotation' => 0
+                    ],
+                    'grid' => [
+                        'display' => true
                     ]
                 ],
                 'y' => [
@@ -83,8 +96,14 @@ class CostProductProject extends ChartWidget
                         'text' => 'Costo por Producto ($)'
                     ],
                     'ticks' => [
-                        'callback' => 'function(value) { return "$" + value.toLocaleString(); }'
-                    ]
+                        'display' => true,
+                        'callback' => 'function(value) { return "$" + value.toLocaleString(); }',
+                        'stepSize' => 1000
+                    ],
+                    'grid' => [
+                        'display' => true
+                    ],
+                    'beginAtZero' => true
                 ]
             ],
             'responsive' => true,

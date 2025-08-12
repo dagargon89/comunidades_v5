@@ -13,24 +13,30 @@ class CostBeneficiaryProject extends ChartWidget
 
     protected function getData(): array
     {
-        // Consultar la vista para obtener datos de proyectos con costo por beneficiario
-        $data = DB::table('vista_progreso_proyectos')
+        // Consultar directamente las tablas para obtener datos de proyectos con costo por beneficiario
+        $data = DB::table('projects as p')
             ->select([
-                'Proyecto',
-                'Proyecto_cantidad_financiada',
-                'Beneficiarios_registrados'
+                'p.name as project_name',
+                'p.funded_amount',
+                DB::raw('COUNT(DISTINCT br.beneficiaries_id) as beneficiaries_count')
             ])
-            ->whereNotNull('Proyecto_cantidad_financiada')
-            ->where('Beneficiarios_registrados', '>', 0)
+            ->leftJoin('specific_objectives as so', 'p.id', '=', 'so.projects_id')
+            ->leftJoin('activities as a', 'so.id', '=', 'a.specific_objective_id')
+            ->leftJoin('activity_calendars as ac', 'a.id', '=', 'ac.activity_id')
+            ->leftJoin('beneficiary_registries as br', 'ac.id', '=', 'br.activity_calendar_id')
+            ->whereNotNull('p.funded_amount')
+            ->where('p.funded_amount', '>', 0)
+            ->groupBy('p.id', 'p.name', 'p.funded_amount')
+            ->having('beneficiaries_count', '>', 0)
             ->get()
             ->map(function ($item) {
                 // Calcular costo por beneficiario
-                $costPerBeneficiary = $item->Beneficiarios_registrados > 0
-                    ? $item->Proyecto_cantidad_financiada / $item->Beneficiarios_registrados
+                $costPerBeneficiary = $item->beneficiaries_count > 0
+                    ? $item->funded_amount / $item->beneficiaries_count
                     : 0;
 
                 return [
-                    'project' => $item->Proyecto,
+                    'project' => $item->project_name,
                     'cost_per_beneficiary' => round($costPerBeneficiary, 2)
                 ];
             })
@@ -74,17 +80,31 @@ class CostBeneficiaryProject extends ChartWidget
                 'x' => [
                     'title' => [
                         'display' => true,
-                        'text' => 'Costo por Beneficiario ($)'
+                        'text' => 'Proyecto'
                     ],
                     'ticks' => [
-                        'callback' => 'function(value) { return "$" + value.toLocaleString(); }'
+                        'display' => true,
+                        'maxRotation' => 45,
+                        'minRotation' => 0
+                    ],
+                    'grid' => [
+                        'display' => true
                     ]
                 ],
                 'y' => [
                     'title' => [
                         'display' => true,
-                        'text' => 'Proyecto'
-                    ]
+                        'text' => 'Costo por Beneficiario ($)'
+                    ],
+                    'ticks' => [
+                        'display' => true,
+                        'callback' => 'function(value) { return "$" + value.toLocaleString(); }',
+                        'stepSize' => 1000
+                    ],
+                    'grid' => [
+                        'display' => true
+                    ],
+                    'beginAtZero' => true
                 ]
             ],
             'responsive' => true,

@@ -40,6 +40,7 @@ class FinancieraPanelProvider extends PanelProvider
             //->discoverWidgets(in: app_path('Filament/Financiera/Widgets'), for: 'App\\Filament\\Financiera\\Widgets')
             ->widgets([
                 \App\Filament\Financiera\Widgets\StatsOverview::class,
+                \App\Filament\Financiera\Widgets\CostBeneficiaryProject::class,
             ])
             ->middleware([
                 EncryptCookies::class,

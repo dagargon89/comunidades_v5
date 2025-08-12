@@ -31,8 +31,6 @@ class UsuarioPanelProvider extends PanelProvider
             ->registration()
             ->maxContentWidth(MaxWidth::Full)
             ->topNavigation()
-            ->passwordReset()
-            ->emailVerification()
             ->profile()
             ->defaultAvatarProvider(\Filament\AvatarProviders\UiAvatarsProvider::class)
             ->userMenuItems([

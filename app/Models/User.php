@@ -116,6 +116,11 @@ class User extends Authenticatable implements FilamentUser
             return $this->hasAnyRole(['capturista', 'responsable']);
         }
 
+        // Panel Financiera - solo financiera
+        if ($panel->getId() === 'financiera') {
+            return $this->hasAnyRole(['financiera']);
+        }
+
         // Por defecto, denegar acceso
         return false;
     }

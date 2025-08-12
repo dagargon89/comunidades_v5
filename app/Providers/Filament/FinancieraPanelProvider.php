@@ -27,7 +27,6 @@ class FinancieraPanelProvider extends PanelProvider
             ->id('financiera')
             ->path('financiera')
             ->login()
-            ->registration()
             ->maxContentWidth(MaxWidth::Full)
             ->topNavigation()
             ->colors([

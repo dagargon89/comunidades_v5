@@ -13,26 +13,22 @@ class CostBeneficiaryProject extends ChartWidget
 
     protected function getData(): array
     {
-        // Consultar directamente las tablas para obtener datos de proyectos con costo por beneficiario
-        $data = DB::table('projects as p')
+        // Utilizar la vista vista_progreso_proyectos para obtener datos consolidados
+        $data = DB::table('vista_progreso_proyectos as vpp')
             ->select([
-                'p.name as project_name',
-                'p.funded_amount',
-                DB::raw('COUNT(DISTINCT br.beneficiaries_id) as beneficiaries_count')
+                'vpp.Proyecto as project_name',
+                'vpp.Proyecto_cantidad_financiada as funded_amount',
+                DB::raw('SUM(vpp.Beneficiarios_evento) as total_beneficiaries')
             ])
-            ->leftJoin('specific_objectives as so', 'p.id', '=', 'so.projects_id')
-            ->leftJoin('activities as a', 'so.id', '=', 'a.specific_objective_id')
-            ->leftJoin('activity_calendars as ac', 'a.id', '=', 'ac.activity_id')
-            ->leftJoin('beneficiary_registries as br', 'ac.id', '=', 'br.activity_calendar_id')
-            ->whereNotNull('p.funded_amount')
-            ->where('p.funded_amount', '>', 0)
-            ->groupBy('p.id', 'p.name', 'p.funded_amount')
-            ->having('beneficiaries_count', '>', 0)
+            ->whereNotNull('vpp.Proyecto_cantidad_financiada')
+            ->where('vpp.Proyecto_cantidad_financiada', '>', 0)
+            ->groupBy('vpp.Proyecto_ID', 'vpp.Proyecto', 'vpp.Proyecto_cantidad_financiada')
+            ->having('total_beneficiaries', '>', 0)
             ->get()
             ->map(function ($item) {
                 // Calcular costo por beneficiario
-                $costPerBeneficiary = $item->beneficiaries_count > 0
-                    ? $item->funded_amount / $item->beneficiaries_count
+                $costPerBeneficiary = $item->total_beneficiaries > 0
+                    ? $item->funded_amount / $item->total_beneficiaries
                     : 0;
 
                 return [

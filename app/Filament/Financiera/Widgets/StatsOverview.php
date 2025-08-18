@@ -13,7 +13,9 @@ class StatsOverview extends BaseWidget
         return [
             Stat::make(
                 'Total de proyectos',
-                DB::table('projects')->count()
+                DB::table('vista_progreso_proyectos')
+                    ->distinct('Proyecto_ID')
+                    ->count('Proyecto_ID')
             )
                 ->description('Cantidad total de proyectos registrados')
                 ->descriptionIcon('heroicon-o-chart-bar')
@@ -26,7 +28,12 @@ class StatsOverview extends BaseWidget
 
             Stat::make(
                 'Total de financiamiento',
-                '$' . number_format(DB::table('projects')->sum('funded_amount'), 0, '.', ',')
+                '$' . number_format(
+                    DB::table('vista_progreso_proyectos')
+                        ->distinct('Proyecto_ID')
+                        ->sum('Proyecto_cantidad_financiada'),
+                    0, '.', ','
+                )
             )
                 ->description('Monto total financiado de todos los proyectos')
                 ->descriptionIcon('heroicon-o-currency-dollar')
@@ -39,9 +46,10 @@ class StatsOverview extends BaseWidget
 
             Stat::make(
                 'Beneficiarios únicos',
-                DB::table('beneficiary_registries')
-                    ->distinct('beneficiaries_id')
-                    ->count('beneficiaries_id')
+                DB::table('vista_progreso_proyectos')
+                    ->whereNotNull('Beneficiarios_evento')
+                    ->where('Beneficiarios_evento', '>', 0)
+                    ->sum('Beneficiarios_evento')
             )
                 ->description('Total de beneficiarios registrados en actividades')
                 ->descriptionIcon('heroicon-o-users')
@@ -54,10 +62,10 @@ class StatsOverview extends BaseWidget
 
             Stat::make(
                 'Productos únicos',
-                DB::table('planned_metrics')
-                    ->whereNotNull('product_real_value')
-                    ->where('product_real_value', '>', 0)
-                    ->sum('product_real_value') ?: 'N/A'
+                DB::table('vista_progreso_proyectos')
+                    ->whereNotNull('Productos_realizados')
+                    ->where('Productos_realizados', '>', 0)
+                    ->sum('Productos_realizados') ?: 'N/A'
             )
                 ->description('Total de productos realizados en actividades')
                 ->descriptionIcon('heroicon-o-cube')

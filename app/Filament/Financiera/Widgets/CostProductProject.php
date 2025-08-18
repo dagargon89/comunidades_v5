@@ -13,25 +13,24 @@ class CostProductProject extends ChartWidget
 
     protected function getData(): array
     {
-        // Consultar directamente las tablas para obtener datos de proyectos con costo por producto
-        $data = DB::table('projects as p')
+        // Utilizar la vista vista_progreso_proyectos para obtener datos consolidados
+        $data = DB::table('vista_progreso_proyectos as vpp')
             ->select([
-                'p.name as project_name',
-                'p.funded_amount',
-                DB::raw('COALESCE(SUM(pm.product_real_value), 0) as products_completed')
+                'vpp.Proyecto as project_name',
+                'vpp.Proyecto_cantidad_financiada as funded_amount',
+                DB::raw('SUM(vpp.Productos_realizados) as total_products')
             ])
-            ->leftJoin('specific_objectives as so', 'p.id', '=', 'so.projects_id')
-            ->leftJoin('activities as a', 'so.id', '=', 'a.specific_objective_id')
-            ->leftJoin('planned_metrics as pm', 'a.id', '=', 'pm.activity_id')
-            ->whereNotNull('p.funded_amount')
-            ->where('p.funded_amount', '>', 0)
-            ->groupBy('p.id', 'p.name', 'p.funded_amount')
-            ->having('products_completed', '>', 0)
+            ->whereNotNull('vpp.Proyecto_cantidad_financiada')
+            ->where('vpp.Proyecto_cantidad_financiada', '>', 0)
+            ->whereNotNull('vpp.Productos_realizados')
+            ->where('vpp.Productos_realizados', '>', 0)
+            ->groupBy('vpp.Proyecto_ID', 'vpp.Proyecto', 'vpp.Proyecto_cantidad_financiada')
+            ->having('total_products', '>', 0)
             ->get()
             ->map(function ($item) {
                 // Calcular costo por producto
-                $costPerProduct = $item->products_completed > 0
-                    ? $item->funded_amount / $item->products_completed
+                $costPerProduct = $item->total_products > 0
+                    ? $item->funded_amount / $item->total_products
                     : 0;
 
                 return [

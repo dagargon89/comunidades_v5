@@ -106,7 +106,8 @@ class Dashboard extends BaseDashboard
                             ->columnSpanFull(),
                     ])
                     ->columns(12) // Usar 12 columnas para mayor flexibilidad
-                    ->collapsible(),
+                    ->collapsible()
+                    ->collapsed(),
             ]);
     }
 

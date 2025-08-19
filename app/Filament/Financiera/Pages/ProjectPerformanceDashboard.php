@@ -135,8 +135,7 @@ class ProjectPerformanceDashboard extends BaseDashboard
                     ])
                     ->columns(1)
                     ->collapsible()
-                    ->persistCollapsed()
-                    ->collapsed(false),
+                    ->collapsed(),
             ]);
     }
 

@@ -35,7 +35,7 @@ class FinancieraPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Financiera/Resources'), for: 'App\\Filament\\Financiera\\Resources')
             ->discoverPages(in: app_path('Filament/Financiera/Pages'), for: 'App\\Filament\\Financiera\\Pages')
             ->pages([
-                //Pages\Dashboard::class,
+                \App\Filament\Financiera\Pages\Dashboard::class,
             ])
            // ->discoverWidgets(in: app_path('Filament/Financiera/Widgets'), for: 'App\\Filament\\Financiera\\Widgets')
             ->widgets([

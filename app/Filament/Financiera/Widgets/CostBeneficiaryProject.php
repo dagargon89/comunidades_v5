@@ -50,12 +50,14 @@ class CostBeneficiaryProject extends ChartWidget
                     : 0;
 
                 return [
-                    'project' => $item->project_name,
+                    'project' => strlen($item->project_name) > 30
+                        ? substr($item->project_name, 0, 27) . '...'
+                        : $item->project_name,
                     'cost_per_beneficiary' => round($costPerBeneficiary, 2)
                 ];
             })
             ->sortByDesc('cost_per_beneficiary')
-            ->take(10); // Limitar a 10 proyectos para mejor visualización
+            ->take($projectId ? 10 : 8); // Menos proyectos si no hay filtro específico
 
         return [
             'datasets' => [
@@ -99,7 +101,10 @@ class CostBeneficiaryProject extends ChartWidget
                     'ticks' => [
                         'display' => true,
                         'maxRotation' => 45,
-                        'minRotation' => 0
+                        'minRotation' => 45,
+                        'font' => [
+                            'size' => 10
+                        ]
                     ],
                     'grid' => [
                         'display' => true

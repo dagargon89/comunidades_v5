@@ -2,14 +2,14 @@
 
 namespace App\Filament\Financiera\Pages;
 
-use Filament\Pages\Page;
-use Illuminate\Support\Facades\DB;
+use Filament\Pages\Dashboard as BaseDashboard;
 
-class ProjectPerformanceDashboard extends Page
+class ProjectPerformanceDashboard extends Dashboard
 {
-    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
 
-    protected static string $view = 'filament.financiera.pages.project-performance-dashboard';
+    protected static string $routePath = 'rendimiento-proyectos';
+
+    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
 
     protected static ?string $title = 'Dashboard de Rendimiento de Proyectos';
 

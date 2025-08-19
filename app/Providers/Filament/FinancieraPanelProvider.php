@@ -45,6 +45,7 @@ class FinancieraPanelProvider extends PanelProvider
                 \App\Filament\Financiera\Widgets\PopulationProgressProject::class,
                 \App\Filament\Financiera\Widgets\ProductProgressProject::class,
                 \App\Filament\Financiera\Widgets\ProjectDetails::class,
+                \App\Filament\Financiera\Widgets\ProjectPerformanceStatsOverview::class,
             ])
             ->middleware([
                 EncryptCookies::class,

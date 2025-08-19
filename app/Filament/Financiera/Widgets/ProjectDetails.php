@@ -111,8 +111,17 @@ class ProjectDetails extends BaseWidget
             public $timestamps = false;
         };
 
-        // Query simple basado en la documentación: usar la vista directamente
+        // Query agrupado para mostrar solo un registro por proyecto
         return $model->newQuery()
+            ->select([
+                'Proyecto_ID',
+                'Proyecto',
+                'Proyecto_Fecha_Inicio',
+                'Proyecto_Fecha_Final',
+                'Proyecto_cantidad_financiada',
+                DB::raw('AVG(population_progress_percent) as population_progress_percent'),
+                DB::raw('AVG(product_progress_percent) as product_progress_percent'),
+            ])
             ->when($startDate, fn ($query) => $query->whereDate('Evento_fecha_inicio', '>=', $startDate))
             ->when($endDate, fn ($query) => $query->whereDate('Evento_fecha_fin', '<=', $endDate))
             ->when($financierId, fn ($query) => $query->where('Financiadora_id', $financierId))
@@ -120,6 +129,7 @@ class ProjectDetails extends BaseWidget
             ->when($activityYear, fn ($query) => $query->where('year_actividad', $activityYear))
             ->when($activityMonth, fn ($query) => $query->where('mes_actividad', $activityMonth))
             ->when($eventStatus, fn ($query) => $query->where('Evento_estado', $eventStatus))
-            ->whereNotNull('Proyecto');
+            ->whereNotNull('Proyecto')
+            ->groupBy('Proyecto_ID', 'Proyecto', 'Proyecto_Fecha_Inicio', 'Proyecto_Fecha_Final', 'Proyecto_cantidad_financiada');
     }
 }

@@ -4,15 +4,21 @@ namespace App\Filament\Financiera\Widgets;
 
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 
 class CostProductProject extends ChartWidget
 {
+    use InteractsWithPageFilters;
+
     protected static ?string $heading = 'Costo por Producto por Proyecto';
 
     // protected static ?string $maxHeight = '400px';
 
     protected function getData(): array
     {
+        $startDate = $this->filters['startDate'] ?? null;
+        $endDate = $this->filters['endDate'] ?? null;
+
         // Utilizar la vista vista_progreso_proyectos para obtener datos consolidados
         $data = DB::table('vista_progreso_proyectos as vpp')
             ->select([
@@ -20,6 +26,8 @@ class CostProductProject extends ChartWidget
                 'vpp.Proyecto_cantidad_financiada as funded_amount',
                 DB::raw('SUM(vpp.Productos_realizados) as total_products')
             ])
+            ->when($startDate, fn ($query) => $query->whereDate('vpp.Evento_fecha_inicio', '>=', $startDate))
+            ->when($endDate, fn ($query) => $query->whereDate('vpp.Evento_fecha_fin', '<=', $endDate))
             ->whereNotNull('vpp.Proyecto_cantidad_financiada')
             ->where('vpp.Proyecto_cantidad_financiada', '>', 0)
             ->whereNotNull('vpp.Productos_realizados')

@@ -5,15 +5,24 @@ namespace App\Filament\Financiera\Widgets;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Facades\DB;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use Illuminate\Database\Eloquent\Builder;
 
 class StatsOverview extends BaseWidget
 {
+    use InteractsWithPageFilters;
+
     protected function getStats(): array
     {
+        $startDate = $this->filters['startDate'] ?? null;
+        $endDate = $this->filters['endDate'] ?? null;
+
         return [
             Stat::make(
                 'Total de proyectos',
                 DB::table('vista_progreso_proyectos')
+                    ->when($startDate, fn ($query) => $query->whereDate('Proyecto_Fecha_Inicio', '>=', $startDate))
+                    ->when($endDate, fn ($query) => $query->whereDate('Proyecto_Fecha_Final', '<=', $endDate))
                     ->distinct('Proyecto_ID')
                     ->count('Proyecto_ID')
             )
@@ -30,6 +39,8 @@ class StatsOverview extends BaseWidget
                 'Total de financiamiento',
                 '$' . number_format(
                     DB::table('vista_progreso_proyectos')
+                        ->when($startDate, fn ($query) => $query->whereDate('Proyecto_Fecha_Inicio', '>=', $startDate))
+                        ->when($endDate, fn ($query) => $query->whereDate('Proyecto_Fecha_Final', '<=', $endDate))
                         ->distinct('Proyecto_ID')
                         ->sum('Proyecto_cantidad_financiada'),
                     0, '.', ','
@@ -47,6 +58,8 @@ class StatsOverview extends BaseWidget
             Stat::make(
                 'Beneficiarios únicos',
                 DB::table('vista_progreso_proyectos')
+                    ->when($startDate, fn ($query) => $query->whereDate('Evento_fecha_inicio', '>=', $startDate))
+                    ->when($endDate, fn ($query) => $query->whereDate('Evento_fecha_fin', '<=', $endDate))
                     ->whereNotNull('Beneficiarios_evento')
                     ->where('Beneficiarios_evento', '>', 0)
                     ->sum('Beneficiarios_evento')
@@ -63,6 +76,8 @@ class StatsOverview extends BaseWidget
             Stat::make(
                 'Productos únicos',
                 DB::table('vista_progreso_proyectos')
+                    ->when($startDate, fn ($query) => $query->whereDate('Evento_fecha_inicio', '>=', $startDate))
+                    ->when($endDate, fn ($query) => $query->whereDate('Evento_fecha_fin', '<=', $endDate))
                     ->whereNotNull('Productos_realizados')
                     ->where('Productos_realizados', '>', 0)
                     ->sum('Productos_realizados') ?: 'N/A'

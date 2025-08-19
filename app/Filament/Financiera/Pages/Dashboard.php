@@ -17,123 +17,95 @@ class Dashboard extends BaseDashboard
 {
     use HasFiltersForm;
 
-    public function filtersForm(Form $form): Form
+        public function filtersForm(Form $form): Form
     {
         return $form
             ->schema([
-                Section::make('Filtros por Fechas')
+                Section::make('Filtros del Dashboard')
+                    ->description('Utiliza estos filtros para personalizar la visualización de datos en todos los widgets')
                     ->schema([
+                        // Fechas - Primera fila
                         Grid::make(2)
                             ->schema([
                                 DatePicker::make('startDate')
                                     ->label('Fecha de inicio')
-                                    ->placeholder('Filtrar desde esta fecha'),
+                                    ->placeholder('Desde esta fecha')
+                                    ->columnSpan(1),
                                 DatePicker::make('endDate')
                                     ->label('Fecha de fin')
-                                    ->placeholder('Filtrar hasta esta fecha'),
-                            ]),
-                    ])
-                    ->description('Filtra proyectos por fecha de inicio/fin y actividades por fecha de eventos')
-                    ->collapsible(),
+                                    ->placeholder('Hasta esta fecha')
+                                    ->columnSpan(1),
+                            ])
+                            ->columnSpanFull(),
 
-                Section::make('Filtros por Proyecto')
-                    ->schema([
+                        // Proyectos y Financiadora - Segunda fila
                         Grid::make(2)
                             ->schema([
                                 Select::make('financier_id')
                                     ->label('Financiadora')
-                                    ->placeholder('Seleccionar financiadora')
+                                    ->placeholder('Todas las financiadoras')
                                     ->options(function () {
                                         return DB::table('financiers')
                                             ->whereNotNull('name')
+                                            ->orderBy('name')
                                             ->pluck('name', 'id')
                                             ->toArray();
                                     })
-                                    ->searchable(),
+                                    ->searchable()
+                                    ->columnSpan(1),
                                 Select::make('project_id')
                                     ->label('Proyecto')
-                                    ->placeholder('Seleccionar proyecto')
+                                    ->placeholder('Todos los proyectos')
                                     ->options(function () {
                                         return DB::table('projects')
                                             ->whereNotNull('name')
+                                            ->orderBy('name')
                                             ->pluck('name', 'id')
                                             ->toArray();
                                     })
-                                    ->searchable(),
-                            ]),
-                    ])
-                    ->collapsible(),
+                                    ->searchable()
+                                    ->columnSpan(1),
+                            ])
+                            ->columnSpanFull(),
 
-                Section::make('Filtros por Actividad')
-                    ->schema([
+                        // Actividades - Tercera fila
                         Grid::make(3)
                             ->schema([
                                 Select::make('activity_year')
-                                    ->label('Año de actividad')
-                                    ->placeholder('Seleccionar año')
+                                    ->label('Año')
+                                    ->placeholder('Todos los años')
                                     ->options(function () {
                                         return DB::table('vista_progreso_proyectos')
                                             ->whereNotNull('year_actividad')
                                             ->distinct()
+                                            ->orderBy('year_actividad', 'desc')
                                             ->pluck('year_actividad', 'year_actividad')
-                                            ->sort()
                                             ->toArray();
-                                    }),
+                                    })
+                                    ->columnSpan(1),
                                 Select::make('activity_month')
-                                    ->label('Mes de actividad')
-                                    ->placeholder('Seleccionar mes')
+                                    ->label('Mes')
+                                    ->placeholder('Todos los meses')
                                     ->options([
-                                        1 => 'Enero',
-                                        2 => 'Febrero',
-                                        3 => 'Marzo',
-                                        4 => 'Abril',
-                                        5 => 'Mayo',
-                                        6 => 'Junio',
-                                        7 => 'Julio',
-                                        8 => 'Agosto',
-                                        9 => 'Septiembre',
-                                        10 => 'Octubre',
-                                        11 => 'Noviembre',
-                                        12 => 'Diciembre',
-                                    ]),
+                                        1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo',
+                                        4 => 'Abril', 5 => 'Mayo', 6 => 'Junio',
+                                        7 => 'Julio', 8 => 'Agosto', 9 => 'Septiembre',
+                                        10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre',
+                                    ])
+                                    ->columnSpan(1),
                                 Select::make('event_status')
                                     ->label('Estado del evento')
-                                    ->placeholder('Seleccionar estado')
+                                    ->placeholder('Todos los estados')
                                     ->options([
                                         'Completado' => 'Completado',
                                         'Calendarizado' => 'Calendarizado',
                                         'Sin fecha' => 'Sin fecha',
-                                    ]),
-                            ]),
+                                    ])
+                                    ->columnSpan(1),
+                            ])
+                            ->columnSpanFull(),
                     ])
-                    ->collapsible(),
-
-                Section::make('Filtros por Rangos')
-                    ->schema([
-                        Grid::make(2)
-                            ->schema([
-                                TextInput::make('min_beneficiaries')
-                                    ->label('Mín. beneficiarios')
-                                    ->placeholder('Número mínimo')
-                                    ->numeric()
-                                    ->minValue(0),
-                                TextInput::make('max_beneficiaries')
-                                    ->label('Máx. beneficiarios')
-                                    ->placeholder('Número máximo')
-                                    ->numeric()
-                                    ->minValue(0),
-                                TextInput::make('min_products')
-                                    ->label('Mín. productos')
-                                    ->placeholder('Número mínimo')
-                                    ->numeric()
-                                    ->minValue(0),
-                                TextInput::make('max_products')
-                                    ->label('Máx. productos')
-                                    ->placeholder('Número máximo')
-                                    ->numeric()
-                                    ->minValue(0),
-                            ]),
-                    ])
+                    ->columns(12) // Usar 12 columnas para mayor flexibilidad
                     ->collapsible(),
             ]);
     }

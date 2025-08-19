@@ -21,10 +21,6 @@ class StatsOverview extends BaseWidget
         $activityYear = $this->filters['activity_year'] ?? null;
         $activityMonth = $this->filters['activity_month'] ?? null;
         $eventStatus = $this->filters['event_status'] ?? null;
-        $minBeneficiaries = $this->filters['min_beneficiaries'] ?? null;
-        $maxBeneficiaries = $this->filters['max_beneficiaries'] ?? null;
-        $minProducts = $this->filters['min_products'] ?? null;
-        $maxProducts = $this->filters['max_products'] ?? null;
 
         return [
             Stat::make(
@@ -84,8 +80,6 @@ class StatsOverview extends BaseWidget
                     ->when($activityYear, fn ($query) => $query->where('year_actividad', $activityYear))
                     ->when($activityMonth, fn ($query) => $query->where('mes_actividad', $activityMonth))
                     ->when($eventStatus, fn ($query) => $query->where('Evento_estado', $eventStatus))
-                    ->when($minBeneficiaries, fn ($query) => $query->where('Beneficiarios_evento', '>=', $minBeneficiaries))
-                    ->when($maxBeneficiaries, fn ($query) => $query->where('Beneficiarios_evento', '<=', $maxBeneficiaries))
                     ->whereNotNull('Beneficiarios_evento')
                     ->where('Beneficiarios_evento', '>', 0)
                     ->sum('Beneficiarios_evento')
@@ -109,8 +103,6 @@ class StatsOverview extends BaseWidget
                     ->when($activityYear, fn ($query) => $query->where('year_actividad', $activityYear))
                     ->when($activityMonth, fn ($query) => $query->where('mes_actividad', $activityMonth))
                     ->when($eventStatus, fn ($query) => $query->where('Evento_estado', $eventStatus))
-                    ->when($minProducts, fn ($query) => $query->where('Productos_realizados', '>=', $minProducts))
-                    ->when($maxProducts, fn ($query) => $query->where('Productos_realizados', '<=', $maxProducts))
                     ->whereNotNull('Productos_realizados')
                     ->where('Productos_realizados', '>', 0)
                     ->sum('Productos_realizados') ?: 'N/A'

@@ -23,8 +23,6 @@ class CostBeneficiaryProject extends ChartWidget
         $activityYear = $this->filters['activity_year'] ?? null;
         $activityMonth = $this->filters['activity_month'] ?? null;
         $eventStatus = $this->filters['event_status'] ?? null;
-        $minBeneficiaries = $this->filters['min_beneficiaries'] ?? null;
-        $maxBeneficiaries = $this->filters['max_beneficiaries'] ?? null;
 
         // Utilizar la vista vista_progreso_proyectos para obtener datos consolidados
         $data = DB::table('vista_progreso_proyectos as vpp')
@@ -40,8 +38,6 @@ class CostBeneficiaryProject extends ChartWidget
             ->when($activityYear, fn ($query) => $query->where('vpp.year_actividad', $activityYear))
             ->when($activityMonth, fn ($query) => $query->where('vpp.mes_actividad', $activityMonth))
             ->when($eventStatus, fn ($query) => $query->where('vpp.Evento_estado', $eventStatus))
-            ->when($minBeneficiaries, fn ($query) => $query->where('vpp.Beneficiarios_evento', '>=', $minBeneficiaries))
-            ->when($maxBeneficiaries, fn ($query) => $query->where('vpp.Beneficiarios_evento', '<=', $maxBeneficiaries))
             ->whereNotNull('vpp.Proyecto_cantidad_financiada')
             ->where('vpp.Proyecto_cantidad_financiada', '>', 0)
             ->groupBy('vpp.Proyecto_ID', 'vpp.Proyecto', 'vpp.Proyecto_cantidad_financiada')

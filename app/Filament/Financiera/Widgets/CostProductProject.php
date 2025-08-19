@@ -23,8 +23,6 @@ class CostProductProject extends ChartWidget
         $activityYear = $this->filters['activity_year'] ?? null;
         $activityMonth = $this->filters['activity_month'] ?? null;
         $eventStatus = $this->filters['event_status'] ?? null;
-        $minProducts = $this->filters['min_products'] ?? null;
-        $maxProducts = $this->filters['max_products'] ?? null;
 
         // Utilizar la vista vista_progreso_proyectos para obtener datos consolidados
         $data = DB::table('vista_progreso_proyectos as vpp')
@@ -40,8 +38,6 @@ class CostProductProject extends ChartWidget
             ->when($activityYear, fn ($query) => $query->where('vpp.year_actividad', $activityYear))
             ->when($activityMonth, fn ($query) => $query->where('vpp.mes_actividad', $activityMonth))
             ->when($eventStatus, fn ($query) => $query->where('vpp.Evento_estado', $eventStatus))
-            ->when($minProducts, fn ($query) => $query->where('vpp.Productos_realizados', '>=', $minProducts))
-            ->when($maxProducts, fn ($query) => $query->where('vpp.Productos_realizados', '<=', $maxProducts))
             ->whereNotNull('vpp.Proyecto_cantidad_financiada')
             ->where('vpp.Proyecto_cantidad_financiada', '>', 0)
             ->whereNotNull('vpp.Productos_realizados')

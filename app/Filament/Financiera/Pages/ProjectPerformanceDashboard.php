@@ -8,6 +8,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Form;
 use Illuminate\Support\Facades\DB;
 use App\Filament\Financiera\Widgets\ProjectPerformanceStatsOverview;
 
@@ -25,110 +26,118 @@ class ProjectPerformanceDashboard extends BaseDashboard
 
     protected static ?int $navigationSort = 2;
 
-    protected function getFiltersFormSchema(): array
+    public function filtersForm(Form $form): Form
     {
-        return [
-            Section::make('Filtros de Rendimiento de Proyectos')
-                ->description('Filtra los datos por período, proyecto y estado de eventos')
-                ->icon('heroicon-o-funnel')
-                ->schema([
-                    Grid::make(3)
-                        ->schema([
-                            DatePicker::make('startDate')
-                                ->label('Fecha de Inicio')
-                                ->placeholder('Seleccionar fecha de inicio')
-                                ->displayFormat('d/m/Y')
-                                ->native(false),
+        return $form
+            ->schema([
+                Section::make('Filtros de Rendimiento de Proyectos')
+                    ->description('Filtra los datos por período, proyecto y estado de eventos')
+                    ->icon('heroicon-o-funnel')
+                    ->schema([
+                        // Fechas - Primera fila
+                        Grid::make(2)
+                            ->schema([
+                                DatePicker::make('startDate')
+                                    ->label('Fecha de Inicio')
+                                    ->placeholder('Desde esta fecha')
+                                    ->columnSpan(1),
 
-                            DatePicker::make('endDate')
-                                ->label('Fecha de Fin')
-                                ->placeholder('Seleccionar fecha de fin')
-                                ->displayFormat('d/m/Y')
-                                ->native(false),
+                                DatePicker::make('endDate')
+                                    ->label('Fecha de Fin')
+                                    ->placeholder('Hasta esta fecha')
+                                    ->columnSpan(1),
+                            ])
+                            ->columnSpanFull(),
 
-                            Select::make('financier_id')
-                                ->label('Financiadora')
-                                ->placeholder('Todas las financiadoras')
-                                ->options(function () {
-                                    return DB::table('vista_progreso_proyectos')
-                                        ->select('Financiadora_id', DB::raw('MIN(Proyecto) as first_project'))
-                                        ->whereNotNull('Financiadora_id')
-                                        ->groupBy('Financiadora_id')
-                                        ->get()
-                                        ->pluck('first_project', 'Financiadora_id')
-                                        ->toArray();
-                                })
-                                ->searchable()
-                                ->native(false),
-                        ]),
+                        // Filtros específicos - Segunda fila
+                        Grid::make(3)
+                            ->schema([
+                                Select::make('financier_id')
+                                    ->label('Financiadora')
+                                    ->placeholder('Todas las financiadoras')
+                                    ->options(function () {
+                                        return DB::table('vista_progreso_proyectos')
+                                            ->select('Financiadora_id', DB::raw('MIN(Proyecto) as first_project'))
+                                            ->whereNotNull('Financiadora_id')
+                                            ->groupBy('Financiadora_id')
+                                            ->get()
+                                            ->pluck('first_project', 'Financiadora_id')
+                                            ->toArray();
+                                    })
+                                    ->searchable()
+                                    ->native(false),
 
-                    Grid::make(4)
-                        ->schema([
-                            Select::make('project_id')
-                                ->label('Proyecto')
-                                ->placeholder('Todos los proyectos')
-                                ->options(function () {
-                                    return DB::table('vista_progreso_proyectos')
-                                        ->select('Proyecto_ID', 'Proyecto')
-                                        ->distinct()
-                                        ->orderBy('Proyecto')
-                                        ->get()
-                                        ->pluck('Proyecto', 'Proyecto_ID')
-                                        ->toArray();
-                                })
-                                ->searchable()
-                                ->native(false),
+                                Select::make('project_id')
+                                    ->label('Proyecto')
+                                    ->placeholder('Todos los proyectos')
+                                    ->options(function () {
+                                        return DB::table('vista_progreso_proyectos')
+                                            ->select('Proyecto_ID', 'Proyecto')
+                                            ->distinct()
+                                            ->orderBy('Proyecto')
+                                            ->get()
+                                            ->pluck('Proyecto', 'Proyecto_ID')
+                                            ->toArray();
+                                    })
+                                    ->searchable()
+                                    ->native(false),
 
-                            Select::make('activity_year')
-                                ->label('Año de Actividad')
-                                ->placeholder('Todos los años')
-                                ->options(function () {
-                                    return DB::table('vista_progreso_proyectos')
-                                        ->select('year_actividad')
-                                        ->whereNotNull('year_actividad')
-                                        ->distinct()
-                                        ->orderByDesc('year_actividad')
-                                        ->get()
-                                        ->pluck('year_actividad', 'year_actividad')
-                                        ->toArray();
-                                })
-                                ->native(false),
+                                Select::make('event_status')
+                                    ->label('Estado del Evento')
+                                    ->placeholder('Todos los estados')
+                                    ->options([
+                                        'Completado' => 'Completado',
+                                        'Calendarizado' => 'Calendarizado',
+                                        'Sin fecha' => 'Sin fecha',
+                                    ])
+                                    ->native(false),
+                            ])
+                            ->columnSpanFull(),
 
-                            Select::make('activity_month')
-                                ->label('Mes de Actividad')
-                                ->placeholder('Todos los meses')
-                                ->options([
-                                    1 => 'Enero',
-                                    2 => 'Febrero',
-                                    3 => 'Marzo',
-                                    4 => 'Abril',
-                                    5 => 'Mayo',
-                                    6 => 'Junio',
-                                    7 => 'Julio',
-                                    8 => 'Agosto',
-                                    9 => 'Septiembre',
-                                    10 => 'Octubre',
-                                    11 => 'Noviembre',
-                                    12 => 'Diciembre',
-                                ])
-                                ->native(false),
+                        // Filtros de tiempo - Tercera fila
+                        Grid::make(2)
+                            ->schema([
+                                Select::make('activity_year')
+                                    ->label('Año de Actividad')
+                                    ->placeholder('Todos los años')
+                                    ->options(function () {
+                                        return DB::table('vista_progreso_proyectos')
+                                            ->select('year_actividad')
+                                            ->whereNotNull('year_actividad')
+                                            ->distinct()
+                                            ->orderByDesc('year_actividad')
+                                            ->get()
+                                            ->pluck('year_actividad', 'year_actividad')
+                                            ->toArray();
+                                    })
+                                    ->native(false),
 
-                            Select::make('event_status')
-                                ->label('Estado del Evento')
-                                ->placeholder('Todos los estados')
-                                ->options([
-                                    'Completado' => 'Completado',
-                                    'Calendarizado' => 'Calendarizado',
-                                    'Sin fecha' => 'Sin fecha',
-                                ])
-                                ->native(false),
-                        ]),
-                ])
-                ->columns(1)
-                ->collapsible()
-                ->persistCollapsed()
-                ->collapsed(false),
-        ];
+                                Select::make('activity_month')
+                                    ->label('Mes de Actividad')
+                                    ->placeholder('Todos los meses')
+                                    ->options([
+                                        1 => 'Enero',
+                                        2 => 'Febrero',
+                                        3 => 'Marzo',
+                                        4 => 'Abril',
+                                        5 => 'Mayo',
+                                        6 => 'Junio',
+                                        7 => 'Julio',
+                                        8 => 'Agosto',
+                                        9 => 'Septiembre',
+                                        10 => 'Octubre',
+                                        11 => 'Noviembre',
+                                        12 => 'Diciembre',
+                                    ])
+                                    ->native(false),
+                            ])
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(1)
+                    ->collapsible()
+                    ->persistCollapsed()
+                    ->collapsed(false),
+            ]);
     }
 
     public function getWidgets(): array

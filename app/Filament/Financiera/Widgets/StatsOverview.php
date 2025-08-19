@@ -33,8 +33,7 @@ class StatsOverview extends BaseWidget
                     ->when($activityYear, fn ($query) => $query->where('year_actividad', $activityYear))
                     ->when($activityMonth, fn ($query) => $query->where('mes_actividad', $activityMonth))
                     ->when($eventStatus, fn ($query) => $query->where('Evento_estado', $eventStatus))
-                    ->distinct('Proyecto_ID')
-                    ->count('Proyecto_ID')
+                    ->count(DB::raw('DISTINCT Proyecto_ID'))
             )
                 ->description('Cantidad total de proyectos registrados')
                 ->descriptionIcon('heroicon-o-chart-bar')
@@ -48,15 +47,12 @@ class StatsOverview extends BaseWidget
             Stat::make(
                 'Total de financiamiento',
                 '$' . number_format(
-                    DB::table('vista_progreso_proyectos')
-                        ->when($startDate, fn ($query) => $query->whereDate('Proyecto_Fecha_Inicio', '>=', $startDate))
-                        ->when($endDate, fn ($query) => $query->whereDate('Proyecto_Fecha_Final', '<=', $endDate))
+                    DB::table(DB::raw('(SELECT DISTINCT Proyecto_ID, Proyecto_cantidad_financiada, Financiadora_id, year_actividad, mes_actividad, Evento_estado FROM vista_progreso_proyectos) as unique_projects'))
                         ->when($financierId, fn ($query) => $query->where('Financiadora_id', $financierId))
                         ->when($projectId, fn ($query) => $query->where('Proyecto_ID', $projectId))
                         ->when($activityYear, fn ($query) => $query->where('year_actividad', $activityYear))
                         ->when($activityMonth, fn ($query) => $query->where('mes_actividad', $activityMonth))
                         ->when($eventStatus, fn ($query) => $query->where('Evento_estado', $eventStatus))
-                        ->distinct('Proyecto_ID')
                         ->sum('Proyecto_cantidad_financiada'),
                     0, '.', ','
                 )

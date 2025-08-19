@@ -16,6 +16,15 @@ class StatsOverview extends BaseWidget
     {
         $startDate = $this->filters['startDate'] ?? null;
         $endDate = $this->filters['endDate'] ?? null;
+        $financierId = $this->filters['financier_id'] ?? null;
+        $projectId = $this->filters['project_id'] ?? null;
+        $activityYear = $this->filters['activity_year'] ?? null;
+        $activityMonth = $this->filters['activity_month'] ?? null;
+        $eventStatus = $this->filters['event_status'] ?? null;
+        $minBeneficiaries = $this->filters['min_beneficiaries'] ?? null;
+        $maxBeneficiaries = $this->filters['max_beneficiaries'] ?? null;
+        $minProducts = $this->filters['min_products'] ?? null;
+        $maxProducts = $this->filters['max_products'] ?? null;
 
         return [
             Stat::make(
@@ -23,6 +32,11 @@ class StatsOverview extends BaseWidget
                 DB::table('vista_progreso_proyectos')
                     ->when($startDate, fn ($query) => $query->whereDate('Proyecto_Fecha_Inicio', '>=', $startDate))
                     ->when($endDate, fn ($query) => $query->whereDate('Proyecto_Fecha_Final', '<=', $endDate))
+                    ->when($financierId, fn ($query) => $query->where('Financiadora_id', $financierId))
+                    ->when($projectId, fn ($query) => $query->where('Proyecto_ID', $projectId))
+                    ->when($activityYear, fn ($query) => $query->where('year_actividad', $activityYear))
+                    ->when($activityMonth, fn ($query) => $query->where('mes_actividad', $activityMonth))
+                    ->when($eventStatus, fn ($query) => $query->where('Evento_estado', $eventStatus))
                     ->distinct('Proyecto_ID')
                     ->count('Proyecto_ID')
             )
@@ -41,6 +55,11 @@ class StatsOverview extends BaseWidget
                     DB::table('vista_progreso_proyectos')
                         ->when($startDate, fn ($query) => $query->whereDate('Proyecto_Fecha_Inicio', '>=', $startDate))
                         ->when($endDate, fn ($query) => $query->whereDate('Proyecto_Fecha_Final', '<=', $endDate))
+                        ->when($financierId, fn ($query) => $query->where('Financiadora_id', $financierId))
+                        ->when($projectId, fn ($query) => $query->where('Proyecto_ID', $projectId))
+                        ->when($activityYear, fn ($query) => $query->where('year_actividad', $activityYear))
+                        ->when($activityMonth, fn ($query) => $query->where('mes_actividad', $activityMonth))
+                        ->when($eventStatus, fn ($query) => $query->where('Evento_estado', $eventStatus))
                         ->distinct('Proyecto_ID')
                         ->sum('Proyecto_cantidad_financiada'),
                     0, '.', ','
@@ -60,6 +79,13 @@ class StatsOverview extends BaseWidget
                 DB::table('vista_progreso_proyectos')
                     ->when($startDate, fn ($query) => $query->whereDate('Evento_fecha_inicio', '>=', $startDate))
                     ->when($endDate, fn ($query) => $query->whereDate('Evento_fecha_fin', '<=', $endDate))
+                    ->when($financierId, fn ($query) => $query->where('Financiadora_id', $financierId))
+                    ->when($projectId, fn ($query) => $query->where('Proyecto_ID', $projectId))
+                    ->when($activityYear, fn ($query) => $query->where('year_actividad', $activityYear))
+                    ->when($activityMonth, fn ($query) => $query->where('mes_actividad', $activityMonth))
+                    ->when($eventStatus, fn ($query) => $query->where('Evento_estado', $eventStatus))
+                    ->when($minBeneficiaries, fn ($query) => $query->where('Beneficiarios_evento', '>=', $minBeneficiaries))
+                    ->when($maxBeneficiaries, fn ($query) => $query->where('Beneficiarios_evento', '<=', $maxBeneficiaries))
                     ->whereNotNull('Beneficiarios_evento')
                     ->where('Beneficiarios_evento', '>', 0)
                     ->sum('Beneficiarios_evento')
@@ -78,6 +104,13 @@ class StatsOverview extends BaseWidget
                 DB::table('vista_progreso_proyectos')
                     ->when($startDate, fn ($query) => $query->whereDate('Evento_fecha_inicio', '>=', $startDate))
                     ->when($endDate, fn ($query) => $query->whereDate('Evento_fecha_fin', '<=', $endDate))
+                    ->when($financierId, fn ($query) => $query->where('Financiadora_id', $financierId))
+                    ->when($projectId, fn ($query) => $query->where('Proyecto_ID', $projectId))
+                    ->when($activityYear, fn ($query) => $query->where('year_actividad', $activityYear))
+                    ->when($activityMonth, fn ($query) => $query->where('mes_actividad', $activityMonth))
+                    ->when($eventStatus, fn ($query) => $query->where('Evento_estado', $eventStatus))
+                    ->when($minProducts, fn ($query) => $query->where('Productos_realizados', '>=', $minProducts))
+                    ->when($maxProducts, fn ($query) => $query->where('Productos_realizados', '<=', $maxProducts))
                     ->whereNotNull('Productos_realizados')
                     ->where('Productos_realizados', '>', 0)
                     ->sum('Productos_realizados') ?: 'N/A'

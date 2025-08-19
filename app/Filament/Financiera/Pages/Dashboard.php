@@ -7,6 +7,7 @@ use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Actions\Action;
 
 class Dashboard extends BaseDashboard
 {
@@ -28,5 +29,20 @@ class Dashboard extends BaseDashboard
                     ->columns(2)
                     ->description('Filtra proyectos por fecha de inicio/fin y actividades por fecha de eventos'),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('resetFilters')
+                ->label('Limpiar filtros')
+                ->icon('heroicon-o-x-mark')
+                ->color('gray')
+                ->action(function () {
+                    $this->filters = [];
+                    $this->dispatch('filtersChanged');
+                })
+                ->visible(fn () => filled($this->filters)),
+        ];
     }
 }

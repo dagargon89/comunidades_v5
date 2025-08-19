@@ -33,7 +33,7 @@ class ProjectDetails extends BaseWidget
             )
             ->columns([
                 TextColumn::make('Proyecto')
-                    ->label('PROJECT')
+                    ->label('PROYECTO')
                     ->searchable()
                     ->sortable()
                     ->wrap()
@@ -41,34 +41,34 @@ class ProjectDetails extends BaseWidget
                     ->tooltip(fn ($record) => $record->Proyecto),
 
                 TextColumn::make('Proyecto_ID')
-                    ->label('PROJECT ID')
+                    ->label('ID PROYECTO')
                     ->sortable()
                     ->alignCenter()
                     ->width('120px'),
 
                 TextColumn::make('Proyecto_Fecha_Inicio')
-                    ->label('START DATE')
-                    ->date('Y-m-d')
+                    ->label('FECHA INICIO')
+                    ->date('d/m/Y')
                     ->sortable()
                     ->alignCenter()
                     ->width('120px'),
 
                 TextColumn::make('Proyecto_Fecha_Final')
-                    ->label('END DATE')
-                    ->date('Y-m-d')
+                    ->label('FECHA FIN')
+                    ->date('d/m/Y')
                     ->sortable()
                     ->alignCenter()
                     ->width('120px'),
 
                 TextColumn::make('Proyecto_cantidad_financiada')
-                    ->label('FUNDED AMOUNT')
-                    ->money('USD')
+                    ->label('MONTO FINANCIADO')
+                    ->money('MXN')
                     ->sortable()
                     ->alignEnd()
                     ->width('150px'),
 
                 TextColumn::make('population_progress_percent')
-                    ->label('POPULATION PROGRESS %')
+                    ->label('PROGRESO POBLACIÓN %')
                     ->suffix('%')
                     ->sortable()
                     ->alignCenter()
@@ -77,7 +77,7 @@ class ProjectDetails extends BaseWidget
                     ->formatStateUsing(fn ($state) => $state ? number_format($state, 1) : '0.0'),
 
                 TextColumn::make('product_progress_percent')
-                    ->label('PRODUCT PROGRESS %')
+                    ->label('PROGRESO PRODUCTOS %')
                     ->suffix('%')
                     ->sortable()
                     ->alignCenter()

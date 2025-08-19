@@ -125,4 +125,21 @@ class Dashboard extends BaseDashboard
                 ->visible(fn () => filled($this->filters)),
         ];
     }
+
+    public function getWidgets(): array
+    {
+        return [
+            \App\Filament\Financiera\Widgets\StatsOverview::class,
+            \App\Filament\Financiera\Widgets\CostBeneficiaryProject::class,
+            \App\Filament\Financiera\Widgets\CostProductProject::class,
+            \App\Filament\Financiera\Widgets\PopulationProgressProject::class,
+            \App\Filament\Financiera\Widgets\ProductProgressProject::class,
+            \App\Filament\Financiera\Widgets\ProjectDetails::class,
+        ];
+    }
+
+    public function getColumns(): int | string | array
+    {
+        return 2;
+    }
 }

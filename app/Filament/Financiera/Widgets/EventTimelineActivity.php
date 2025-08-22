@@ -135,12 +135,14 @@ class EventTimelineActivity extends ChartWidget
                             'display' => true,
                             'text' => 'Activity'
                         ],
+                        'min' => -0.5,
+                        'max' => count($activitiesByName) - 0.5,
                         'ticks' => [
                             'stepSize' => 1,
-                            'callback' => 'function(value) {
+                            'callback' => new \Filament\Support\RawJs('function(value) {
                                 const activities = ' . json_encode(array_values($activitiesByName->keys()->toArray())) . ';
-                                return activities[value] || "";
-                            }'
+                                return activities[Math.round(value)] || "";
+                            }')
                         ]
                     ]
                 ],

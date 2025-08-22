@@ -27,19 +27,9 @@ class Dashboard extends BaseDashboard
             // ========================================
 
             // SECCIÓN 1: SEGUIMIENTO DE ACTIVIDADES
-            \App\Filament\Usuario\Widgets\UpcomingActivitiesWidget::class,      // Próximas actividades (hoy, mañana, semana)
-            // \App\Filament\Usuario\Widgets\ProjectProgressWidget::class,         // Progreso por proyecto con barras de avance
+           // \App\Filament\Usuario\Widgets\UpcomingActivitiesWidget::class,      // Próximas actividades (hoy, mañana, semana)
 
-            // SECCIÓN 2: GESTIÓN DE DOCUMENTACIÓN
-            // \App\Filament\Usuario\Widgets\RecentFilesWidget::class,            // Archivos subidos recientemente
-            // \App\Filament\Usuario\Widgets\PendingDocumentationWidget::class,   // Actividades pendientes de documentación
 
-            // SECCIÓN 3: REGISTROS DE BENEFICIARIOS
-            // \App\Filament\Usuario\Widgets\RecentRegistriesWidget::class,       // Últimos beneficiarios registrados
-            // \App\Filament\Usuario\Widgets\PendingRegistriesWidget::class,      // Actividades pendientes de registro
-
-            // SECCIÓN 4: ACCIONES RÁPIDAS
-            // \App\Filament\Usuario\Widgets\QuickActionsWidget::class,           // Botones de acceso rápido a funciones principales
         ];
     }
 

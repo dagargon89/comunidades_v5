@@ -18,6 +18,8 @@ class ProjectDetails extends BaseWidget
 
     protected static ?string $heading = 'Detalles de Proyectos';
 
+    protected static ?string $pollingInterval = null;
+
     protected int | string | array $columnSpan = 'full';
 
     public function getTableRecordKey($record): string

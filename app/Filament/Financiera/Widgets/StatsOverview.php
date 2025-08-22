@@ -12,6 +12,8 @@ class StatsOverview extends BaseWidget
 {
     use InteractsWithPageFilters;
 
+    protected static ?string $pollingInterval = null;
+
     protected function getStats(): array
     {
         $startDate = $this->filters['startDate'] ?? null;

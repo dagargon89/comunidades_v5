@@ -10,6 +10,8 @@ class CostBeneficiaryProject extends ChartWidget
 {
     use InteractsWithPageFilters;
 
+    protected static ?string $pollingInterval = null;
+
     protected static ?string $heading = 'Costo por Beneficiario por Proyecto';
 
    // protected static ?string $maxHeight = '400px';

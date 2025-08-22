@@ -10,6 +10,8 @@ class PopulationProgressProject extends ChartWidget
 {
     use InteractsWithPageFilters;
 
+    protected static ?string $pollingInterval = null;
+
     protected static ?string $heading = 'Progreso de Población por Proyecto';
 
     protected function getData(): array

@@ -12,6 +12,8 @@ class ProductProgressProject extends ChartWidget
 
     protected static ?string $heading = 'Progreso de Productos por Proyecto';
 
+    protected static ?string $pollingInterval = null;
+
     protected function getData(): array
     {
         $startDate = $this->filters['startDate'] ?? null;

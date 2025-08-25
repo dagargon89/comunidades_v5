@@ -8,6 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Actions\Action;
 use Illuminate\Support\Facades\DB;
 
 class EventManagement extends BaseDashboard
@@ -110,6 +111,21 @@ class EventManagement extends BaseDashboard
                     ->collapsible()
                     ->collapsed(),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('resetFilters')
+                ->label('Limpiar filtros')
+                ->icon('heroicon-o-x-mark')
+                ->color('gray')
+                ->action(function () {
+                    $this->filters = [];
+                    $this->dispatch('filtersChanged');
+                })
+                ->visible(fn () => filled($this->filters)),
+        ];
     }
 
     public function getWidgets(): array

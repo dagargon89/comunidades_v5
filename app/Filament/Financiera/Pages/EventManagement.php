@@ -38,13 +38,13 @@ class EventManagement extends BaseDashboard
                                     ->label('Proyecto')
                                     ->placeholder('Selecciona un proyecto')
                                     ->options(function () {
-                                        return DB::table('padron_beneficiarios')
-                                            ->select('nombre_proyecto')
-                                            ->whereNotNull('nombre_proyecto')
+                                        return DB::table('vista_progreso_proyectos')
+                                            ->select('Proyecto')
+                                            ->whereNotNull('Proyecto')
                                             ->distinct()
-                                            ->orderBy('nombre_proyecto')
+                                            ->orderBy('Proyecto')
                                             ->get()
-                                            ->pluck('nombre_proyecto', 'nombre_proyecto')
+                                            ->pluck('Proyecto', 'Proyecto')
                                             ->filter()
                                             ->toArray();
                                     })
@@ -62,14 +62,14 @@ class EventManagement extends BaseDashboard
                                             return [];
                                         }
 
-                                        return DB::table('padron_beneficiarios')
-                                            ->select('nombre_actividad')
-                                            ->where('nombre_proyecto', $projectName)
-                                            ->whereNotNull('nombre_actividad')
+                                        return DB::table('vista_progreso_proyectos')
+                                            ->select('Actividad')
+                                            ->where('Proyecto', $projectName)
+                                            ->whereNotNull('Actividad')
                                             ->distinct()
-                                            ->orderBy('nombre_actividad')
+                                            ->orderBy('Actividad')
                                             ->get()
-                                            ->pluck('nombre_actividad', 'nombre_actividad')
+                                            ->pluck('Actividad', 'Actividad')
                                             ->filter()
                                             ->toArray();
                                     })
@@ -88,15 +88,15 @@ class EventManagement extends BaseDashboard
                                             return [];
                                         }
 
-                                        return DB::table('padron_beneficiarios')
-                                            ->select('Evento_Fecha_Inicio')
-                                            ->where('nombre_proyecto', $projectName)
-                                            ->where('nombre_actividad', $activityName)
-                                            ->whereNotNull('Evento_Fecha_Inicio')
+                                        return DB::table('vista_progreso_proyectos')
+                                            ->select('Evento_fecha_inicio')
+                                            ->where('Proyecto', $projectName)
+                                            ->where('Actividad', $activityName)
+                                            ->whereNotNull('Evento_fecha_inicio')
                                             ->distinct()
-                                            ->orderBy('Evento_Fecha_Inicio')
+                                            ->orderBy('Evento_fecha_inicio')
                                             ->get()
-                                            ->pluck('Evento_Fecha_Inicio', 'Evento_Fecha_Inicio')
+                                            ->pluck('Evento_fecha_inicio', 'Evento_fecha_inicio')
                                             ->filter()
                                             ->toArray();
                                     })
@@ -115,7 +115,7 @@ class EventManagement extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            // Aquí puedes agregar widgets específicos para la gestión de eventos
+            \App\Filament\Financiera\Widgets\EventManagementStatsOverview::class,
         ];
     }
 

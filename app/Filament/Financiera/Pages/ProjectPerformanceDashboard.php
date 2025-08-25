@@ -12,6 +12,7 @@ use Filament\Forms\Form;
 use Illuminate\Support\Facades\DB;
 use App\Filament\Financiera\Widgets\ProjectPerformanceStatsOverview;
 use App\Filament\Financiera\Widgets\EventTimelineActivity;
+use App\Filament\Financiera\Widgets\ActivityPerformanceDetails;
 
 class ProjectPerformanceDashboard extends BaseDashboard
 {
@@ -145,6 +146,7 @@ class ProjectPerformanceDashboard extends BaseDashboard
         return [
             ProjectPerformanceStatsOverview::class,
             EventTimelineActivity::class,
+            ActivityPerformanceDetails::class,
         ];
     }
 

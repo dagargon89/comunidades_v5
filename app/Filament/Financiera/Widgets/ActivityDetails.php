@@ -23,7 +23,11 @@ class ActivityDetails extends BaseWidget
 
     public function table(Table $table): Table
     {
-        // Query usando el modelo VistaProgresoProyecto
+        // Obtener los filtros aplicados
+        $projectId = $this->filters['project_id'] ?? null;
+        $activityName = $this->filters['activity_name'] ?? null;
+
+        // Query usando el modelo VistaProgresoProyecto con filtros aplicados
         $query = VistaProgresoProyecto::query()
             ->select([
                 'Actividad',
@@ -32,6 +36,8 @@ class ActivityDetails extends BaseWidget
                 'Evento_estado',
                 'Beneficiarios_evento'
             ])
+            ->when($projectId, fn ($query) => $query->where('Proyecto_ID', $projectId))
+            ->when($activityName, fn ($query) => $query->where('Actividad', $activityName))
             ->distinct()
             ->orderBy('Actividad');
 

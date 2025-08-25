@@ -116,6 +116,7 @@ class EventManagement extends BaseDashboard
     {
         return [
             \App\Filament\Financiera\Widgets\EventManagementStatsOverview::class,
+            \App\Filament\Financiera\Widgets\BeneficiariesTable::class,
         ];
     }
 

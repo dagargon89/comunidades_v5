@@ -89,7 +89,7 @@ class ActivityTracking extends BaseDashboard
     public function getWidgets(): array
     {
         return [
-            // Aquí puedes agregar widgets específicos para el seguimiento de actividades
+            \App\Filament\Financiera\Widgets\ActivityTrackStatsOverview::class,
         ];
     }
 

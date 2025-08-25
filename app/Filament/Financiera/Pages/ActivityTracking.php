@@ -90,6 +90,7 @@ class ActivityTracking extends BaseDashboard
     {
         return [
             \App\Filament\Financiera\Widgets\ActivityTrackStatsOverview::class,
+            \App\Filament\Financiera\Widgets\ActivityDetails::class,
         ];
     }
 

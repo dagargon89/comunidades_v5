@@ -429,11 +429,11 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                 ->icon('heroicon-m-pencil-square')
                                 ->schema([
                                     SignaturePad::make('signature')
-                                        ->label('Firma del beneficiario')
-                                        ->extraAttributes([
-                                            'style' => 'min-height: 200px; min-width: 100%;'
-                                        ])
-                                        ->columnSpanFull(),
+                                        ->label(__('Firma del beneficiario'))
+                                        /*->extraAttributes([
+                                            'style' => 'min-height: 800px; min-width: 100%;'
+                                        ])*/
+                                       //. ->columnSpanFull(),
                                 ]),
                         ])
                         ->collapsible()

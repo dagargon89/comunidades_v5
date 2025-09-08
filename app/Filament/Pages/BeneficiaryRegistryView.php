@@ -424,17 +424,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                 ->collapsed(),
 
                             // Sección de firma
-                            Forms\Components\Section::make('Firma del Beneficiario')
-                                ->description('Captura la firma del beneficiario')
-                                ->icon('heroicon-m-pencil-square')
-                                ->schema([
-                                    SignaturePad::make('signature')
-                                        ->label(__('Firma del beneficiario'))
-                                        /*->extraAttributes([
-                                            'style' => 'min-height: 800px; min-width: 100%;'
-                                        ])*/
-                                       //. ->columnSpanFull(),
-                                ]),
+                            SignaturePad::make('signature')->label('Firma del beneficiario'),
                         ])
                         ->collapsible()
                         ->collapsed(),
@@ -633,19 +623,7 @@ class BeneficiaryRegistryView extends Page implements HasTable
                                         ->collapsed(),
 
                                     // Sección de firma
-                                    Forms\Components\Section::make('Firma del Beneficiario')
-                                        ->description('Captura la firma del beneficiario')
-                                        ->icon('heroicon-m-pencil-square')
-                                        ->schema([
-                                            SignaturePad::make('signature')
-                                                ->label('Firma del beneficiario')
-                                                ->extraAttributes([
-                                                    'style' => 'min-height: 200px; min-width: 100%;'
-                                                ])
-                                                ->columnSpanFull(),
-                                        ])
-                                        ->collapsible()
-                                        ->collapsed(),
+                                    SignaturePad::make('signature')->label('Firma del beneficiario'),
                                 ])
                                 ->addActionLabel('Agregar Beneficiario')
                                 ->reorderable()

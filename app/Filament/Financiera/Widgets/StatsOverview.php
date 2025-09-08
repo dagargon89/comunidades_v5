@@ -5,11 +5,6 @@ namespace App\Filament\Financiera\Widgets;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
-use App\Models\Project;
-use App\Models\Activity;
-use App\Models\ActivityCalendar;
-use App\Models\BeneficiaryRegistry;
-use App\Models\PlannedMetric;
 use Illuminate\Support\Facades\DB;
 
 class StatsOverview extends BaseWidget
@@ -31,7 +26,15 @@ class StatsOverview extends BaseWidget
         return [
             Stat::make(
                 'Total de proyectos',
-                $this->getTotalProjects($startDate, $endDate, $financierId, $projectId, $activityYear, $activityMonth, $eventStatus)
+                DB::table('vista_progreso_proyectos')
+                    ->when($startDate, fn ($query) => $query->whereDate('Proyecto_Fecha_Inicio', '>=', $startDate))
+                    ->when($endDate, fn ($query) => $query->whereDate('Proyecto_Fecha_Final', '<=', $endDate))
+                    ->when($financierId, fn ($query) => $query->where('Financiadora_id', $financierId))
+                    ->when($projectId, fn ($query) => $query->where('Proyecto_ID', $projectId))
+                    ->when($activityYear, fn ($query) => $query->where('year_actividad', $activityYear))
+                    ->when($activityMonth, fn ($query) => $query->where('mes_actividad', $activityMonth))
+                    ->when($eventStatus, fn ($query) => $query->where('Evento_estado', $eventStatus))
+                    ->count(DB::raw('DISTINCT Proyecto_ID'))
             )
                 ->description('Cantidad total de proyectos registrados')
                 ->descriptionIcon('heroicon-o-chart-bar')
@@ -45,7 +48,13 @@ class StatsOverview extends BaseWidget
             Stat::make(
                 'Total de financiamiento',
                 '$' . number_format(
-                    $this->getTotalFinancing($startDate, $endDate, $financierId, $projectId, $activityYear, $activityMonth, $eventStatus),
+                    DB::table(DB::raw('(SELECT DISTINCT Proyecto_ID, Proyecto_cantidad_financiada, Financiadora_id, year_actividad, mes_actividad, Evento_estado FROM vista_progreso_proyectos) as unique_projects'))
+                        ->when($financierId, fn ($query) => $query->where('Financiadora_id', $financierId))
+                        ->when($projectId, fn ($query) => $query->where('Proyecto_ID', $projectId))
+                        ->when($activityYear, fn ($query) => $query->where('year_actividad', $activityYear))
+                        ->when($activityMonth, fn ($query) => $query->where('mes_actividad', $activityMonth))
+                        ->when($eventStatus, fn ($query) => $query->where('Evento_estado', $eventStatus))
+                        ->sum('Proyecto_cantidad_financiada'),
                     0, '.', ','
                 )
             )
@@ -60,7 +69,17 @@ class StatsOverview extends BaseWidget
 
             Stat::make(
                 'Beneficiarios únicos',
-                $this->getTotalBeneficiaries($startDate, $endDate, $financierId, $projectId, $activityYear, $activityMonth, $eventStatus)
+                DB::table('vista_progreso_proyectos')
+                    ->when($startDate, fn ($query) => $query->whereDate('Evento_fecha_inicio', '>=', $startDate))
+                    ->when($endDate, fn ($query) => $query->whereDate('Evento_fecha_fin', '<=', $endDate))
+                    ->when($financierId, fn ($query) => $query->where('Financiadora_id', $financierId))
+                    ->when($projectId, fn ($query) => $query->where('Proyecto_ID', $projectId))
+                    ->when($activityYear, fn ($query) => $query->where('year_actividad', $activityYear))
+                    ->when($activityMonth, fn ($query) => $query->where('mes_actividad', $activityMonth))
+                    ->when($eventStatus, fn ($query) => $query->where('Evento_estado', $eventStatus))
+                    ->whereNotNull('Beneficiarios_evento')
+                    ->where('Beneficiarios_evento', '>', 0)
+                    ->sum('Beneficiarios_evento')
             )
                 ->description('Total de beneficiarios registrados en actividades')
                 ->descriptionIcon('heroicon-o-users')
@@ -73,7 +92,17 @@ class StatsOverview extends BaseWidget
 
             Stat::make(
                 'Productos únicos',
-                $this->getTotalProducts($startDate, $endDate, $financierId, $projectId, $activityYear, $activityMonth, $eventStatus) ?: 'N/A'
+                DB::table('vista_progreso_proyectos')
+                    ->when($startDate, fn ($query) => $query->whereDate('Evento_fecha_inicio', '>=', $startDate))
+                    ->when($endDate, fn ($query) => $query->whereDate('Evento_fecha_fin', '<=', $endDate))
+                    ->when($financierId, fn ($query) => $query->where('Financiadora_id', $financierId))
+                    ->when($projectId, fn ($query) => $query->where('Proyecto_ID', $projectId))
+                    ->when($activityYear, fn ($query) => $query->where('year_actividad', $activityYear))
+                    ->when($activityMonth, fn ($query) => $query->where('mes_actividad', $activityMonth))
+                    ->when($eventStatus, fn ($query) => $query->where('Evento_estado', $eventStatus))
+                    ->whereNotNull('Productos_realizados')
+                    ->where('Productos_realizados', '>', 0)
+                    ->sum('Productos_realizados') ?: 'N/A'
             )
                 ->description('Total de productos realizados en actividades')
                 ->descriptionIcon('heroicon-o-cube')
@@ -84,135 +113,5 @@ class StatsOverview extends BaseWidget
                     'class' => 'cursor-pointer hover:shadow-lg transition-shadow duration-200',
                 ]),
         ];
-    }
-
-    /**
-     * Obtener el total de proyectos únicos usando consultas directas a las tablas
-     */
-    private function getTotalProjects($startDate, $endDate, $financierId, $projectId, $activityYear, $activityMonth, $eventStatus)
-    {
-        $query = Project::query()
-            ->when($startDate, fn ($query) => $query->whereDate('start_date', '>=', $startDate))
-            ->when($endDate, fn ($query) => $query->whereDate('end_date', '<=', $endDate))
-            ->when($financierId, fn ($query) => $query->where('financiers_id', $financierId))
-            ->when($projectId, fn ($query) => $query->where('id', $projectId));
-
-        // Si hay filtros de actividad, filtrar por actividades relacionadas
-        if ($activityYear || $activityMonth || $eventStatus) {
-            $query->whereHas('specificObjectives.activities', function ($activityQuery) use ($activityYear, $activityMonth, $eventStatus) {
-                if ($activityYear) {
-                    $activityQuery->whereHas('plannedMetrics', fn ($q) => $q->where('year', $activityYear));
-                }
-                if ($activityMonth) {
-                    $activityQuery->whereHas('plannedMetrics', fn ($q) => $q->where('month', $activityMonth));
-                }
-                if ($eventStatus) {
-                    $activityQuery->whereHas('activityCalendars', function ($calendarQuery) use ($eventStatus) {
-                        if ($eventStatus === 'Completado') {
-                            $calendarQuery->where('end_date', '<=', now());
-                        } elseif ($eventStatus === 'Calendarizado') {
-                            $calendarQuery->where('end_date', '>', now());
-                        }
-                    });
-                }
-            });
-        }
-
-        return $query->count();
-    }
-
-    /**
-     * Obtener el total de financiamiento usando consultas directas a las tablas
-     */
-    private function getTotalFinancing($startDate, $endDate, $financierId, $projectId, $activityYear, $activityMonth, $eventStatus)
-    {
-        $query = Project::query()
-            ->when($startDate, fn ($query) => $query->whereDate('start_date', '>=', $startDate))
-            ->when($endDate, fn ($query) => $query->whereDate('end_date', '<=', $endDate))
-            ->when($financierId, fn ($query) => $query->where('financiers_id', $financierId))
-            ->when($projectId, fn ($query) => $query->where('id', $projectId));
-
-        // Si hay filtros de actividad, filtrar por actividades relacionadas
-        if ($activityYear || $activityMonth || $eventStatus) {
-            $query->whereHas('specificObjectives.activities', function ($activityQuery) use ($activityYear, $activityMonth, $eventStatus) {
-                if ($activityYear) {
-                    $activityQuery->whereHas('plannedMetrics', fn ($q) => $q->where('year', $activityYear));
-                }
-                if ($activityMonth) {
-                    $activityQuery->whereHas('plannedMetrics', fn ($q) => $q->where('month', $activityMonth));
-                }
-                if ($eventStatus) {
-                    $activityQuery->whereHas('activityCalendars', function ($calendarQuery) use ($eventStatus) {
-                        if ($eventStatus === 'Completado') {
-                            $calendarQuery->where('end_date', '<=', now());
-                        } elseif ($eventStatus === 'Calendarizado') {
-                            $calendarQuery->where('end_date', '>', now());
-                        }
-                    });
-                }
-            });
-        }
-
-        return $query->sum('funded_amount');
-    }
-
-    /**
-     * Obtener el total de beneficiarios únicos usando consultas directas a las tablas
-     */
-    private function getTotalBeneficiaries($startDate, $endDate, $financierId, $projectId, $activityYear, $activityMonth, $eventStatus)
-    {
-        $query = BeneficiaryRegistry::query()
-            ->whereHas('activityCalendar.activity.specificObjective.project', function ($projectQuery) use ($startDate, $endDate, $financierId, $projectId) {
-                $projectQuery->when($startDate, fn ($query) => $query->whereDate('start_date', '>=', $startDate))
-                    ->when($endDate, fn ($query) => $query->whereDate('end_date', '<=', $endDate))
-                    ->when($financierId, fn ($query) => $query->where('financiers_id', $financierId))
-                    ->when($projectId, fn ($query) => $query->where('id', $projectId));
-            })
-            ->when($activityYear, function ($query) use ($activityYear) {
-                $query->whereHas('activityCalendar.activity.plannedMetrics', fn ($q) => $q->where('year', $activityYear));
-            })
-            ->when($activityMonth, function ($query) use ($activityMonth) {
-                $query->whereHas('activityCalendar.activity.plannedMetrics', fn ($q) => $q->where('month', $activityMonth));
-            })
-            ->when($eventStatus, function ($query) use ($eventStatus) {
-                $query->whereHas('activityCalendar', function ($calendarQuery) use ($eventStatus) {
-                    if ($eventStatus === 'Completado') {
-                        $calendarQuery->where('end_date', '<=', now());
-                    } elseif ($eventStatus === 'Calendarizado') {
-                        $calendarQuery->where('end_date', '>', now());
-                    }
-                });
-            });
-
-        return $query->count();
-    }
-
-    /**
-     * Obtener el total de productos realizados usando consultas directas a las tablas
-     */
-    private function getTotalProducts($startDate, $endDate, $financierId, $projectId, $activityYear, $activityMonth, $eventStatus)
-    {
-        $query = PlannedMetric::query()
-            ->whereNotNull('product_real_value')
-            ->where('product_real_value', '>', 0)
-            ->whereHas('activity.specificObjective.project', function ($projectQuery) use ($startDate, $endDate, $financierId, $projectId) {
-                $projectQuery->when($startDate, fn ($query) => $query->whereDate('start_date', '>=', $startDate))
-                    ->when($endDate, fn ($query) => $query->whereDate('end_date', '<=', $endDate))
-                    ->when($financierId, fn ($query) => $query->where('financiers_id', $financierId))
-                    ->when($projectId, fn ($query) => $query->where('id', $projectId));
-            })
-            ->when($activityYear, fn ($query) => $query->where('year', $activityYear))
-            ->when($activityMonth, fn ($query) => $query->where('month', $activityMonth))
-            ->when($eventStatus, function ($query) use ($eventStatus) {
-                $query->whereHas('activity.activityCalendars', function ($calendarQuery) use ($eventStatus) {
-                    if ($eventStatus === 'Completado') {
-                        $calendarQuery->where('end_date', '<=', now());
-                    } elseif ($eventStatus === 'Calendarizado') {
-                        $calendarQuery->where('end_date', '>', now());
-                    }
-                });
-            });
-
-        return $query->sum('product_real_value');
     }
 }

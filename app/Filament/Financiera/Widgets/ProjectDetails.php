@@ -11,6 +11,7 @@ use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 
 class ProjectDetails extends BaseWidget
 {
@@ -86,6 +87,9 @@ class ProjectDetails extends BaseWidget
                     ->width('150px')
                     ->color(fn ($state) => $state >= 80 ? 'success' : ($state >= 50 ? 'warning' : 'danger'))
                     ->formatStateUsing(fn ($state) => $state ? number_format($state, 1) : '0.0'),
+            ])
+            ->headerActions([
+                ExportAction::make()
             ])
             ->defaultSort('Proyecto_cantidad_financiada', 'desc')
             ->striped()

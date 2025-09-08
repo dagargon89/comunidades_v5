@@ -489,7 +489,6 @@ class BeneficiaryRegistryView extends Page implements HasTable
             Actions\Action::make('addMassive')
                 ->label('Registrar beneficiarios masivos')
                 ->icon('heroicon-o-users')
-                ->modalWidth('10xl')
                 ->form([
                     Forms\Components\Section::make('Registro Masivo de Beneficiarios')
                         ->description('Agrega múltiples beneficiarios de forma eficiente')

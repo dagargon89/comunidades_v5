@@ -477,6 +477,8 @@ class BeneficiaryRegistryView extends Page implements HasTable
                         ])
                         ->collapsible()
                         ->collapsed(),
+
+                        SignaturePad::make('signature')->label('Firma del beneficiario'),
                 ])
                 ->action(function (array $data) {
                     // Log temporal para depurar

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class ProjectDetails extends BaseWidget
 {
@@ -89,7 +90,11 @@ class ProjectDetails extends BaseWidget
                     ->formatStateUsing(fn ($state) => $state ? number_format($state, 1) : '0.0'),
             ])
             ->headerActions([
-                ExportAction::make()
+                ExportAction::make()->exports([
+                    ExcelExport::make('excel')->label('Excel')->withFilename('detalles_proyectos.xlsx'),
+                    ExcelExport::make('csv')->label('CSV')->withFilename('detalles_proyectos.csv'),
+                    ExcelExport::make('pdf')->label('PDF')->withFilename('detalles_proyectos.pdf'),
+                ])
             ])
             ->defaultSort('Proyecto_cantidad_financiada', 'desc')
             ->striped()

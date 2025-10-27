@@ -29,6 +29,14 @@ class UserResource extends Resource
 
     protected static ?string $slug = 'usuarios';
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -188,16 +196,32 @@ class UserResource extends Resource
                 Tables\Filters\SelectFilter::make('organizations_id')
                     ->label('Organización')
                     ->relationship('organization', 'name'),
+                Tables\Filters\TrashedFilter::make()
+                    ->label('Usuarios Eliminados'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->icon('heroicon-o-pencil'),
                 Tables\Actions\DeleteAction::make()
                     ->icon('heroicon-o-trash'),
+                Tables\Actions\RestoreAction::make()
+                    ->icon('heroicon-o-arrow-path'),
+                Tables\Actions\ForceDeleteAction::make()
+                    ->icon('heroicon-o-trash')
+                    ->requiresConfirmation()
+                    ->modalHeading('Eliminar permanentemente')
+                    ->modalDescription('¿Estás seguro de que deseas eliminar permanentemente este usuario? Esta acción no se puede deshacer.')
+                    ->modalSubmitActionLabel('Eliminar permanentemente'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make()
+                        ->requiresConfirmation()
+                        ->modalHeading('Eliminar permanentemente usuarios seleccionados')
+                        ->modalDescription('¿Estás seguro? Esta acción no se puede deshacer.')
+                        ->modalSubmitActionLabel('Eliminar permanentemente'),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

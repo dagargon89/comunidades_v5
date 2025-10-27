@@ -101,13 +101,6 @@ class ActivityPerformanceDetails extends BaseWidget
                     ->color('primary')
                     ->formatStateUsing(fn ($state) => number_format($state ?? 0)),
             ])
-            ->headerActions([
-                ExportAction::make()->exports([
-                    ExcelExport::make('excel')->label('Excel')->withFilename('detalles_rendimiento_actividades.xlsx'),
-                    ExcelExport::make('csv')->label('CSV')->withFilename('detalles_rendimiento_actividades.csv'),
-                    ExcelExport::make('pdf')->label('PDF')->withFilename('detalles_rendimiento_actividades.pdf'),
-                ])
-            ])
             ->defaultSort('Actividad', 'asc')
             ->striped()
             ->paginated([10, 25, 50])

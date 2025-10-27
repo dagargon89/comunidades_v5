@@ -11,7 +11,7 @@ class EventTimelineActivity extends ChartWidget
 {
     use InteractsWithPageFilters;
 
-    protected static ?string $heading = 'Event Timeline by Activity';
+    protected static ?string $heading = 'Línea de tiempo de eventos por actividad';
     protected static ?string $maxHeight = '500px';
     protected static ?int $sort = 4;
     protected int | string | array $columnSpan = 'full';

@@ -35,4 +35,23 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Ollama AI Service Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for Ollama Cloud API used for generating narrative reports.
+    | This service is used to automatically generate formal institutional
+    | narratives from structured activity data.
+    |
+    */
+    'ollama' => [
+        'url' => env('OLLAMA_URL', 'http://localhost:11434'),
+        'api_key' => env('OLLAMA_API_KEY'),
+        'model' => env('OLLAMA_MODEL', 'llama3.1'),
+        'timeout' => env('OLLAMA_TIMEOUT', 180),
+        'temperature' => env('OLLAMA_TEMPERATURE', 0.3),
+        'max_tokens' => env('OLLAMA_MAX_TOKENS', 1500),
+    ],
+
 ];

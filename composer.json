@@ -8,11 +8,13 @@
     "require": {
         "php": "^8.2",
         "awcodes/filament-table-repeater": "^3.1",
+        "barryvdh/laravel-dompdf": "^3.1",
         "bezhansalleh/filament-shield": "^3.3",
         "filament/filament": "^3.3",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "livewire/livewire": "^3.6",
+        "phpoffice/phpword": "^1.4",
         "pxlrbt/filament-excel": "^2.5",
         "saade/filament-autograph": "^3.2"
     },

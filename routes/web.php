@@ -36,4 +36,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/data-publications/history', [DataPublicationController::class, 'getHistory'])->name('data-publications.history');
     Route::get('/data-publications/stats', [DataPublicationController::class, 'getStats'])->name('data-publications.stats');
     Route::get('/data-publications/by-period', [DataPublicationController::class, 'getByPeriod'])->name('data-publications.by-period');
+
+    // Ruta para descargar informe narrativo
+    Route::get('/admin/informe-narrativo/descargar', [App\Http\Controllers\InformeNarrativoController::class, 'descargar'])->name('admin.informe-narrativo.descargar');
 });

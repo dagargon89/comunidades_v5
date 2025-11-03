@@ -67,3 +67,14 @@ AWS_BUCKET=
 AWS_USE_PATH_STYLE_ENDPOINT=false
 
 VITE_APP_NAME="${APP_NAME}"
+
+# ============================================
+# OLLAMA AI CONFIGURATION
+# ============================================
+# Configuration for Ollama Cloud API - used for generating narrative reports
+OLLAMA_URL=https://api.ollama.cloud/v1
+OLLAMA_API_KEY=4e6f58a0d5104cce90e63783f064bd3d.G9lcW-dH0ke2i1onmklX1TJK
+OLLAMA_MODEL=llama3.1
+OLLAMA_TIMEOUT=180
+OLLAMA_TEMPERATURE=0.3
+OLLAMA_MAX_TOKENS=1500

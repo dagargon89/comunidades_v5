@@ -189,6 +189,10 @@ class GenerarInformeNarrativo extends Page implements HasForms
 
     public function generar()
     {
+        // Aumentar límite de tiempo de ejecución a 10 minutos
+        set_time_limit(600);
+        ini_set('max_execution_time', 600);
+
         $data = $this->form->getState();
 
         // Validar que se haya seleccionado un proyecto
@@ -472,8 +476,16 @@ class GenerarInformeNarrativo extends Page implements HasForms
     protected function procesarNarrativas(array &$datos, bool $usarCache): void
     {
         $generator = app(NarrativaGenerator::class);
+        $totalEventos = $datos['eventos']->count();
+        $procesados = 0;
+        $exitosos = 0;
+        $fallidos = 0;
+
+        \Log::info("Procesando narrativas: {$totalEventos} eventos");
 
         foreach ($datos['eventos'] as $evento) {
+            $procesados++;
+
             // Si no tiene narrativa, crear una vacía
             if (!$evento->narrativa) {
                 $evento->narrativa = ActivityNarrative::create([
@@ -484,16 +496,41 @@ class GenerarInformeNarrativo extends Page implements HasForms
             // Si no tiene narrativa generada o no usamos cache, generar
             if (!$usarCache || !$evento->narrativa->narrativa_generada) {
                 try {
+                    \Log::info("Generando narrativa {$procesados}/{$totalEventos} para evento {$evento->id}");
+
                     $generator->generarNarrativaEvento($evento, !$usarCache);
+
                     // Refrescar la narrativa
                     $evento->narrativa->refresh();
+
+                    $exitosos++;
+                    \Log::info("Narrativa generada exitosamente para evento {$evento->id}");
+
                 } catch (\Exception $e) {
-                    \Log::error("Error generando narrativa para evento {$evento->id}", [
-                        'error' => $e->getMessage()
+                    $fallidos++;
+                    \Log::error("Error generando narrativa para evento {$evento->id} ({$procesados}/{$totalEventos})", [
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString()
                     ]);
+
+                    // Crear una narrativa de respaldo si falla
+                    if (!$evento->narrativa->narrativa_generada) {
+                        $evento->narrativa->narrativa_generada = "Se realizó la actividad {$evento->activity->name} el {$evento->start_date->format('d/m/Y')}.";
+                        $evento->narrativa->save();
+                    }
                 }
+            } else {
+                $exitosos++;
+                \Log::info("Usando narrativa existente para evento {$evento->id} ({$procesados}/{$totalEventos})");
+            }
+
+            // Pequeña pausa entre llamadas para no saturar la API
+            if (!$usarCache && $procesados % 5 === 0) {
+                usleep(100000); // 0.1 segundos
             }
         }
+
+        \Log::info("Procesamiento completado: {$exitosos} exitosos, {$fallidos} fallidos de {$totalEventos} eventos");
     }
 
     protected function renderizarInforme(array $datos, array $config): string

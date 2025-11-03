@@ -322,24 +322,44 @@ PROMPT;
         }
 
         try {
-            Log::info('NarrativaGenerator: Llamando a Ollama Cloud API', [
+            Log::info('NarrativaGenerator: Llamando a Ollama API', [
                 'url' => $this->ollamaUrl,
                 'model' => $this->model,
+                'tiene_api_key' => !empty($this->apiKey),
             ]);
 
             $headers = [
                 'Content-Type' => 'application/json',
             ];
 
-            // Agregar API Key si está configurada
-            if ($this->apiKey) {
-                $headers['Authorization'] = "Bearer {$this->apiKey}";
-            }
+            // Detectar si es Ollama Cloud (tiene API key) o Ollama Local
+            $isOllamaCloud = !empty($this->apiKey);
 
-            $response = Http::withHeaders($headers)
-                ->timeout($this->timeout)
-                ->retry(3, 1000) // 3 intentos, 1 segundo entre intentos
-                ->post("{$this->ollamaUrl}/api/generate", [
+            if ($isOllamaCloud) {
+                $headers['Authorization'] = "Bearer {$this->apiKey}";
+
+                // Ollama Cloud usa endpoint compatible con OpenAI
+                $endpoint = "{$this->ollamaUrl}/chat/completions";
+                $payload = [
+                    'model' => $this->model,
+                    'messages' => [
+                        [
+                            'role' => 'user',
+                            'content' => $prompt
+                        ]
+                    ],
+                    'temperature' => $this->temperature,
+                    'max_tokens' => $this->maxTokens,
+                    'stream' => false,
+                ];
+
+                Log::info('NarrativaGenerator: Usando endpoint Ollama Cloud', [
+                    'endpoint' => $endpoint
+                ]);
+            } else {
+                // Ollama Local usa endpoint nativo
+                $endpoint = "{$this->ollamaUrl}/api/generate";
+                $payload = [
                     'model' => $this->model,
                     'prompt' => $prompt,
                     'stream' => false,
@@ -348,22 +368,41 @@ PROMPT;
                         'top_p' => 0.9,
                         'num_predict' => $this->maxTokens,
                     ]
+                ];
+
+                Log::info('NarrativaGenerator: Usando endpoint Ollama Local', [
+                    'endpoint' => $endpoint
                 ]);
+            }
+
+            $response = Http::withHeaders($headers)
+                ->timeout($this->timeout)
+                ->retry(3, 1000) // 3 intentos, 1 segundo entre intentos
+                ->post($endpoint, $payload);
 
             if (!$response->successful()) {
                 $error = $response->body();
-                Log::error("NarrativaGenerator: Error en Ollama Cloud API", [
+                Log::error("NarrativaGenerator: Error en Ollama API", [
                     'status' => $response->status(),
-                    'error' => $error
+                    'error' => $error,
+                    'endpoint' => $endpoint
                 ]);
-                throw new \Exception("Error en Ollama Cloud API ({$response->status()}): {$error}");
+                throw new \Exception("Error en Ollama API ({$response->status()}): {$error}");
             }
 
             $result = $response->json();
-            $narrativa = $result['response'] ?? '';
+
+            // Extraer narrativa según el tipo de respuesta
+            if ($isOllamaCloud) {
+                // Respuesta OpenAI-compatible
+                $narrativa = $result['choices'][0]['message']['content'] ?? '';
+            } else {
+                // Respuesta Ollama Local
+                $narrativa = $result['response'] ?? '';
+            }
 
             if (empty($narrativa)) {
-                throw new \Exception('Ollama Cloud API retornó una respuesta vacía');
+                throw new \Exception('Ollama API retornó una respuesta vacía');
             }
 
             // Limpiar respuesta
@@ -373,7 +412,8 @@ PROMPT;
             Cache::put($cacheKey, $narrativa, now()->addDays(30));
 
             Log::info('NarrativaGenerator: Narrativa generada exitosamente', [
-                'length' => strlen($narrativa)
+                'length' => strlen($narrativa),
+                'tipo' => $isOllamaCloud ? 'cloud' : 'local'
             ]);
 
             return $narrativa;

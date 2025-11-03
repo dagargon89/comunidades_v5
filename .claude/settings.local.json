@@ -8,7 +8,8 @@
       "Bash(php:*)",
       "Bash(test:*)",
       "Bash(powershell -Command \"Add-Type -AssemblyName System.IO.Compression.FileSystem; $zipPath = ''C:\\laragon\\www\\comunidades_v5\\ID 9381 Informe Narrativo 2P VF.docx''; $extractPath = ''C:\\laragon\\www\\comunidades_v5\\temp_docx''; if (Test-Path $extractPath) { Remove-Item $extractPath -Recurse -Force }; [System.IO.Compression.ZipFile]::ExtractToDirectory($zipPath, $extractPath); Get-Content ''$extractPath\\word\\document.xml'' -Raw\")",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []

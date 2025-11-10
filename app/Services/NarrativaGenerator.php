@@ -54,8 +54,14 @@ class NarrativaGenerator
         // Construir prompt
         $prompt = $this->construirPromptEvento($datos);
 
+        // Iniciar tracking de tiempo
+        $startTime = microtime(true);
+
         // Llamar a Ollama Cloud
         $textoGenerado = $this->llamarOllamaCloud($prompt, !$force);
+
+        // Calcular tiempo de generación
+        $tiempoGeneracion = microtime(true) - $startTime;
 
         // Guardar o actualizar narrativa
         $narrativa->narrativa_generada = $textoGenerado;
@@ -68,7 +74,18 @@ class NarrativaGenerator
 
         $narrativa->save();
 
-        Log::info("NarrativaGenerator: Narrativa generada/actualizada para evento {$evento->id}");
+        // Crear versión automáticamente
+        $narrativa->crearVersion(
+            tipoCambio: $force ? 'regeneracion_automatica' : 'generacion_inicial',
+            motivo: $force ? 'Regeneración solicitada por el usuario' : 'Generación inicial de la narrativa',
+            tiempoGeneracion: $tiempoGeneracion,
+            modeloUsado: $this->model
+        );
+
+        Log::info("NarrativaGenerator: Narrativa generada/actualizada para evento {$evento->id}", [
+            'tiempo_generacion' => round($tiempoGeneracion, 2) . 's',
+            'tipo_cambio' => $force ? 'regeneracion' : 'inicial'
+        ]);
 
         return $narrativa;
     }

@@ -162,6 +162,16 @@ class ActivityNarrativeResource extends Resource
                     ->falseColor('warning')
                     ->alignCenter(),
 
+                Tables\Columns\TextColumn::make('total_versiones')
+                    ->label('Versiones')
+                    ->badge()
+                    ->color('gray')
+                    ->icon('heroicon-o-clock')
+                    ->alignCenter()
+                    ->default(0)
+                    ->tooltip('Número de versiones guardadas')
+                    ->toggleable(),
+
                 Tables\Columns\TextColumn::make('narrativa_regenerada_at')
                     ->label('Última generación')
                     ->dateTime('d/m/Y H:i')
@@ -215,6 +225,20 @@ class ActivityNarrativeResource extends Resource
                     }),
             ])
             ->actions([
+                // Acción: Ver historial de versiones
+                Tables\Actions\Action::make('ver_historial')
+                    ->label('Historial')
+                    ->icon('heroicon-o-clock')
+                    ->color('gray')
+                    ->visible(fn ($record) => $record->versions()->count() > 0)
+                    ->modalHeading(fn ($record) => "Historial de Versiones ({$record->versions()->count()})")
+                    ->modalContent(fn ($record) => view('filament.modals.narrativa-historial', [
+                        'versiones' => $record->versions
+                    ]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Cerrar')
+                    ->modalWidth('4xl'),
+
                 // Acción: Ver narrativa
                 Tables\Actions\Action::make('ver_narrativa')
                     ->label('Ver')

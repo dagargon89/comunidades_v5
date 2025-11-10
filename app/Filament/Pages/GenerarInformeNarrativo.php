@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\ActivityCalendar;
 use App\Models\ActivityNarrative;
 use App\Services\NarrativaGenerator;
+use App\Jobs\GenerarInformeCompletoJob;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -189,10 +190,6 @@ class GenerarInformeNarrativo extends Page implements HasForms
 
     public function generar()
     {
-        // Aumentar límite de tiempo de ejecución a 10 minutos
-        set_time_limit(600);
-        ini_set('max_execution_time', 600);
-
         $data = $this->form->getState();
 
         // Validar que se haya seleccionado un proyecto
@@ -219,35 +216,21 @@ class GenerarInformeNarrativo extends Page implements HasForms
                 return;
             }
 
-            // 2. Procesar narrativas (generar las que falten)
-            $this->procesarNarrativas($datos, $data['usar_cache_narrativas']);
+            // 2. Verificar si necesita generar narrativas de forma asíncrona
+            $eventosSinNarrativa = $datos['eventos']->filter(function ($evento) use ($data) {
+                return !$evento->narrativa ||
+                       !$evento->narrativa->narrativa_generada ||
+                       !$data['usar_cache_narrativas'];
+            });
 
-            // 3. Renderizar informe
-            $html = $this->renderizarInforme($datos, $data);
+            // Si hay eventos sin narrativa Y tenemos más de 5 eventos, usar procesamiento asíncrono
+            if ($eventosSinNarrativa->count() > 0 && $datos['eventos']->count() > 5) {
+                $this->generarAsync($datos, $data);
+                return;
+            }
 
-            // 4. Guardar en sesión para descarga
-            session([
-                'informe_narrativo_html' => $html,
-                'informe_narrativo_formato' => $data['formato_salida'],
-                'informe_narrativo_proyecto_id' => $datos['proyecto']->id,
-                'informe_narrativo_proyecto_nombre' => $datos['proyecto']->name,
-            ]);
-
-            \Log::info('GenerarInformeNarrativo: Datos guardados en sesión', [
-                'proyecto_id' => $datos['proyecto']->id,
-                'formato' => $data['formato_salida'],
-                'html_length' => strlen($html)
-            ]);
-
-            Notification::make()
-                ->title('Informe generado exitosamente')
-                ->body('El informe se descargará automáticamente')
-                ->success()
-                ->send();
-
-            // 5. Disparar evento para descarga
-            \Log::info('GenerarInformeNarrativo: Disparando evento descargar-informe');
-            $this->dispatch('descargar-informe');
+            // Si solo son pocos eventos o ya tienen narrativas, generar síncronamente (rápido)
+            $this->generarSync($datos, $data);
 
         } catch (\Exception $e) {
             Notification::make()
@@ -262,6 +245,120 @@ class GenerarInformeNarrativo extends Page implements HasForms
                 'trace' => $e->getTraceAsString()
             ]);
         }
+    }
+
+    /**
+     * Genera el informe de forma asíncrona usando jobs
+     */
+    protected function generarAsync(array $datos, array $data): void
+    {
+        $proyecto = $datos['proyecto'];
+
+        // Despachar el job con los parámetros correctos
+        GenerarInformeCompletoJob::dispatch(
+            userId: auth()->id(),
+            projectId: $proyecto->id,
+            fechaInicio: $data['fecha_inicio'],
+            fechaFin: $data['fecha_fin'],
+            opciones: [
+                'usar_cache_narrativas' => $data['usar_cache_narrativas'],
+                'objetivos_ids' => $data['objetivos_ids'] ?? [],
+                'metas_ids' => $data['metas_ids'] ?? [],
+            ]
+        );
+
+        Notification::make()
+            ->title('Generando narrativas en segundo plano')
+            ->body("Se están generando {$datos['eventos']->count()} narrativas. Recibirás una notificación cuando termine.")
+            ->info()
+            ->icon('heroicon-o-clock')
+            ->persistent()
+            ->send();
+
+        \Log::info('GenerarInformeNarrativo: Job despachado', [
+            'proyecto_id' => $proyecto->id,
+            'total_eventos' => $datos['eventos']->count(),
+        ]);
+    }
+
+    /**
+     * Genera el informe de forma síncrona (cuando ya existen las narrativas)
+     */
+    protected function generarSync(array $datos, array $data): void
+    {
+        // Aumentar límite de tiempo a 2 minutos (suficiente para renderizar)
+        set_time_limit(120);
+
+        // Procesar narrativas pendientes (solo las que falten)
+        $this->procesarNarrativasPendientes($datos, $data['usar_cache_narrativas']);
+
+        // Renderizar informe
+        $html = $this->renderizarInforme($datos, $data);
+
+        // Guardar en sesión para descarga
+        session([
+            'informe_narrativo_html' => $html,
+            'informe_narrativo_formato' => $data['formato_salida'],
+            'informe_narrativo_proyecto_id' => $datos['proyecto']->id,
+            'informe_narrativo_proyecto_nombre' => $datos['proyecto']->name,
+        ]);
+
+        \Log::info('GenerarInformeNarrativo: Datos guardados en sesión', [
+            'proyecto_id' => $datos['proyecto']->id,
+            'formato' => $data['formato_salida'],
+            'html_length' => strlen($html)
+        ]);
+
+        Notification::make()
+            ->title('Informe generado exitosamente')
+            ->body('El informe se descargará automáticamente')
+            ->success()
+            ->send();
+
+        // Disparar evento para descarga
+        \Log::info('GenerarInformeNarrativo: Disparando evento descargar-informe');
+        $this->dispatch('descargar-informe');
+    }
+
+    /**
+     * Procesa solo las narrativas que aún no existen (versión rápida para pocos eventos)
+     */
+    protected function procesarNarrativasPendientes(array &$datos, bool $usarCache): void
+    {
+        $generator = app(NarrativaGenerator::class);
+        $procesados = 0;
+        $exitosos = 0;
+
+        foreach ($datos['eventos'] as $evento) {
+            // Si no tiene narrativa, crear una vacía
+            if (!$evento->narrativa) {
+                $evento->narrativa = ActivityNarrative::create([
+                    'activity_calendar_id' => $evento->id,
+                ]);
+            }
+
+            // Si no tiene narrativa generada o no usamos cache, generar
+            if (!$usarCache || !$evento->narrativa->narrativa_generada) {
+                try {
+                    $generator->generarNarrativaEvento($evento, !$usarCache);
+                    $evento->narrativa->refresh();
+                    $exitosos++;
+                } catch (\Exception $e) {
+                    \Log::error("Error generando narrativa para evento {$evento->id}", [
+                        'error' => $e->getMessage()
+                    ]);
+
+                    // Crear narrativa de respaldo
+                    if (!$evento->narrativa->narrativa_generada) {
+                        $evento->narrativa->narrativa_generada = "Se realizó la actividad {$evento->activity->name} el {$evento->start_date->format('d/m/Y')}.";
+                        $evento->narrativa->save();
+                    }
+                }
+            }
+            $procesados++;
+        }
+
+        \Log::info("Procesamiento completado: {$exitosos} narrativas generadas de {$procesados} eventos");
     }
 
     protected function obtenerLogros(array $datos): array

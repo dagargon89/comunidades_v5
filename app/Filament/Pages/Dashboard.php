@@ -45,6 +45,10 @@ class Dashboard extends BaseDashboard
             \App\Filament\Widgets\DashboardStats::class,
             \App\Filament\Widgets\RecentProjects::class,
             \App\Filament\Widgets\ActivityOverview::class,
+            // Widgets de Narrativas
+            \App\Filament\Widgets\NarrativasStatsWidget::class,
+            \App\Filament\Widgets\NarrativasPorMesChart::class,
+            \App\Filament\Widgets\NarrativasRecientesWidget::class,
         ];
     }
 

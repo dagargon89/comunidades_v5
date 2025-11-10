@@ -11,7 +11,8 @@
       "Bash(powershell -Command:*)",
       "Bash(curl:*)",
       "Bash(findstr:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(composer show:*)"
     ],
     "deny": [],
     "ask": []

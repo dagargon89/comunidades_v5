@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ActivityNarrative extends Model
 {
@@ -171,5 +172,58 @@ class ActivityNarrative extends Model
 
         $fecha = $this->activityCalendar->start_date;
         return $fecha->day . ' de ' . $meses[$fecha->month] . ' de ' . $fecha->year;
+    }
+
+    /**
+     * Relación: Tiene muchas versiones
+     */
+    public function versions(): HasMany
+    {
+        return $this->hasMany(NarrativaVersion::class, 'activity_narrative_id')
+            ->orderBy('version_number', 'desc');
+    }
+
+    /**
+     * Obtiene la versión más reciente
+     */
+    public function versionActual()
+    {
+        return $this->versions()->latest('created_at')->first();
+    }
+
+    /**
+     * Crea una nueva versión de la narrativa
+     */
+    public function crearVersion(
+        string $tipoCambio = 'generacion_inicial',
+        ?string $motivo = null,
+        ?float $tiempoGeneracion = null,
+        ?string $modeloUsado = null
+    ): NarrativaVersion {
+        $numeroVersion = $this->versions()->max('version_number') + 1;
+
+        return $this->versions()->create([
+            'version_number' => $numeroVersion,
+            'narrativa_generada' => $this->narrativa_generada,
+            'narrativa_contexto' => $this->narrativa_contexto,
+            'narrativa_desarrollo' => $this->narrativa_desarrollo,
+            'narrativa_resultados' => $this->narrativa_resultados,
+            'participantes_count' => $this->participantes_count,
+            'organizaciones_participantes' => $this->organizaciones_participantes,
+            'modelo_usado' => $modeloUsado ?? config('services.ollama.model'),
+            'temperatura' => config('services.ollama.temperature'),
+            'tiempo_generacion' => $tiempoGeneracion,
+            'created_by' => auth()->id(),
+            'tipo_cambio' => $tipoCambio,
+            'motivo_cambio' => $motivo,
+        ]);
+    }
+
+    /**
+     * Obtiene el total de versiones
+     */
+    public function getTotalVersionesAttribute(): int
+    {
+        return $this->versions()->count();
     }
 }
